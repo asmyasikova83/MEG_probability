@@ -5,8 +5,7 @@ subjects = [
 
 runs = ['2']
 
-fpath = '/home/sasha/MEG/Data_prob/{}_run{}_raw_tsss_mc.fif'
-#fpath = '/home/sasha/MEG/Data_prob/{}_run{}_raw.fif'
+fpath = '/home/asmyasnikova83/DATA/links/{}/{}_run{}_raw_tsss_mc.fif'
 
 events_trained = []
 log_trained_events = []
@@ -15,9 +14,9 @@ log_reinf_trained = []
 
 for run in runs:
     for subject in subjects:
-        print(fpath)
+        print(fpath.format(subject, subject, run))
 
-        raw = mne.io.read_raw_fif(fpath.format(subject, run), allow_maxshield=False, preload=True, verbose=None)
+        raw = mne.io.read_raw_fif(fpath.format(subject, subject, run), allow_maxshield=False, preload=True, verbose=None)
 
         events = mne.find_events(raw, stim_channel='STI101', output='onset', consecutive='increasing', min_duration=0, shortest_event=1, mask=None, uint_cast=False, mask_type='and',  initial_event=False, verbose=None)
 
