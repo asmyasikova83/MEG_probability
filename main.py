@@ -1,11 +1,42 @@
 import mne
+import numpy as np
 
 subjects = [ 
-    'P000']
+    'P000',
+    'P001',
+    'P002',
+    'P003',
+    'P004',
+    'P005',
+    'P006',
+    'P007',
+    'P008',
+    'P009',
+    'P010',
+    'P011',
+    'P012',
+    'P014',
+    'P015',
+    'P016',
+    'P017',
+    'P018',
+    'P019',
+    'P020',
+    'P021',
+    'P022',
+    'P023',
+    'P024',
+    'P025',
+    'P026',
+    'P028',
+    'P029',
+    'P030']
 
-runs = ['2']
+runs = ['1','2','3','4','5','6','7']
 
 fpath = '/home/asmyasnikova83/DATA/links/{}/{}_run{}_raw_tsss_mc.fif'
+fpath_events = '/home/asmyasnikova83/DATA/reinforced/{}_run{}_events.txt'
+fpath_log = '/home/asmyasnikova83/DATA/reinforced/{}_run{}_log.txt'
 
 events_trained = []
 log_trained_events = []
@@ -70,16 +101,16 @@ for run in runs:
             answer_count = correct_counter/len(res)
             print(answer_count)
             if answer_count > 0.66:
-                events_trained.extend(res)
-                log_trained_events.extend(log)
-                reinforcement_trained.extend(reinforcement)
-                log_reinf_trained.extend(log_reinf)
+                events_file = open(fpath_events.format(subject, run), "w")
+                log_file = open(fpath_log.format(subject, run), "w")
+
+                np.savetxt(events_file, reinforcement, fmt="%d")
+                log_reinf_str='\n'.join(log_reinf)
+                log_file.write(log_reinf_str)
+
+                log_file.close()
+                events_file.close()
+                print('Saved!')
         else:
             print('Did not find trained')
-        
-for i in range(len(events_trained)):
-    print(events_trained[i],log_trained_events[i])
-
-for i in range(len(reinforcement_trained)):
-    print(reinforcement_trained[i],log_reinf_trained[i]) 
 
