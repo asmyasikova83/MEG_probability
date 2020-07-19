@@ -27,11 +27,12 @@ def no_mio_events(epochs_ar, thres):
             good_chan.append(i)
     return np.array(good_chan) 
 
-data_path = '/home/asmyasnikova83/DATA/links/'
-out_path = f'theta_reinforced_{L_freq}_{H_freq}/'
-os.makedirs(os.path.join(os.getcwd(), "Sensor", "TFR", out_path), exist_ok = True)
+#data_path = '/home/asmyasnikova83/DATA/links/'
+#out_path = f'theta_reinforced_{L_freq}_{H_freq}/'
+#os.makedirs(os.path.join(os.getcwd(), "Sensor", "TFR", out_path), exist_ok = True)
 fpath_raw = '/home/asmyasnikova83/DATA/links/{}/{}_run{}_raw_tsss_mc.fif'
 fpath_events = '/home/asmyasnikova83/DATA/reinforced/{}_run{}_events.txt'
+fpath_mio_out = '/home/asmyasnikova83/DATA/mio_out/{}_run{}_mio_corrected.txt'
 
 '''
 with open("config.py", "r") as f_in:
@@ -40,14 +41,13 @@ with open("config.py", "r") as f_in:
         f_out.writelines(settings)
 '''
 
-def calculate_beta(subj, run, fpath_raw):
+def calculate_beta(subj, run, fpath_raw, fpath_events, fpath_mio_out):
     freqs = np.arange(L_freq, H_freq, f_step)
         
     raw_data = mne.io.Raw(fpath_raw.format(subj, subj, run), preload=False)
 
     picks = mne.pick_types(raw_data.info, meg = True)
     events_raw = mne.find_events(raw_data, stim_channel='STI101', output='onset', consecutive='increasing', min_duration=0, shortest_event=1, mask=None, uint_cast=False, mask_type='and', initial_event=False, verbose=None)
-    fpath_events = '/home/asmyasnikova83/DATA/reinforced/{}_run{}_events.txt'
     events = np.loadtxt(fpath_events.format(subj, run), dtype=int)
     epochs = mne.Epochs(raw_data, events, event_id = None, tmin = period_start, tmax = period_end, picks=picks, preload = True)
     epochs = epochs.pick(picks="grad")
@@ -69,7 +69,7 @@ def calculate_beta(subj, run, fpath_raw):
     del events_raw
     evee = list(map(str, full_ev))
     evee = list(map(lambda x: x + "\n", evee))
-    with open(f"Cleaned_events/{subject}_run{run}_cleaned_events.txt", "w") as ff:
+    with open(fpath_mio_out.format(subj, run), "w") as ff:
         ff.writelines(evee)
 
 for run in runs:
@@ -80,7 +80,7 @@ for run in runs:
         file = pathlib.Path(rf)
         if file.exists():
             print('This file is being processed: ', rf)
-            calculate_beta(subject, run, fpath_raw)
+            calculate_beta(subject, run, fpath_raw, fpath_events, fpath_mio_out)
         else:
             print('This file: ', rf, 'does not exit')
             continue
