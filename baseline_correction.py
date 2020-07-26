@@ -17,7 +17,7 @@ def retrieve_events_for_baseline(raw_data, picks):
         # cross
         if events_raw[i][2] == 1:
             # check
-            # ... i + 4
+            # ids of event of interet are located in i + 4
             assert(events_raw[i + 4][2] == 50 or
                    events_raw[i + 4][2] == 51 or
                    events_raw[i + 4][2] == 52 or
