@@ -9,7 +9,9 @@ f_step = 1
 period_start = -1.000 # epoch start
 period_end = 1.000 #epoch end
 
-baseline = (-0.350, -0.050) # time interval before the appearance of the fixation cross
+# time interval before the appearance of the fixation cross
+baseline_interval_start = -350
+baseline_interval_end = -50
 
 subjects = [
     'P000',

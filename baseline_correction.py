@@ -61,9 +61,7 @@ def compute_baseline(events_with_cross, events_of_interest, raw_data, picks):
     assert(N_events == len(events_with_cross))
     BASELINE = np.zeros((N_events, N_chans))
     for i in range(N_events):
-        #extract data for baseline computation for each event
-        baseline_interval_start = -350
-        baseline_interval_end = -50
+        #extract data for baseline computation for each event:   baseline_interval_start = -350 baseline_interval_end = -50
         baseline_chunk = epochs_ar[:, baseline_interval_start:baseline_interval_end, i]
         #baseline computation over the time samples in column data (axis=1)
         BASELINE[i, 0:N_chans] = np.mean(baseline_chunk, axis=1)
