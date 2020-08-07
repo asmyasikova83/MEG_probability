@@ -1,13 +1,7 @@
 import os
 
-stim = "reinforced"
-
-L_freq = 4
-H_freq = 6
-f_step = 1
-
-period_start = -1.000 # epoch start
-period_end = 1.000 #epoch end
+period_start = -2.000 #epoch start
+period_end = 1.500 #epoch end
 
 # time interval before the appearance of the fixation cross
 baseline_interval_start = -350
@@ -15,7 +9,6 @@ baseline_interval_end = -50
 
 subjects = [
     'P000',
-    'P001',
     'P002',
     'P003',
     'P004',
@@ -48,9 +41,12 @@ runs = ['1','2','3','4','5','6','7']
 
 '''
 subjects = [
-    'P000',
-    'P001']
+    'P002',
+    'P003',
+    'P004',
+    'P005',
+    'P006']
 
-runs = ['1','2']
+runs = ['1','2','3','4','5','6']
 '''
 
