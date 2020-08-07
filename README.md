@@ -9,7 +9,7 @@ Exploring the issue of exploration/exploitation after successful training (we co
 
 1) investigate  the reaction to negative and positive feedback. 
 
-Therefore,in the script extract_events.py we
+Therefore, in the script events_extraction.py we
 
  a) identify the events and timing corespondent to successful training;
 
