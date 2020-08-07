@@ -42,17 +42,17 @@ with open("config.py", "r") as f_in:
 '''
 
 def calculate_beta(subj, run, fpath_raw, fpath_events, fpath_mio_out):
-    freqs = np.arange(L_freq, H_freq, f_step)
+   # freqs = np.arange(L_freq, H_freq, f_step)
         
     raw_data = mne.io.Raw(fpath_raw.format(subj, subj, run), preload=False)
-
+    raw_data = raw_data.filter(l_freq=70, h_freq=None)
     picks = mne.pick_types(raw_data.info, meg = True)
     events_raw = mne.find_events(raw_data, stim_channel='STI101', output='onset', consecutive='increasing', min_duration=0, shortest_event=1, mask=None, uint_cast=False, mask_type='and', initial_event=False, verbose=None)
     events = np.loadtxt(fpath_events.format(subj, run), dtype=int)
     epochs = mne.Epochs(raw_data, events, event_id = None, tmin = period_start, tmax = period_end, picks=picks, preload = True)
     epochs = epochs.pick(picks="grad")
 
-    thres = 7 #procedure to remove epochs-outliers based on thres*STD difference
+    thres = 6 #procedure to remove epochs-outliers based on thres*STD difference
     clean = no_mio_events(epochs.get_data(), thres)
    
     print(subj, thres, str(events.shape[0]) + " ~~~~ " + str(events[clean].shape[0]) )
