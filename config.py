@@ -1,4 +1,17 @@
 import os
+import numpy as np
+
+L_freq = 4
+H_freq = 6
+f_step = 1
+
+freqs = np.arange(L_freq, H_freq+1, f_step)
+
+tfr = True
+
+if tfr:
+    period_start = -2.20 # epoch start
+    period_end = 1.70 #epoch end
 
 period_start = -2.000 #epoch start
 period_end = 1.500 #epoch end
