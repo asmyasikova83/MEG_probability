@@ -23,5 +23,12 @@ Next, in the script grand_average.py we
 
  b) compute grand average of the obtained evokeds and save correspondent figure in /home/asmyasnikova83/DATA/evoked_ave
 
+Time frequency analysis
+
+Script baseline_correction.py contains a function for manual computation of power baseline based on time interval as of (-0.350, -0.050) ms before the appearance of feedback (0 ms)
+and that of manual correction of frequency representation of the epochs of interest (with feedback) by summation of power bands in a freq range, division by mean power in the (-0.350, -0.050) ms interval and log transformation of the result.
+
+Script tfr.py contains further processing and plotting options of tfr data: collecting and averaging of tfr data over 30 participants and 7 runs.
+Plot_topomap and plot_topo are available.
 
 
