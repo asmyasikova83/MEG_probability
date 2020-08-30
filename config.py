@@ -7,14 +7,16 @@ f_step = 1
 
 freqs = np.arange(L_freq, H_freq+1, f_step)
 
+mode = 'server'
+
 tfr = True
 
 if tfr:
     period_start = -2.20 # epoch start
     period_end = 1.70 #epoch end
-
-period_start = -2.000 #epoch start
-period_end = 1.500 #epoch end
+else:
+    period_start = -2.00 #epoch start
+    period_end = 1.50 #epoch end
 
 # time interval before the appearance of the fixation cross
 baseline_interval_start = -350
@@ -63,5 +65,8 @@ subjects = [
     'P006']
 
 runs = ['1','2','3','4','5','6']
+<<<<<<< HEAD
+=======
 
+>>>>>>> 7031b1df9945da020afc5b3bef6df4c938083406
 '''

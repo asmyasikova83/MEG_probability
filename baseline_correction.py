@@ -69,63 +69,63 @@ def create_mne_epochs_evoked(kind, subject, run, CORRECTED_DATA, events_of_inter
     if kind == 'both':
     #explore reinforcement data with both pos and neg feedback
         if subject == 'P005' and run == '1' or subject == 'P003' and run == '1' or subject == 'P003' and run == '3' or subject == 'P004' and run == '4':
-            epochs = mne.EpochsArray(CORRECTED_DATA, info=reduced_info, events=events_of_interest, tmin=-2.000, baseline=None, event_id= [50, 52, 53])
+            epochs = mne.EpochsArray(CORRECTED_DATA, info=reduced_info, events=events_of_interest, tmin=period_start, baseline=None, event_id= [50, 52, 53])
         elif subject == 'P005' and run == '2' or subject == 'P003' and run == '2':
-            epochs = mne.EpochsArray(CORRECTED_DATA, info=reduced_info, events=events_of_interest, tmin=-2.000, baseline=None, event_id= [50, 53])
+            epochs = mne.EpochsArray(CORRECTED_DATA, info=reduced_info, events=events_of_interest, tmin=period_start, baseline=None, event_id= [50, 53])
         elif subject == 'P005' and run == '3':
-            epochs = mne.EpochsArray(CORRECTED_DATA, info=reduced_info, events=events_of_interest, tmin=-2.000, baseline=None, event_id= [50, 53])
+            epochs = mne.EpochsArray(CORRECTED_DATA, info=reduced_info, events=events_of_interest, tmin=period_start, baseline=None, event_id= [50, 53])
         elif subject == 'P005' and run == '4':
-            epochs = mne.EpochsArray(CORRECTED_DATA, info=reduced_info, events=events_of_interest, tmin=-2.000, baseline=None, event_id= [50, 53])
+            epochs = mne.EpochsArray(CORRECTED_DATA, info=reduced_info, events=events_of_interest, tmin=period_start, baseline=None, event_id= [50, 53])
         elif subject == 'P005' and run == '5':
-            epochs = mne.EpochsArray(CORRECTED_DATA, info=reduced_info, events=events_of_interest, tmin=-2.000, baseline=None, event_id= [50, 53])
+            epochs = mne.EpochsArray(CORRECTED_DATA, info=reduced_info, events=events_of_interest, tmin=period_start, baseline=None, event_id= [50, 53])
         elif subject == 'P003' and run == '5':
-            epochs = mne.EpochsArray(CORRECTED_DATA, info=reduced_info, events=events_of_interest, tmin=-2.000, baseline=None, event_id= [50, 52, 53])
+            epochs = mne.EpochsArray(CORRECTED_DATA, info=reduced_info, events=events_of_interest, tmin=period_start, baseline=None, event_id= [50, 52, 53])
         elif subject == 'P004' and run == '5':
-            epochs = mne.EpochsArray(CORRECTED_DATA, info=reduced_info, events=events_of_interest, tmin=-2.000, baseline=None, event_id= [50, 53])
+            epochs = mne.EpochsArray(CORRECTED_DATA, info=reduced_info, events=events_of_interest, tmin=period_start, baseline=None, event_id= [50, 53])
         else:
-            epochs = mne.EpochsArray(CORRECTED_DATA, info=reduced_info, events=events_of_interest, tmin=-2.000, baseline=None, event_id= [50, 51, 52, 53])
+            epochs = mne.EpochsArray(CORRECTED_DATA, info=reduced_info, events=events_of_interest, tmin=period_start, baseline=None, event_id= [50, 51, 52, 53])
     if kind == 'positive':
     #explore data with positive feedback
         if subject == 'P005' and run == '1' or subject == 'P003' and run == '1' or subject == 'P003' and run == '3' or subject == 'P004' and run == '4':
-            epochs = mne.EpochsArray(CORRECTED_DATA, info=reduced_info, events=events_of_interest, tmin=-2.000, baseline=None, event_id= [50])
+            epochs = mne.EpochsArray(CORRECTED_DATA, info=reduced_info, events=events_of_interest, tmin=period_start, baseline=None, event_id= [50])
         elif subject == 'P005' and run == '2' or subject == 'P003' and run == '2' or subject == 'P016' and run == '4' or subject == 'P023' and run == '4':
-            epochs = mne.EpochsArray(CORRECTED_DATA, info=reduced_info, events=events_of_interest, tmin=-2.000, baseline=None, event_id= [50])
+            epochs = mne.EpochsArray(CORRECTED_DATA, info=reduced_info, events=events_of_interest, tmin=period_start, baseline=None, event_id= [50])
         elif subject == 'P005' and run == '3' or subject == 'P009' and run == '1' or subject == 'P016' and run == '1' or subject == 'P014' and run == '4' :
-            epochs = mne.EpochsArray(CORRECTED_DATA, info=reduced_info, events=events_of_interest, tmin=-2.000, baseline=None, event_id= [50])
+            epochs = mne.EpochsArray(CORRECTED_DATA, info=reduced_info, events=events_of_interest, tmin=period_start, baseline=None, event_id= [50])
         elif subject == 'P005' and run == '4' or subject == 'P021' and run == '1' or subject == 'P014' and run == '2' or subject == 'P011' and run == '4':
-            epochs = mne.EpochsArray(CORRECTED_DATA, info=reduced_info, events=events_of_interest, tmin=-2.000, baseline=None, event_id= [50])
+            epochs = mne.EpochsArray(CORRECTED_DATA, info=reduced_info, events=events_of_interest, tmin=period_start, baseline=None, event_id= [50])
         elif subject == 'P005' and run == '5' or subject == 'P018' and run == '2' or subject == 'P008' and run == '3' or subject == 'P007' and run == '4':
-            epochs = mne.EpochsArray(CORRECTED_DATA, info=reduced_info, events=events_of_interest, tmin=-2.000, baseline=None, event_id= [50])
+            epochs = mne.EpochsArray(CORRECTED_DATA, info=reduced_info, events=events_of_interest, tmin=period_start, baseline=None, event_id= [50])
         elif subject == 'P003' and run == '5' or subject == 'P021' and run == '2' or subject == 'P007' and run == '3' or subject == 'P009' and run == '4':
-            epochs = mne.EpochsArray(CORRECTED_DATA, info=reduced_info, events=events_of_interest, tmin=-2.000, baseline=None, event_id= [50])
+            epochs = mne.EpochsArray(CORRECTED_DATA, info=reduced_info, events=events_of_interest, tmin=period_start, baseline=None, event_id= [50])
         elif subject == 'P004' and run == '5' or subject == 'P009' and run == '3' or subject == 'P014' and run == '3' or subject == 'P016' and run == '3':
-            epochs = mne.EpochsArray(CORRECTED_DATA, info=reduced_info, events=events_of_interest, tmin=-2.000, baseline=None, event_id= [50])
+            epochs = mne.EpochsArray(CORRECTED_DATA, info=reduced_info, events=events_of_interest, tmin=period_start, baseline=None, event_id= [50])
         elif subject == 'P025' and run == '4' or subject == 'P008' and run == '5' or subject == 'P009' and run == '5' or subject == 'P014' and run == '5':
-            epochs = mne.EpochsArray(CORRECTED_DATA, info=reduced_info, events=events_of_interest, tmin=-2.000, baseline=None, event_id= [50] )
+            epochs = mne.EpochsArray(CORRECTED_DATA, info=reduced_info, events=events_of_interest, tmin=period_start, baseline=None, event_id= [50] )
         elif subject == 'P020' and run == '5' or subject == 'P025' and run == '5' or subject == 'P023' and run == '5' or subject == 'P007' and run == '6':
-            epochs = mne.EpochsArray(CORRECTED_DATA, info=reduced_info, events=events_of_interest, tmin=-2.000, baseline=None, event_id= [50] )
+            epochs = mne.EpochsArray(CORRECTED_DATA, info=reduced_info, events=events_of_interest, tmin=period_start, baseline=None, event_id= [50] )
         elif subject == 'P009' and run == '6' or subject == 'P025' and run == '5' or subject == 'P023' and run == '5' or subject == 'P007' and run == '6':
-            epochs = mne.EpochsArray(CORRECTED_DATA, info=reduced_info, events=events_of_interest, tmin=-2.000, baseline=None, event_id= [50] )
+            epochs = mne.EpochsArray(CORRECTED_DATA, info=reduced_info, events=events_of_interest, tmin=period_start, baseline=None, event_id= [50] )
         else:
-            epochs = mne.EpochsArray(CORRECTED_DATA, info=reduced_info, events=events_of_interest, tmin=-2.000, baseline=None, event_id= [50, 51])
+            epochs = mne.EpochsArray(CORRECTED_DATA, info=reduced_info, events=events_of_interest, tmin=period_start, baseline=None, event_id= [50, 51])
     if kind == 'negative':
     #explore data with negative feedback
         if subject == 'P005' and run == '1' or subject == 'P003' and run == '1' or subject == 'P003' and run == '3' or subject == 'P004' and run == '4':
-            epochs = mne.EpochsArray(CORRECTED_DATA, info=reduced_info, events=events_of_interest, tmin=-2.000, baseline=None, event_id= [52, 53])
+            epochs = mne.EpochsArray(CORRECTED_DATA, info=reduced_info, events=events_of_interest, tmin=period_start, baseline=None, event_id= [52, 53])
         elif subject == 'P005' and run == '2' or subject == 'P003' and run == '2':
-            epochs = mne.EpochsArray(CORRECTED_DATA, info=reduced_info, events=events_of_interest, tmin=-2.000, baseline=None, event_id= [53])
+            epochs = mne.EpochsArray(CORRECTED_DATA, info=reduced_info, events=events_of_interest, tmin=period_start, baseline=None, event_id= [53])
         elif subject == 'P005' and run == '3' or subject == 'P009' and run == '3' or subject == 'P007' and run == '4':
-            epochs = mne.EpochsArray(CORRECTED_DATA, info=reduced_info, events=events_of_interest, tmin=-2.000, baseline=None, event_id= [53])
+            epochs = mne.EpochsArray(CORRECTED_DATA, info=reduced_info, events=events_of_interest, tmin=period_start, baseline=None, event_id= [53])
         elif subject == 'P005' and run == '4' or subject == 'P009' and run == '4' or subject == 'P016' and run == '4':
-            epochs = mne.EpochsArray(CORRECTED_DATA, info=reduced_info, events=events_of_interest, tmin=-2.000, baseline=None, event_id= [53])
+            epochs = mne.EpochsArray(CORRECTED_DATA, info=reduced_info, events=events_of_interest, tmin=period_start, baseline=None, event_id= [53])
         elif subject == 'P005' and run == '5' or subject == 'P009' and run == '5' or subject == 'P014' and run == '5' or subject == 'P025' and run == '5':
-            epochs = mne.EpochsArray(CORRECTED_DATA, info=reduced_info, events=events_of_interest, tmin=-2.000, baseline=None, event_id= [53])
+            epochs = mne.EpochsArray(CORRECTED_DATA, info=reduced_info, events=events_of_interest, tmin=period_start, baseline=None, event_id= [53])
         elif subject == 'P003' and run == '5':
-            epochs = mne.EpochsArray(CORRECTED_DATA, info=reduced_info, events=events_of_interest, tmin=-2.000, baseline=None, event_id= [52, 53])
+            epochs = mne.EpochsArray(CORRECTED_DATA, info=reduced_info, events=events_of_interest, tmin=period_start, baseline=None, event_id= [52, 53])
         elif subject == 'P004' and run == '5':
-            epochs = mne.EpochsArray(CORRECTED_DATA, info=reduced_info, events=events_of_interest, tmin=-2.000, baseline=None, event_id= [53])
+            epochs = mne.EpochsArray(CORRECTED_DATA, info=reduced_info, events=events_of_interest, tmin=period_start, baseline=None, event_id= [53])
         else:
-            epochs = mne.EpochsArray(CORRECTED_DATA, info=reduced_info, events=events_of_interest, tmin=-2.000, baseline=None, event_id= [52, 53])
+            epochs = mne.EpochsArray(CORRECTED_DATA, info=reduced_info, events=events_of_interest, tmin=period_start, baseline=None, event_id= [52, 53])
     # downsample to 250 Hz
     epochs_of_interest = epochs.copy().resample(250, npad='auto')
     evoked = epochs_of_interest.average()
@@ -217,12 +217,18 @@ def correct_baseline_power(epochs_of_interest, b_line, kind, b_line_manually, su
     #hack for changed dimensionality of summarized data - now we have dim 1 for freq
     freq_show.freqs  = np.array([5])
     if kind == 'positive':
-        tfr_path = '/home/asmyasnikova83/DATA/TFR/positive/{0}_run{1}_theta_positive_int_50ms-tfr.h5'
+        if mode == 'server':
+            tfr_path = '/home/asmyasnikova83/DATA/TFR/positive/{0}_run{1}_theta_positive_int_50ms-tfr.h5'
+        else:
+            tfr_path = '/home/sasha/MEG/Time_frequency_analysis/{0}_run{1}_theta_positive_int_50ms-tfr.h5'
     if kind == 'negative':
+        if mode == 'server':
+            tfr_path = '/home/asmyasnikova83/DATA/TFR/negative/{0}_run{1}_theta_negative_int_50ms-tfr.h5'
+        else:
+            tfr_path = '/home/sasha/MEG/Time_frequency_analysis/{0}_run{1}_theta_negative_int_50ms-tfr.h5'
         #tfr_path = '/home/sasha/MEG/Time_frequency_analysis/{0}_run{1}_theta_negative_int_50ms-tfr.h5'
         #tfr_path = '/home/sasha/MEG/Time_frequency_analysis/{0}_run{1}_alpha_negative_int_50ms-tfr.h5'
         #tfr_path = '/home/sasha/MEG/Time_frequency_analysis/{0}_run{1}_beta_negative_int_50ms-tfr.h5'
-        tfr_path = '/home/asmyasnikova83/DATA/TFR/negative/{0}_run{1}_theta_negative_int_50ms-tfr.h5'
     freq_show.save(tfr_path.format(subject, run), overwrite=True)
     print(tfr_path.format(subject, run))
     return freq_show

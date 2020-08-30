@@ -41,8 +41,8 @@ if kind == 'positive':
     if mode != 'server':
         fpath_events = fpath_ev + '{}_run{}_mio_corrected_positive.txt'
         freq_fpath = fpath_fr +  '{0}_run{1}_theta_positive_int_50ms-tfr.h5'
-        #freq_fpath = '/home/sasha/MEG/Time_frequency_analysis/{0}_run{1}_alpha_negative_int_50ms-tfr.h5'
-        #freq_fpath = '/home/sasha/MEG/Time_frequency_analysis/{0}_run{1}_beta_negative_int_50ms-tfr.h5'
+        #freq_fpath = '/home/sasha/MEG/Time_frequency_analysis/{0}_run{1}_alpha_positive_int_50ms-tfr.h5'
+        #freq_fpath = '/home/sasha/MEG/Time_frequency_analysis/{0}_run{1}_beta_positive_int_50ms-tfr.h5'
 
 for run in runs:
     for subject in subjects:
@@ -50,7 +50,10 @@ for run in runs:
         file = pathlib.Path(rf)
         if file.exists():
             print('This file is being processed: ', rf)
-            raw_file = fpath_raw.format(subject,subject, run)
+            if mode == 'server':
+                raw_file = fpath_raw.format(subject,subject, run)
+            else:
+                raw_file = fpath_raw.format(subject, run)
             raw_data = mne.io.Raw(raw_file, preload=True)
             #filter 1-50 Hz
             raw_data = raw_data.filter(None, 50, fir_design='firwin') # for low frequencies, below the peaks of power-line noise low pass filter the data
@@ -70,7 +73,8 @@ for run in runs:
             freq_show = correct_baseline_power(epochs_of_interest, b_line, kind, b_line_manually, subject, run)
             print('\n\nDone with the BASELINE II!')
             #plot an example of topomap
-            topomap_one(freq_show)
+            if mode == 'server':
+                topomap_one(freq_show)
             freq_file = freq_fpath.format(subject, run)
             #read tfr data from (freq_file)[0]
             freq_show = mne.time_frequency.read_tfrs(freq_file)[0]
@@ -84,14 +88,14 @@ for run in runs:
 
 print('\n\nGrand_average:')
 freq_data = mne.grand_average(data)
-#freq = freq_data.apply_baseline(baseline=(-0.35,-0.05), mode="logratio")
 
 print('\n\nPlot poto:')
 #topomap for the general time inerval
 PM = freq_data.plot_topo(picks='meg', title='Theta average power in Negative Feedback')
-os.chdir('/home/asmyasnikova83/DATA')
-PM.savefig('output.png')
+if mode == 'server':
+    os.chdir('/home/asmyasnikova83/DATA')
+    PM.savefig('output.png')
+else:
+    plt.show()
 #topographic maps of time-frequency intervals of TFR data.
-title = 'Theta power in Positive Feedback'
 #freq_data.plot_topomap(tmin= 0.20, tmax=0.60, fmin=4, fmax=6, ch_type='grad')
-plt.show()
