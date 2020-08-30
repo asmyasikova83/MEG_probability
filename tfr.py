@@ -8,24 +8,41 @@ from baseline_correction import create_mne_epochs_evoked
 from baseline_correction import compute_baseline_substraction_and_power
 from baseline_correction import correct_baseline_substraction
 from baseline_correction import correct_baseline_power
+from baseline_correction import topomap_one
 from config import *
 import pathlib
 
-fpath_raw = '/home/sasha/MEG/MIO_cleaning/{}_run{}_raw_tsss_mc.fif'
+if mode == 'server':
+    fpath_raw = '/home/asmyasnikova83/DATA/links/{}/{}_run{}_raw_tsss_mc.fif'
+    fpath_ev = '/home/asmyasnikova83/DATA/'
+    fpath_fr= '/home/asmyasnikova83/DATA/TFR/'
+else:
+    fpath_raw = '/home/sasha/MEG/MIO_cleaning/{}_run{}_raw_tsss_mc.fif'
+    fpath_ev =  '/home/sasha/MEG/MIO_cleaning/'
+    fpath_fr = '/home/sasha/MEG/Time_frequency_analysis/'
 data = []
 
 kind = 'negative'
 
 if kind == 'negative':
     #explore negative feedback
-    fpath_events = '/home/sasha/MEG/MIO_cleaning/{}_run{}_mio_corrected_negative.txt'
-    #freq_fpath = '/home/sasha/MEG/Time_frequency_analysis/{0}_run{1}_theta_negative_int_50ms-tfr.h5'
-    #freq_fpath = '/home/sasha/MEG/Time_frequency_analysis/{0}_run{1}_alpha_negative_int_50ms-tfr.h5' 
-    #freq_fpath = '/home/sasha/MEG/Time_frequency_analysis/{0}_run{1}_beta_negative_int_50ms-tfr.h5'
-    freq_fpath = '/home/sasha/MEG/Time_frequency_analysis/TFR/{0}_run{1}_theta_b_line_negative_int_50ms-tfr.h5'
+    if mode == 'server':
+        fpath_events = fpath_ev + 'mio_out_negative/{}_run{}_mio_corrected_negative.txt'
+        freq_fpath = fpath_fr + 'negative/{0}_run{1}_theta_negative_int_50ms-tfr.h5'
+    if mode != 'server':
+        fpath_events = fpath_ev + '{}_run{}_mio_corrected_negative.txt'
+        freq_fpath = fpath_fr +  '{0}_run{1}_theta_negative_int_50ms-tfr.h5'
+        #freq_fpath = '/home/sasha/MEG/Time_frequency_analysis/{0}_run{1}_alpha_negative_int_50ms-tfr.h5'
+        #freq_fpath = '/home/sasha/MEG/Time_frequency_analysis/{0}_run{1}_beta_negative_int_50ms-tfr.h5'
 if kind == 'positive':
-    fpath_events = '/home/sasha/MEG/MIO_cleaning/{}_run{}_mio_corrected_positive.txt' 
-    freq_fpath = '/home/sasha/MEG/Time_frequency_analysis/TFR/{0}_run{1}_theta_b_line_positive_int_50ms-tfr.h5'
+    if mode == 'server':
+        fpath_events = fpath_ev + 'mio_out_positive/{}_run{}_mio_corrected_positive.txt'
+        freq_fpath = fpath_fr + 'positive/{0}_run{1}_theta_positive_int_50ms-tfr.h5'
+    if mode != 'server':
+        fpath_events = fpath_ev + '{}_run{}_mio_corrected_positive.txt'
+        freq_fpath = fpath_fr +  '{0}_run{1}_theta_positive_int_50ms-tfr.h5'
+        #freq_fpath = '/home/sasha/MEG/Time_frequency_analysis/{0}_run{1}_alpha_negative_int_50ms-tfr.h5'
+        #freq_fpath = '/home/sasha/MEG/Time_frequency_analysis/{0}_run{1}_beta_negative_int_50ms-tfr.h5'
 
 for run in runs:
     for subject in subjects:
@@ -33,25 +50,27 @@ for run in runs:
         file = pathlib.Path(rf)
         if file.exists():
             print('This file is being processed: ', rf)
-            raw_file = fpath_raw.format(subject, run)
+            raw_file = fpath_raw.format(subject,subject, run)
             raw_data = mne.io.Raw(raw_file, preload=True)
             #filter 1-50 Hz
             raw_data = raw_data.filter(None, 50, fir_design='firwin') # for low frequencies, below the peaks of power-line noise low pass filter the data
             raw_data = raw_data.filter(1., None, fir_design='firwin') #remove slow drifts          
             picks = mne.pick_types(raw_data.info, meg = True)
+            picks = mne.pick_types(raw_data.info, meg = True)
             events_with_cross, events_of_interest = retrieve_events_for_baseline(raw_data, rf, picks)
-            print('Done with the events!')
+            print('\n\nDone with the events!')
             BASELINE, b_line = compute_baseline_substraction_and_power(raw_data, events_with_cross, picks)
-            print('Done with the BASELINE I!')
+            print('\n\nDone with the BASELINE I!')
             CORRECTED_DATA = correct_baseline_substraction(BASELINE, events_of_interest, raw_data, picks)
-            print('Done with the CORRECTED!')
+            print('\n\nDone with the CORRECTED!')
             plot_created_epochs_evoked = False
             epochs_of_interest, evoked = create_mne_epochs_evoked(kind, subject, run, CORRECTED_DATA, events_of_interest, plot_created_epochs_evoked, raw_data, picks)
             # for time frequency analysis we need baseline II (power correction)
-            b_line_manually = False
-            check = False
-            correct_baseline_power(epochs_of_interest, b_line, kind, b_line_manually, check, subject, run)
-            #print('Done with the BASELINE II!')
+            b_line_manually = True
+            freq_show = correct_baseline_power(epochs_of_interest, b_line, kind, b_line_manually, subject, run)
+            print('\n\nDone with the BASELINE II!')
+            #plot an example of topomap
+            topomap_one(freq_show)
             freq_file = freq_fpath.format(subject, run)
             #read tfr data from (freq_file)[0]
             freq_show = mne.time_frequency.read_tfrs(freq_file)[0]
@@ -63,11 +82,15 @@ for run in runs:
             continue
 
 
+print('\n\nGrand_average:')
 freq_data = mne.grand_average(data)
-freq = freq_data.apply_baseline(baseline=(-0.35,-0.05), mode="logratio")
+#freq = freq_data.apply_baseline(baseline=(-0.35,-0.05), mode="logratio")
 
+print('\n\nPlot poto:')
 #topomap for the general time inerval
-freq.plot_topo(picks='meg', title='Theta average power in Negative Feedback')
+PM = freq_data.plot_topo(picks='meg', title='Theta average power in Negative Feedback')
+os.chdir('/home/asmyasnikova83/DATA')
+PM.savefig('output.png')
 #topographic maps of time-frequency intervals of TFR data.
 title = 'Theta power in Positive Feedback'
 #freq_data.plot_topomap(tmin= 0.20, tmax=0.60, fmin=4, fmax=6, ch_type='grad')
