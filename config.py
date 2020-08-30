@@ -20,6 +20,8 @@ period_end = 1.500 #epoch end
 baseline_interval_start = -350
 baseline_interval_end = -50
 
+mode = 'server'
+
 subjects = [
     'P000',
     'P002',
@@ -61,5 +63,5 @@ subjects = [
     'P006']
 
 runs = ['1','2','3','4','5','6']
-'''
 
+'''
