@@ -30,7 +30,7 @@ def no_mio_events(epochs_ar, thres):
 #data_path = '/home/asmyasnikova83/DATA/links/'
 #out_path = f'theta_reinforced_{L_freq}_{H_freq}/'
 #os.makedirs(os.path.join(os.getcwd(), "Sensor", "TFR", out_path), exist_ok = True)
-fpath_raw = '/home/asmyasnikova83/DATA/links/{}/{}_run{}_raw_tsss_mc.fif'
+fpath_raw = '/net/server/data/Archive/prob_learn/experiment/ICA_cleaned/{}/run{}_{}_raw_ica.fif'
 fpath_events = '/home/asmyasnikova83/DATA/reinforced/{}_run{}_events.txt'
 fpath_mio_out = '/home/asmyasnikova83/DATA/mio_out/{}_run{}_mio_corrected.txt'
 
@@ -44,7 +44,7 @@ with open("config.py", "r") as f_in:
 def calculate_beta(subj, run, fpath_raw, fpath_events, fpath_mio_out):
    # freqs = np.arange(L_freq, H_freq, f_step)
         
-    raw_data = mne.io.Raw(fpath_raw.format(subj, subj, run), preload=True)
+    raw_data = mne.io.Raw(fpath_raw.format(subj, run, subj), preload=True)
     raw_data = raw_data.filter(l_freq=70, h_freq=None)
     picks = mne.pick_types(raw_data.info, meg = True)
     events_raw = mne.find_events(raw_data, stim_channel='STI101', output='onset', consecutive='increasing', min_duration=0, shortest_event=1, mask=None, uint_cast=False, mask_type='and', initial_event=False, verbose=None)
