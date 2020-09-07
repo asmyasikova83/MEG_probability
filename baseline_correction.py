@@ -61,11 +61,12 @@ def create_mne_epochs_evoked(kind, subject, run, CORRECTED_DATA, events_of_inter
     epochs_data = CORRECTED_DATA
     # create info for the Epoch object
     info = raw.info
-    meg_indices = mne.pick_types(info, meg=True)
+    meg_indices = mne.pick_types(info, meg='grad')
     reduced_info = mne.pick_info(info, meg_indices)
     print(events_of_interest)
     print('subj', subject)
     print('run', run)
+    print('CORR DATA shape', CORRECTED_DATA.shape)
     if kind == 'both':
     #explore reinforcement data with both pos and neg feedback
         if subject == 'P005' and run == '1' or subject == 'P003' and run == '1' or subject == 'P003' and run == '3' or subject == 'P004' and run == '4':
@@ -142,7 +143,7 @@ def create_mne_epochs_evoked(kind, subject, run, CORRECTED_DATA, events_of_inter
         evoked.plot_topomap(ch_type='mag', title='mag (original)', time_unit='s')
         plt.show()
         exit()
-    return epochs_of_interest, evoked
+    return epochs_of_interest, evoked, reduced_info
 
 def plot_epochs_with_without_BASELINE(events_of_interest, epochs_of_interest_w_BASELINE, raw_data, picks):
     epochs_of_interest_out_BASELINE = mne.Epochs(raw_data, events_of_interest, event_id = None, tmin = period_start,
@@ -164,7 +165,7 @@ def compute_baseline_substraction_and_power(raw_data, events_with_cross, picks):
     for i in range(N_events):
         #extract data for baseline computation for each event
         #baseline_interval_start = -350, baseline_interval_end = -50 from config
-        baseline_chunk = epochs_ar[:, baseline_interval_start:baseline_interval_end, i]
+        baseline_chunk = epochs_ar[:, baseline_interval_start_sub:baseline_interval_end_sub, i]
         #baseline computation over the time samples in column data (axis=1)
         BASELINE[i, 0:N_chans] = np.mean(baseline_chunk, axis=1)
     # We need to operate on further data as of (204,2001), so we need to transpose BASELINE as of (2001,25)
@@ -175,7 +176,9 @@ def compute_baseline_substraction_and_power(raw_data, events_with_cross, picks):
     epochs_with_cross = epochs_with_cross.pick(picks="meg")
     epochs_with_cross = epochs_with_cross.copy().resample(250, npad='auto')
     freq_show_baseline = mne.time_frequency.tfr_multitaper(epochs_with_cross, freqs = freqs, n_cycles = freqs//2, use_fft = False,
-                                                           return_itc = False).crop(tmin=-0.350, tmax=-0.050, include_tmax=True)
+                                                           return_itc = False).crop(tmin= baseline_interval_start_power-0.350, tmax=baseline_interval_end_power+0.350, include_tmax=True)
+    #remove artifacts
+    freq_show_baseline = freq_show_baseline.crop(tmin=-0.350, tmax=-0.050, include_tmax=True)
     b_line  = freq_show_baseline.data.mean(axis=-1)
     #return array of (N_chan, N_events) with averaged value over the baseline time interval
     return BASELINE, b_line
@@ -202,6 +205,8 @@ def correct_baseline_power(epochs_of_interest, b_line, kind, b_line_manually, su
     # baseline power correction of TFR data after baseline I substraction from the signal
     #for theta n_cycles = 2
     freq_show = mne.time_frequency.tfr_multitaper(epochs_of_interest, freqs = freqs, n_cycles =  freqs//2, use_fft = False, return_itc = False)
+    #remove artifacts
+    freq_show = freq_show.crop(tmin=period_start+0.350, tmax=period_end-0.350, include_tmax=True)
     #summarize power in tapers of theta freq
     temp = freq_show.data.sum(axis=1)
     # now fred dim == 1
@@ -219,28 +224,47 @@ def correct_baseline_power(epochs_of_interest, b_line, kind, b_line_manually, su
     if kind == 'positive':
         if mode == 'server':
             tfr_path = '/home/asmyasnikova83/DATA/TFR/positive/{0}_run{1}_theta_positive_int_50ms-tfr.h5'
+            # tfr_path = '/home/asmyasnikova83/DATA/TFR/positive/{0}_run{1}_alpha_positive_int_50ms-tfr.h5'
         else:
             tfr_path = '/home/sasha/MEG/Time_frequency_analysis/{0}_run{1}_theta_positive_int_50ms-tfr.h5'
+           # tfr_path = '/home/sasha/MEG/Time_frequency_analysis/{0}_run{1}_alpha_positive_int_50ms-tfr.h5'
+           # tfr_path = '/home/sasha/MEG/Time_frequency_analysis/{0}_run{1}_gamma_positive_int_50ms-tfr.h5'
     if kind == 'negative':
         if mode == 'server':
             tfr_path = '/home/asmyasnikova83/DATA/TFR/negative/{0}_run{1}_theta_negative_int_50ms-tfr.h5'
+            #tfr_path = '/home/sasha/MEG/Time_frequency_analysis/{0}_run{1}_alpha_negative_int_50ms-tfr.h5'
         else:
             tfr_path = '/home/sasha/MEG/Time_frequency_analysis/{0}_run{1}_theta_negative_int_50ms-tfr.h5'
-        #tfr_path = '/home/sasha/MEG/Time_frequency_analysis/{0}_run{1}_theta_negative_int_50ms-tfr.h5'
-        #tfr_path = '/home/sasha/MEG/Time_frequency_analysis/{0}_run{1}_alpha_negative_int_50ms-tfr.h5'
-        #tfr_path = '/home/sasha/MEG/Time_frequency_analysis/{0}_run{1}_beta_negative_int_50ms-tfr.h5'
+           # tfr_path = '/home/sasha/MEG/Time_frequency_analysis/{0}_run{1}_gamma_negative_int_50ms-tfr.h5'
+           # tfr_path = '/home/sasha/MEG/Time_frequency_analysis/{0}_run{1}_beta_negative_int_50ms-tfr.h5'
     freq_show.save(tfr_path.format(subject, run), overwrite=True)
     print(tfr_path.format(subject, run))
     return freq_show
 
-def topomap_one(freq_show):
-    freq_show.freqs = freqs
-    #see the topomap for one subj one run
-    fig = freq_show.plot_topo()
-    os.chdir('/home/asmyasnikova83/DATA/')
-    save = True
-    if save:
-        fig.savefig('output.png')
-        print('Figure saved!')
-    plt.show()
-    exit()
+def topomap_one(freq_show, reduced_info, events_of_interest, raw):
+    # use this function to create timecourse of freq power
+    freq_timecourse = False
+    if freq_timecourse:
+        info = raw.info
+        info['sfreq'] = 250
+        meg_indices = mne.pick_types(info, meg='grad')
+        reduced_info = mne.pick_info(info, meg_indices)
+        freq_show.freqs = freqs
+        freq_show.data = freq_show.data.reshape(freq_show.data.shape[0],freq_show.data.shape[2])
+        #for P003 run 3 negative
+        evoked = mne.EvokedArray(freq_show.data, info=reduced_info, tmin=period_start, comment='', nave=1, kind='average', verbose=None)
+        evoked.plot_topo()
+        plt.show()
+        exit()
+    example_topomap = False
+    if example_topomap:
+        #see the topomap for one subj one run
+        fig = freq_show.plot_topo()
+        os.chdir('/home/asmyasnikova83/DATA/')
+        save = True
+        if save:
+            fig.savefig('output.png')
+            print('Figure saved!')
+        else:
+        plt.show()
+        exit()
