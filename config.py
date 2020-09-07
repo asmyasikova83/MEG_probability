@@ -2,28 +2,24 @@ import os
 import numpy as np
 
 L_freq = 4
-H_freq = 6
+H_freq = 7
 f_step = 1
 
 freqs = np.arange(L_freq, H_freq+1, f_step)
 
 mode = 'server'
 
-tfr = True
-
-if tfr:
-    period_start = -2.20 # epoch start
-    period_end = 1.70 #epoch end
-else:
-    period_start = -2.00 #epoch start
-    period_end = 1.50 #epoch end
+period_start = -2.350 #epoch start
+period_end = 1.850 #epoch end
 
 # time interval before the appearance of the fixation cross
-baseline_interval_start = -350
-baseline_interval_end = -50
+baseline_interval_start_power = -0.350
+baseline_interval_end_power = -0.50
 
-mode = 'server'
+baseline_interval_start_sub = -350
+baseline_interval_end_sub = -50
 
+'''
 subjects = [
     'P000',
     'P002',
@@ -58,6 +54,7 @@ runs = ['1','2','3','4','5','6']
 
 '''
 subjects = [
+    'P000',
     'P002',
     'P003',
     'P004',
@@ -65,4 +62,4 @@ subjects = [
     'P006']
 
 runs = ['1','2','3','4','5','6']
-'''
+
