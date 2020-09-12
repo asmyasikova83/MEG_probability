@@ -17,7 +17,7 @@ if mode == 'server':
     fpath_ev = '/home/asmyasnikova83/DATA/'
     fpath_fr= '/home/asmyasnikova83/DATA/TFR/'
 else:
-    fpath_raw = '/home/sasha/MEG/MIO_cleaning/{}_run{}_raw_tsss_mc.fif'
+    fpath_raw = '/home/sasha/MEG/MIO_cleaning/run{}_{}_raw_ica.fif'
     fpath_ev =  '/home/sasha/MEG/MIO_cleaning/'
     fpath_fr = '/home/sasha/MEG/Time_frequency_analysis/'
 data = []
@@ -53,12 +53,13 @@ for run in runs:
             if mode == 'server':
                 raw_file = fpath_raw.format(subject, run, subject)
             else:
-                raw_file = fpath_raw.format(subject, run)
+                raw_file = fpath_raw.format(run, subject)
             raw_data = mne.io.Raw(raw_file, preload=True)
             #filter 1-50 Hz
             raw_data = raw_data.filter(None, 50, fir_design='firwin') # for low frequencies, below the peaks of power-line noise low pass filter the data
             raw_data = raw_data.filter(1., None, fir_design='firwin') #remove slow drifts          
-            picks = mne.pick_types(raw_data.info, meg = True)
+            picks = mne.pick_types(raw_data.info, meg = 'grad')
+            #raw_data.info['bads'] = ['MEG 2443']
             events_with_cross, events_of_interest = retrieve_events_for_baseline(raw_data, rf, picks)
             print('\n\nDone with the events!')
             BASELINE, b_line = compute_baseline_substraction_and_power(raw_data, events_with_cross, picks)
@@ -90,15 +91,14 @@ print('\n\nGrand_average:')
 freq_data = mne.grand_average(data)
 
 print('\n\nPlot poto:')
-plot_topo = False
-plot_topomap = True
-if mode == 'server' and plot_topo:
+
+if mode == 'server':
     #topomap for the general time inerval
     PM = freq_data.plot_topo(picks='meg', title='Theta average power in Negative Feedback')
-if mode == 'server' and plot_topomap == True:
     #topographic maps of time-frequency intervals of TFR data
-    PM = freq_data.plot_topomap(tmin= 0.20, tmax=0.60, fmin=4, fmax=6, ch_type='grad')
+    PM = freq_data.plot_topomap(tmin= 0.20, tmax=0.60, fmin=4, fmax=8, ch_type='grad')
     os.chdir('/home/asmyasnikova83/DATA')
     PM.savefig('output.png')
 else:
+    PM = freq_data.plot_topomap(tmin= 0.20, tmax=0.60, fmin=4, fmax=8, ch_type='grad')
     plt.show()

@@ -47,7 +47,7 @@ def reshape_epochs(raw_data, events, picks):
     #  retrieve epochs associated with the events of interest
     epochs = mne.Epochs(raw_data, events, event_id = None, tmin = period_start,
                         tmax = period_end, baseline = None, picks=picks, preload = True)
-    epochs = epochs.pick(picks="meg")
+    #epochs = epochs.pick(picks="meg")
     epochs_ar = epochs.get_data()
     # reshape data for calculations -> 3D matrix with the dimensions of N_chans, N_times, N_events
     epochs_ar = epochs_ar.swapaxes(0, 1)
@@ -130,6 +130,7 @@ def create_mne_epochs_evoked(kind, subject, run, CORRECTED_DATA, events_of_inter
     # downsample to 250 Hz
     epochs_of_interest = epochs.copy().resample(250, npad='auto')
     evoked = epochs_of_interest.average()
+
     # plotting options for newly created epochs object, evoked, psd
     if plot:
         print('Plotting after baseline...')
@@ -143,7 +144,7 @@ def create_mne_epochs_evoked(kind, subject, run, CORRECTED_DATA, events_of_inter
         evoked.plot_topomap(ch_type='mag', title='mag (original)', time_unit='s')
         plt.show()
         exit()
-    return epochs_of_interest, evoked, reduced_info
+    return epochs_of_interest, reduced_info
 
 def plot_epochs_with_without_BASELINE(events_of_interest, epochs_of_interest_w_BASELINE, raw_data, picks):
     epochs_of_interest_out_BASELINE = mne.Epochs(raw_data, events_of_interest, event_id = None, tmin = period_start,
@@ -173,7 +174,7 @@ def compute_baseline_substraction_and_power(raw_data, events_with_cross, picks):
     #compute baseline II for power correction: mean  picks = picks!
     epochs_with_cross = mne.Epochs(raw_data, events_with_cross, event_id = None, tmin = period_start,
                         tmax = period_end, baseline = None, picks=picks, preload = True)
-    epochs_with_cross = epochs_with_cross.pick(picks="meg")
+    #epochs_with_cross = epochs_with_cross.pick(picks="meg")
     epochs_with_cross = epochs_with_cross.copy().resample(250, npad='auto')
     freq_show_baseline = mne.time_frequency.tfr_multitaper(epochs_with_cross, freqs = freqs, n_cycles = freqs//2, use_fft = False,
                                                            return_itc = False).crop(tmin= baseline_interval_start_power-0.350, tmax=baseline_interval_end_power+0.350, include_tmax=True)
@@ -219,6 +220,8 @@ def correct_baseline_power(epochs_of_interest, b_line, kind, b_line_manually, su
         print('\n\nManual b_lining')
         b_line = b_line.sum(axis=1).reshape(temp.shape[0],1)
         freq_show.data = np.log10(freq_show.data/b_line[:, np.newaxis])
+    else:
+        freq_show.apply_baseline(baseline=(-0.5,-0.1), mode="logratio")
     #hack for changed dimensionality of summarized data - now we have dim 1 for freq
     freq_show.freqs  = np.array([5])
     if kind == 'positive':
@@ -247,8 +250,8 @@ def topomap_one(freq_show, reduced_info, events_of_interest, raw):
     if freq_timecourse:
         info = raw.info
         info['sfreq'] = 250
-        meg_indices = mne.pick_types(info, meg='grad')
-        reduced_info = mne.pick_info(info, meg_indices)
+        #meg_indices = mne.pick_types(info, meg='grad')
+        #reduced_info = mne.pick_info(info, meg_indices)
         freq_show.freqs = freqs
         freq_show.data = freq_show.data.reshape(freq_show.data.shape[0],freq_show.data.shape[2])
         #for P003 run 3 negative
@@ -266,5 +269,5 @@ def topomap_one(freq_show, reduced_info, events_of_interest, raw):
             fig.savefig('output.png')
             print('Figure saved!')
         else:
-        plt.show()
-        exit()
+            plt.show()
+            exit()

@@ -2,12 +2,12 @@ import os
 import numpy as np
 
 L_freq = 4
-H_freq = 7
+H_freq = 8
 f_step = 1
 
 freqs = np.arange(L_freq, H_freq+1, f_step)
 
-mode = 'server'
+mode = 'home'
 
 period_start = -2.350 #epoch start
 period_end = 1.850 #epoch end
@@ -54,12 +54,7 @@ runs = ['1','2','3','4','5','6']
 
 '''
 subjects = [
-    'P000',
-    'P002',
-    'P003',
-    'P004',
-    'P005',
-    'P006']
+    'P002']
 
 runs = ['1','2','3','4','5','6']
 
