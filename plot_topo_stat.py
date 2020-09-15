@@ -6,7 +6,9 @@ import os
 import copy
 import matplotlib.pyplot as plt
 import statsmodels.stats.multitest as mul
-import pdfkit
+#import pdfkit
+from config import *
+import pathlib
 
 def clear_html(filename):
     with open(filename, 'w') as f:
@@ -69,7 +71,7 @@ topomaps = ["condition1",
             "p_value",
             ]
 
-config = pdfkit.configuration(wkhtmltopdf='/usr/bin/wkhtmltopdf')
+#config = pdfkit.configuration(wkhtmltopdf='/usr/bin/wkhtmltopdf')
 
 options = {
     'page-size':'A3',
@@ -87,10 +89,11 @@ os.makedirs(os.path.join(output, "Positive_vs_Negative"), exist_ok=True)
 
 if mode == 'server':
     #donor data file
-    temp1 = mne.Evoked('/home/asmyasnikova83/DATA/P006_run6_evoked-ave.fif')
+    #temp = mne.Evoked('/home/asmyasnikova83/DATA/P006_run6_evoked-ave.fif')
+    temp = mne.Evoked("/home/asmyasnikova83/DATA/donor-ave.fif")
     out_path = '/home/asmyasnikova83/DATA/evoked_ave/'
 else:
-    temp1 = mne.Evoked('/home/sasha/MEG/MIO_cleaning/P006_run6_evoked-ave.fif')
+    temp = mne.Evoked('/home/sasha/MEG/MIO_cleaning/P006_run6_evoked-ave.fif')
     out_path = '/home/sasha/MEG/Evoked/'
 
 temp.nave = 98
@@ -98,18 +101,19 @@ temp.nave = 98
 temp.first = -2000
 temp.last = 1500
 
-temp.times = np.arange(-2.0, 1.501, 0.001)
+temp.times = np.arange(-2.000, 1.502, 0.004)
 
 p_mul = 1.6
 
-times_to_plot = np.arange(-1.6, 1.6, 0.2)
-legend = ["Positive Feedback", "Negative Feedback"]
+times_to_plot = np.arange(-2.0, 1.5, 0.2)
+print('times to plot size', times_to_plot.size)
+legend = ["Positive", "Negative"]
 kind = ['positive', 'negative']
 
 rewrite = True
 if rewrite:
 #data container for 2 conditions, 305 ch, times
-    contr = np.zeros((len(subjects), 2, 306, 3501))
+    contr = np.zeros((len(subjects), 2, 306, 876))
     for ind, subj in enumerate(subjects):
         rf = out_path + "{0}_feedback_{1}_theta-ave.fif".format(subj, kind[0])
         file = pathlib.Path(rf)
@@ -216,4 +220,4 @@ add_str_html(html_name, "</tr>")
 add_str_html(html_name, '</body>')
 add_str_html(html_name, '</html>')
 pdf_file = html_name.replace("html", "pdf")
-pdfkit.from_file(html_name, pdf_file, configuration = config, options=options)
+#pdfkit.from_file(html_name, pdf_file, configuration = config, options=options)
