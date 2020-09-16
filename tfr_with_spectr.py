@@ -97,8 +97,9 @@ info = raw_data.info
 info['sfreq'] = 250
 freq_show.freqs = freqs
 title = 'All channels ~4-48 Hz TFR '
+p_mul = 0.8
 #set fmin fmax in compliance with config!
-PM = freq_show.plot(picks='meg', fmin=2, fmax=8, title=title)
+PM = freq_show.plot(picks='meg', fmin=2, fmax=8, title=title, vmax=p_mul, vmin=-p_mul)
 if mode == 'server':
     os.chdir('/home/asmyasnikova83/DATA')
     PM.savefig('output.png')
