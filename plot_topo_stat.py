@@ -157,8 +157,6 @@ if rewrite:
                             title = legend[0], colorbar = True, vmax=p_mul, vmin=-p_mul)
 
     fig.savefig(os.path.join(output, legend[0] + ".png"), dpi = 300)
-    
-
     plt.close()
 
     ##### CONDITION2 ######
@@ -166,15 +164,30 @@ if rewrite:
     temp.data = comp2_mean[204:,:]
 
     fig = temp.plot_topomap(times = times_to_plot, average = 0.05,
-                            scalings = dict(eeg=1e6, grad=1, mag=1e15), 
+                            scalings = dict(eeg=1e6, grad=1, mag=1e15),
                             ch_type='planar1', time_unit='s', show = False, 
                             title = legend[1], colorbar = True, vmax=p_mul, vmin=-p_mul)
     fig.savefig(os.path.join(output, legend[1] + ".png"), dpi = 300)
     plt.close()
     
+    ##### CONDITION2 - CONDITION1 with marks (no FDR) ######
     
-    ##### CONDITION2 - CONDITION1 with marks (WITH FDR) ######
-    
+    binary = p_val_binary(p_val, treshold = 0.05)
+    temp.data = comp2_mean[204:,:] - comp1_mean[204:,:]
+
+    fig = temp.plot_topomap(times = times_to_plot, average = 0.05,
+                            scalings = dict(eeg=1e6, grad=1, mag=1e15), 
+                            ch_type='planar1', time_unit='s', show = False, 
+                            title = "%s - %s"%(legend[1], legend[0]), colorbar = True, 
+                            vmax=p_mul, vmin=-p_mul, extrapolate="local", mask = np.bool_(binary[204:,:]),
+                            mask_params = dict(marker='o', markerfacecolor='yellow', markeredgecolor='k',
+                                               linewidth=0, markersize=10, markeredgewidth=2))
+    fig.savefig(os.path.join(output, legend[0] + "_vs_" + legend[1],"difference.png"), dpi = 300)
+    plt.close()
+ 
+    #### CONDITION2 - CONDITION1 with marks (WITH FDR) ######
+
+    p_mul_new = 0.1
     binary = p_val_binary(p_val_fdr, treshold = 0.05)
     temp.data = comp2_mean[204:,:] - comp1_mean[204:,:]
 
@@ -182,7 +195,7 @@ if rewrite:
                             scalings = dict(eeg=1e6, grad=1, mag=1e15), 
                             ch_type='planar1', time_unit='s', show = False, 
                             title = "%s - %s with_fdr"%(legend[1], legend[0]), colorbar = True, 
-                            vmax=p_mul, vmin=-p_mul, extrapolate="local", mask = np.bool_(binary[204:,:]),
+                            vmax=p_mul_new, vmin=-p_mul_new, extrapolate="local", mask = np.bool_(binary[204:,:]),
                             mask_params = dict(marker='o', markerfacecolor='yellow', markeredgecolor='k',
                                                linewidth=0, markersize=10, markeredgewidth=2))
     fig.savefig(os.path.join(output, legend[0] + "_vs_" + legend[1],"difference_with_fdr.png"), dpi = 300)
