@@ -128,108 +128,10 @@ temp.last = 1500
 
 temp.times = np.arange(-2.000, 1.502, 0.004)
 
-p_mul = 0.3
-
 times_to_plot = np.arange(-2.0, 1.5, 0.2)
 print('times to plot size', times_to_plot.size)
 legend = ["Positive", "Negative"]
 kind = ['positive', 'negative']
-
-rewrite = True
-'''
-if rewrite:
-#data container for 2 conditions, 305 ch, times
-    contr = np.zeros((len(subjects), 2, 306, 876))
-    for ind, subj in enumerate(subjects):
-        rf = out_path + "{0}_feedback_{1}_theta-ave.fif".format(subj, kind[0])
-        file = pathlib.Path(rf)
-        if file.exists():
-            print('This subject is being processed: ', subj)
-            #positive FB
-            print(kind[0])
-            temp1 = mne.Evoked(out_path + "{0}_feedback_{1}_theta-ave.fif".format(subj, kind[0]))
-            temp1 = temp1.pick_types("grad")
-            #planars
-            contr[ind, 0, :204, :] = temp1.data
-            #combined planars
-            contr[ind, 0, 204:, :] = temp1.data[::2] + temp1.data[1::2]
-            #negative FB
-            print(kind[1])
-            temp2 = mne.Evoked(out_path + "{0}_feedback_{1}_theta-ave.fif".format(subj, kind[1]))
-            temp2 = temp2.pick_types("grad")
-
-            contr[ind, 1, :204, :] = temp2.data
-            contr[ind, 1, 204:, :] = temp2.data[::2] + temp2.data[1::2]
-
-    comp1 = contr[:, 0, :, :]
-    comp2 = contr[:, 1, :, :]
-    
-    #axis=0 over conditions
-    t_stat, p_val = stats.ttest_rel(comp1, comp2, axis=0)
-    p_val_fdr = space_fdr(p_val)
-
-    comp1_mean = comp1.mean(axis=0)
-    comp2_mean = comp2.mean(axis=0)
-    
-       
-    
-    ##### CONDITION1 ######
-    
-    temp.data = comp1_mean[204:,:]
-
-    fig = temp.plot_topomap(times = times_to_plot, average = 0.05,
-                            scalings = dict(eeg=1e6, grad=1, mag=1e15), 
-                            ch_type='planar1', time_unit='s', show = False, 
-                            title = legend[0], colorbar = True, vmax=p_mul, vmin=-p_mul)
-
-    fig.savefig(os.path.join(output, legend[0] + ".png"), dpi = 300)
-    
-
-    plt.close()
-
-    ##### CONDITION2 ######
-    
-    temp.data = comp2_mean[204:,:]
-
-    fig = temp.plot_topomap(times = times_to_plot, average = 0.05,
-                            scalings = dict(eeg=1e6, grad=1, mag=1e15), 
-                            ch_type='planar1', time_unit='s', show = False, 
-                            title = legend[1], colorbar = True, vmax=p_mul, vmin=-p_mul)
-    fig.savefig(os.path.join(output, legend[1] + ".png"), dpi = 300)
-    plt.close()
-    
-    
-    ##### CONDITION2 - CONDITION1 with marks (WITH FDR) ######
-    
-    binary = p_val_binary(p_val_fdr, treshold = 0.05)
-    temp.data = comp2_mean[204:,:] - comp1_mean[204:,:]
-
-    fig = temp.plot_topomap(times = times_to_plot, average = 0.05,
-                            scalings = dict(eeg=1e6, grad=1, mag=1e15), 
-                            ch_type='planar1', time_unit='s', show = False, 
-                            title = "%s - %s with_fdr"%(legend[1], legend[0]), colorbar = True, 
-                            vmax=p_mul, vmin=-p_mul, extrapolate="local", mask = np.bool_(binary[204:,:]),
-                            mask_params = dict(marker='o', markerfacecolor='yellow', markeredgecolor='k',
-                                               linewidth=0, markersize=10, markeredgewidth=2))
-    fig.savefig(os.path.join(output, legend[0] + "_vs_" + legend[1],"difference_with_fdr.png"), dpi = 300)
-    plt.close()
-    
-    ##### CONDITION2 - CONDITION1 cutted by thershold (WITH FDR) ######
-    
-    binary = p_val_binary(p_val_fdr, treshold = 0.05)
-    # ask Nikita about the following formula
-    temp.data = (comp2_mean[204:,:] - comp1_mean[204:,:])*binary[204:,:]
-
-    fig = temp.plot_topomap(times = times_to_plot, average = 0.05,
-                            scalings = dict(eeg=1e6, grad=1, mag=1e15), 
-                            ch_type='planar1', time_unit='s', show = False, 
-                            title = "%s - %s (cut) with fdr"%(legend[1], legend[0]), colorbar = True, 
-                            vmax=p_mul, vmin=-p_mul, extrapolate="local")
-    fig.savefig(os.path.join(output, legend[0] + "_vs_" + legend[1],"p_value_cut_with_fdr.png"), dpi = 300)
-    plt.close()
-   
-'''
-
 
 html_name = os.path.join(output, legend[0] + "_vs_" + legend[1] + ".html")
 clear_html(html_name)
