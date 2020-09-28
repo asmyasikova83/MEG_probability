@@ -202,42 +202,53 @@ def correct_baseline_substraction(BASELINE, events_of_interest, raw_data, picks)
         CORRECTED_DATA[i, :, :] = CORRECTED_DATA_CUR
     return CORRECTED_DATA
 
-def correct_baseline_power(epochs_of_interest, b_line, kind, b_line_manually, subject, run):
+def correct_baseline_power(epochs_of_interest, b_line, kind, b_line_manually, subject, run, plot_spectrogram):
     # baseline power correction of TFR data after baseline I substraction from the signal
     #for theta n_cycles = 2
     freq_show = mne.time_frequency.tfr_multitaper(epochs_of_interest, freqs = freqs, n_cycles =  freqs//2, use_fft = False, return_itc = False)
     #remove artifacts
     freq_show = freq_show.crop(tmin=period_start+0.350, tmax=period_end-0.350, include_tmax=True)
     #summarize power in tapers of theta freq
-    temp = freq_show.data.sum(axis=1)
+    print('plot_spectrogram', plot_spectrogram)
+    if plot_spectrogram:
+        freq_show.freqs = freqs
+    else:
+        temp = freq_show.data.sum(axis=1)
+        freq_show.freqs  = np.array([5])
+        freq_show.data = temp.reshape(temp.shape[0],1,temp.shape[1])
     # now fred dim == 1
-    freq_show.data = temp.reshape(temp.shape[0],1,temp.shape[1])
-    print(freq_show.data.shape)
     #b_line mean (306, 2) ->freq data sum (306, 875)->b_line sum reshape (306, 1)->
     #freq data reshape (306, 1, 875) ->freq data b_line corrected (306, 1, 875)
     #compute power baseline from epochs of interest: mean->sum->divide->log
     if b_line_manually:
-        print('\n\nManual b_lining')
-        b_line = b_line.sum(axis=1).reshape(temp.shape[0],1)
-        freq_show.data = np.log10(freq_show.data/b_line[:, np.newaxis])
+        if plot_spectrogram:
+            print('before b_line', freq_show.data.shape)
+            print('b_line shape', b_line.shape)
+            #spread b_line over N_times = 876
+            b_line = np.repeat(b_line[:, :, np.newaxis], 876, axis=2)
+            print('b_line rep', b_line.shape)
+            freq_show.data = np.log10(freq_show.data/b_line)
+        else:
+            b_line = b_line.sum(axis=1).reshape(temp.shape[0],1)
+            freq_show.data = np.log10(freq_show.data/b_line[:, np.newaxis])
+            freq_show.data = temp.reshape(temp.shape[0],1,temp.shape[1])
     else:
         freq_show.apply_baseline(baseline=(-0.5,-0.1), mode="logratio")
     #hack for changed dimensionality of summarized data - now we have dim 1 for freq
-    freq_show.freqs  = np.array([5])
     if kind == 'positive':
         if mode == 'server':
-            tfr_path = '/home/asmyasnikova83/DATA/TFR/positive/{0}_run{1}_theta_positive_int_50ms-tfr.h5'
-            # tfr_path = '/home/asmyasnikova83/DATA/TFR/positive/{0}_run{1}_alpha_positive_int_50ms-tfr.h5'
+            #tfr_path = '/home/asmyasnikova83/DATA/TFR/positive/{0}_run{1}_spec_positive_2_10_int_50ms-tfr.h5'
+            tfr_path = '/home/asmyasnikova83/DATA/TFR/positive/{0}_run{1}_alpha_positive_int_50ms-tfr.h5'
         else:
-            tfr_path = '/home/sasha/MEG/Time_frequency_analysis/{0}_run{1}_theta_positive_int_50ms-tfr.h5'
-           # tfr_path = '/home/sasha/MEG/Time_frequency_analysis/{0}_run{1}_alpha_positive_int_50ms-tfr.h5'
+            tfr_path = '/home/sasha/MEG/Time_frequency_analysis/{0}_run{1}_spec_positive_int_50ms-tfr.h5'
+           #tfr_path = '/home/sasha/MEG/Time_frequency_analysis/{0}_run{1}_alpha_positive_int_50ms-tfr.h5'
            # tfr_path = '/home/sasha/MEG/Time_frequency_analysis/{0}_run{1}_gamma_positive_int_50ms-tfr.h5'
     if kind == 'negative':
         if mode == 'server':
-            tfr_path = '/home/asmyasnikova83/DATA/TFR/negative/{0}_run{1}_theta_negative_int_50ms-tfr.h5'
-            #tfr_path = '/home/sasha/MEG/Time_frequency_analysis/{0}_run{1}_alpha_negative_int_50ms-tfr.h5'
+            #tfr_path = '/home/asmyasnikova83/DATA/TFR/negative/{0}_run{1}_spec_negative_2_10_int_50ms-tfr.h5'
+            tfr_path = '/home/asmyasnikova83/DATA/TFR/negative/{0}_run{1}_alpha_negative_int_50ms-tfr.h5'
         else:
-            tfr_path = '/home/sasha/MEG/Time_frequency_analysis/{0}_run{1}_theta_negative_int_50ms-tfr.h5'
+            tfr_path = '/home/sasha/MEG/Time_frequency_analysis/{0}_run{1}_spec_negative_int_50ms-tfr.h5'
            # tfr_path = '/home/sasha/MEG/Time_frequency_analysis/{0}_run{1}_gamma_negative_int_50ms-tfr.h5'
            # tfr_path = '/home/sasha/MEG/Time_frequency_analysis/{0}_run{1}_beta_negative_int_50ms-tfr.h5'
     freq_show.save(tfr_path.format(subject, run), overwrite=True)
