@@ -213,6 +213,7 @@ def correct_baseline_power(epochs_of_interest, b_line, kind, b_line_manually, su
     if plot_spectrogram:
         freq_show.freqs = freqs
     else:
+        print('b_line with sum')
         temp = freq_show.data.sum(axis=1)
         freq_show.freqs  = np.array([5])
         freq_show.data = temp.reshape(temp.shape[0],1,temp.shape[1])
@@ -229,9 +230,9 @@ def correct_baseline_power(epochs_of_interest, b_line, kind, b_line_manually, su
             print('b_line rep', b_line.shape)
             freq_show.data = np.log10(freq_show.data/b_line)
         else:
+            print('b_line with sum')
             b_line = b_line.sum(axis=1).reshape(temp.shape[0],1)
             freq_show.data = np.log10(freq_show.data/b_line[:, np.newaxis])
-            freq_show.data = temp.reshape(temp.shape[0],1,temp.shape[1])
     else:
         freq_show.apply_baseline(baseline=(-0.5,-0.1), mode="logratio")
     #hack for changed dimensionality of summarized data - now we have dim 1 for freq
