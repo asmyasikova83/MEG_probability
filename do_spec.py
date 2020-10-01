@@ -86,7 +86,7 @@ if mode == 'server':
     PM = freq_data.plot_topo(picks='meg', title='Gamma average power in Negative Feedback')
     #topographic maps of time-frequency intervals of TFR data
     #PM = freq_data.plot_topomap(ch_type='grad')
-    os.chdir('/home/asmyasnikova83/DATA')
+    os.chdir('/net/server/data/Archive/prob_learn/experiment')
     PM.savefig('output.png')
 else:
     PM = freq_data.plot_topomap(ch_type='grad')
