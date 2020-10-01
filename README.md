@@ -31,4 +31,9 @@ and that of manual correction of frequency representation of the epochs of inter
 Script tfr.py contains further processing and plotting options of tfr data: collecting and averaging of tfr data over 30 participants and 7 runs.
 Plot_topomap and plot_topo are available.
 
+Spectrograms
 
+For statistical comparisons we do the summation of power over tapers  in both power baseline and data. For spectrograms we DO NOT do any summation. This option is introduced via flag plot_spectrogram = True 
+before calling correct_baseline_power and is available in plot_spectrogram.py, tfr_for_spec.py
+Spectrograms are plotted via plot_spectrogram.py using the plotting build-in function freq_spec_data.plot
+More advanced framework for doing spectrograms involves tfr_for_spec.py which launches tfr processing of data (each subject, each run). We set plot_spectrogram = Rue here to avoid summation of power over tapers in both baseline and data. Script do_spec.py reads the tfr data and average the data over all runs in each particular subject. Consequenctly, for each subject we obtain 2 tfr data - one for negative, one for positive feedback. After that we do the grand averaging and use a built-in function freq_data.plot_topo in order to obtain a channel-wise spectrogram (topomap)
