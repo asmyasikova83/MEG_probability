@@ -216,6 +216,7 @@ def correct_baseline_power(epochs_of_interest, b_line, kind, b_line_manually, su
         print('b_line with sum')
         temp = freq_show.data.sum(axis=1)
         freq_show.freqs  = np.array([5])
+        #hack for changed dimensionality of summarized data - now we have dim 1 for freq
         freq_show.data = temp.reshape(temp.shape[0],1,temp.shape[1])
     # now fred dim == 1
     #b_line mean (306, 2) ->freq data sum (306, 875)->b_line sum reshape (306, 1)->
@@ -235,23 +236,10 @@ def correct_baseline_power(epochs_of_interest, b_line, kind, b_line_manually, su
             freq_show.data = np.log10(freq_show.data/b_line[:, np.newaxis])
     else:
         freq_show.apply_baseline(baseline=(-0.5,-0.1), mode="logratio")
-    #hack for changed dimensionality of summarized data - now we have dim 1 for freq
     if kind == 'positive':
-        if mode == 'server':
-            #tfr_path = '/home/asmyasnikova83/DATA/TFR/positive/{0}_run{1}_spec_positive_2_10_int_50ms-tfr.h5'
-            tfr_path = '/home/asmyasnikova83/DATA/TFR/positive/{0}_run{1}_alpha_positive_int_50ms-tfr.h5'
-        else:
-            tfr_path = '/home/sasha/MEG/Time_frequency_analysis/{0}_run{1}_spec_positive_int_50ms-tfr.h5'
-           #tfr_path = '/home/sasha/MEG/Time_frequency_analysis/{0}_run{1}_alpha_positive_int_50ms-tfr.h5'
-           # tfr_path = '/home/sasha/MEG/Time_frequency_analysis/{0}_run{1}_gamma_positive_int_50ms-tfr.h5'
+        tfr_path = '/net/server/data/Archive/prob_learn/experiment/TFR/positive/{0}_run{1}_spec_32_48_gamma_positive_int_50ms-tfr.h5'
     if kind == 'negative':
-        if mode == 'server':
-            #tfr_path = '/home/asmyasnikova83/DATA/TFR/negative/{0}_run{1}_spec_negative_2_10_int_50ms-tfr.h5'
-            tfr_path = '/home/asmyasnikova83/DATA/TFR/negative/{0}_run{1}_alpha_negative_int_50ms-tfr.h5'
-        else:
-            tfr_path = '/home/sasha/MEG/Time_frequency_analysis/{0}_run{1}_spec_negative_int_50ms-tfr.h5'
-           # tfr_path = '/home/sasha/MEG/Time_frequency_analysis/{0}_run{1}_gamma_negative_int_50ms-tfr.h5'
-           # tfr_path = '/home/sasha/MEG/Time_frequency_analysis/{0}_run{1}_beta_negative_int_50ms-tfr.h5'
+        tfr_path = '/net/server/data/Archive/prob_learn/experiment/TFR/negative/{0}_run{1}_spec_32_48_gamma_negative_int_50ms-tfr.h5'
     freq_show.save(tfr_path.format(subject, run), overwrite=True)
     print(tfr_path.format(subject, run))
     return freq_show
