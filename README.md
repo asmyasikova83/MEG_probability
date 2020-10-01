@@ -28,9 +28,11 @@ Time frequency analysis
 Script baseline_correction.py contains a function for manual computation of power baseline based on time interval as of (-0.350, -0.050) ms before the appearance of fixation cross (0 ms)
 and that of manual correction of frequency representation of the epochs of interest (with feedback) by summation of power bands in a freq range, their division by mean power in the (-0.350, -0.050) ms interval preceding the appearance of fixation cross summarized over the freq tapers (see multitaper method)  and log transformation of the result.
 
-Script tfr.py contains further processing and plotting options of tfr data: collecting and averaging of tfr data over 30 participants and 7 runs.
-Plot_topomap and plot_topo are available.
+Evoked and induced power
 
+We explore induced_power 
+The information within induced responses is obtained by evaluating the frequency spectrum of each trial (right panels) over time, which is then averaged. The frequency information of individual trials is thus retained (bottom right panel). Evoked responses imply linear average of many short trials whose responses are phase-locked to the onset of a stimulus. 
+Adjamian, Peyman. (2014). The Application of Electro- and Magneto-Encephalography in Tinnitus Research  Methods and Interpretations. Frontiers in neurology. 5. 228. 10.3389/fneur.2014.00228. 
 Spectrograms
 
 For statistical comparisons we do the summation of power over tapers  in both power baseline and data. For spectrograms we DO NOT do any summation. This option is introduced via flag plot_spectrogram = True 
