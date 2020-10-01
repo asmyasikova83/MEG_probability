@@ -8,7 +8,7 @@ from config import *
 import pathlib
 
 fpath_raw = '/net/server/data/Archive/prob_learn/experiment/ICA_cleaned/{}/run{}_{}_raw_ica.fif'
-fpath_ev = '/home/asmyasnikova83/DATA/'
+fpath_ev = '/net/server/data/Archive/prob_learn/experiment/'
 
 data = []
 
