@@ -33,6 +33,7 @@ Evoked and induced power
 We explore induced_power 
 The information within induced responses is obtained by evaluating the frequency spectrum of each trial (right panels) over time, which is then averaged. The frequency information of individual trials is thus retained (bottom right panel). Evoked responses imply linear average of many short trials whose responses are phase-locked to the onset of a stimulus. 
 Adjamian, Peyman. (2014). The Application of Electro- and Magneto-Encephalography in Tinnitus Research  Methods and Interpretations. Frontiers in neurology. 5. 228. 10.3389/fneur.2014.00228. 
+
 Spectrograms
 
 For statistical comparisons we do the summation of power over tapers  in both power baseline and data. For spectrograms we DO NOT do any summation. This option is introduced via flag plot_spectrogram = True 
