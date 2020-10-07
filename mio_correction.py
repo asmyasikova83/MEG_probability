@@ -30,9 +30,14 @@ def no_mio_events(epochs_ar, thres):
 #data_path = '/home/asmyasnikova83/DATA/links/'
 #out_path = f'theta_reinforced_{L_freq}_{H_freq}/'
 #os.makedirs(os.path.join(os.getcwd(), "Sensor", "TFR", out_path), exist_ok = True)
+
 fpath_raw = '/net/server/data/Archive/prob_learn/experiment/ICA_cleaned/{}/run{}_{}_raw_ica.fif'
-fpath_events = '/home/asmyasnikova83/DATA/reinforced/{}_run{}_events.txt'
-fpath_mio_out = '/home/asmyasnikova83/DATA/mio_out/{}_run{}_mio_corrected.txt'
+if kind == 'positive':
+    fpath_events = '/home/asmyasnikova83/DATA/reinforced/{}_run{}_events_positive_no_train.txt'
+    fpath_mio_out = '/home/asmyasnikova83/DATA/mio_out_positive/{}_run{}_mio_corrected_positive_no_train.txt'
+if kind == 'negative':
+    fpath_events = '/home/asmyasnikova83/DATA/reinforced/{}_run{}_events_negative_no_train.txt'
+    fpath_mio_out = '/home/asmyasnikova83/DATA/mio_out_negative/{}_run{}_mio_corrected_negative_no_train.txt' 
 
 '''
 with open("config.py", "r") as f_in:

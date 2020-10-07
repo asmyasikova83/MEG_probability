@@ -7,7 +7,7 @@ f_step = 1
 
 freqs = np.arange(L_freq, H_freq+1, f_step)
 
-mode = 'home'
+mode = 'server'
 
 period_start = -2.350 #epoch start
 period_end = 1.850 #epoch end
@@ -19,7 +19,8 @@ baseline_interval_end_power = -0.50
 baseline_interval_start_sub = -350
 baseline_interval_end_sub = -50
 
-'''
+kind = 'negative'
+
 subjects = [
     'P000',
     'P002',
@@ -50,11 +51,11 @@ subjects = [
     'P029',
     'P030']
 
-runs = ['1','2','3','4','5','6']
+runs = ['1']
 
 '''
 subjects = [
     'P002']
 
 runs = ['1','2','3','4','5','6']
-
+'''
