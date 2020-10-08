@@ -21,15 +21,24 @@ baseline_interval_end_sub = -50
 
 kind = 'negative'
 
+trained = False
+non_trained = True
+
+runs = ['1']
+'''
+subjects = [
+    'P026']
+'''
+#P008 P025 neg negative removed
 subjects = [
     'P000',
+    'P001',
     'P002',
     'P003',
     'P004',
     'P005',
     'P006',
-    'P007',
-    'P008',
+    'P007', 
     'P009',
     'P010',
     'P011',
@@ -45,17 +54,10 @@ subjects = [
     'P022',
     'P023',
     'P024',
-    'P025',
     'P026',
     'P028',
     'P029',
     'P030']
-
-runs = ['1']
-
 '''
-subjects = [
-    'P002']
-
 runs = ['1','2','3','4','5','6']
 '''

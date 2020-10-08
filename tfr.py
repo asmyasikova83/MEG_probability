@@ -22,13 +22,13 @@ else:
     fpath_fr = '/home/sasha/MEG/Time_frequency_analysis/'
 data = []
 
-kind = 'negative'
+#kind = 'negative'
 
 if kind == 'negative':
     #explore negative feedback
     if mode == 'server':
-        fpath_events = fpath_ev + 'mio_out_negative/{}_run{}_mio_corrected_negative.txt'
-        freq_fpath = fpath_fr + 'negative/{0}_run{1}_theta_negative_int_50ms-tfr.h5'
+        fpath_events = fpath_ev + 'mio_out_negative/{}_run{}_mio_corrected_negative_no_train.txt'
+        freq_fpath = fpath_fr + 'negative/{0}_run{1}_theta_negative_no_train_int_50ms-tfr.h5'
     if mode != 'server':
         fpath_events = fpath_ev + '{}_run{}_mio_corrected_negative.txt'
         freq_fpath = fpath_fr +  '{0}_run{1}_theta_negative_int_50ms-tfr.h5'
@@ -36,8 +36,8 @@ if kind == 'negative':
         #freq_fpath = '/home/sasha/MEG/Time_frequency_analysis/{0}_run{1}_beta_negative_int_50ms-tfr.h5'
 if kind == 'positive':
     if mode == 'server':
-        fpath_events = fpath_ev + 'mio_out_positive/{}_run{}_mio_corrected_positive.txt'
-        freq_fpath = fpath_fr + 'positive/{0}_run{1}_theta_positive_int_50ms-tfr.h5'
+        fpath_events = fpath_ev + 'mio_out_positive/{}_run{}_mio_corrected_positive_no_train.txt'
+        freq_fpath = fpath_fr + 'positive/{0}_run{1}_theta_positive_no_train_int_50ms-tfr.h5'
     if mode != 'server':
         fpath_events = fpath_ev + '{}_run{}_mio_corrected_positive.txt'
         freq_fpath = fpath_fr +  '{0}_run{1}_theta_positive_int_50ms-tfr.h5'
@@ -64,13 +64,18 @@ for run in runs:
             print('\n\nDone with the events!')
             BASELINE, b_line = compute_baseline_substraction_and_power(raw_data, events_with_cross, picks)
             print('\n\nDone with the BASELINE I!')
+            print('BASELINE', BASELINE)
+            if BASELINE.all== 0:
+                print('Yes, BASELINE is dummy')
+                continue
             CORRECTED_DATA = correct_baseline_substraction(BASELINE, events_of_interest, raw_data, picks)
             print('\n\nDone with the CORRECTED!')
             plot_created_epochs_evoked = False
             epochs_of_interest, evoked = create_mne_epochs_evoked(kind, subject, run, CORRECTED_DATA, events_of_interest, plot_created_epochs_evoked, raw_data, picks)
             # for time frequency analysis we need baseline II (power correction)
             b_line_manually = True
-            freq_show = correct_baseline_power(epochs_of_interest, b_line, kind, b_line_manually, subject, run)
+            plot_spectrogram = False
+            freq_show = correct_baseline_power(epochs_of_interest, b_line, kind, b_line_manually, subject, run, plot_spectrogram)
             print('\n\nDone with the BASELINE II!')
             #plot an example of topomap
             show_one = False
@@ -86,7 +91,7 @@ for run in runs:
             print('This file: ', rf, 'does not exit')
             continue
 
-
+exit()
 print('\n\nGrand_average:')
 freq_data = mne.grand_average(data)
 
