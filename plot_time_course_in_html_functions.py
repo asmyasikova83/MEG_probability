@@ -50,6 +50,12 @@ def add_pic_html(filename, pic, pic_folder, pos_n, size):
     y = size[1]
     add_str_html(filename, '<IMG STYLE="position:absolute; TOP: %spx; LEFT: %spx; WIDTH: %spx; HEIGHT: %spx" SRC=" %s" />'%(round(y*(1-pos_n[1])*15,3), round(pos_n[0]*x*15,3), x, y, pic_folder+'/'+pic))
 
+def space_fdr(p_val_n):
+    temp = copy.deepcopy(p_val_n)
+    for i in range(temp.shape[1]):
+        _, temp[:, i] = mul.fdrcorrection(p_val_n[:, i])
+    return temp
+
 def plot_stat_comparison(comp1, comp2, p_val, p_mul, time, title='demo_title', folder='comparison',
                          comp1_label='comp1', comp2_label='comp2'):
     assert(len(comp1) == len(comp2) == len(time))

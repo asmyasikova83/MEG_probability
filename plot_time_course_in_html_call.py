@@ -17,7 +17,7 @@ from plot_time_course_in_html_functions import delaete_bad_sub
 from plot_time_course_in_html_functions import add_pic_html
 from plot_time_course_in_html_functions import plot_stat_comparison
 from plot_time_course_in_html_functions import p_val_binary
-
+from compute_p_val import compute_p_val
 
 options = {
     'page-size':'A3',
@@ -47,63 +47,7 @@ chan_labels = to_str_ar(io.loadmat('/home/asmyasnikova83/DATA/channel_labels.mat
 
 kind = ['positive', 'negative']
 
-
-i = 0
-for ind, subj in enumerate(subjects):
-    rf = out_path + "{0}_feedback_{1}_{2}_{3}-ave.fif".format(subj, kind[0], train, frequency)
-    file = pathlib.Path(rf)
-    if file.exists():
-        print('This subject is being processed: ', subj, ' (', i, ') ( ', ind, ' ) ')
-        i = i + 1
-print('i: ', i)
-#a container for tapers in neg and pos reinforcement, i - ov
-contr = np.zeros((i, 2, 306, 876))
-
-
-i = 0
-for ind, subj in enumerate(subjects):
-    rf = out_path + "{0}_feedback_{1}_{2}_{3}-ave.fif".format(subj, kind[0], train, frequency)
-    print(rf)
-    file = pathlib.Path(rf)
-    if file.exists():
-        print('exists:', rf)
-        print('This subject is being processed: ', subj, ' (', i, ') ( ', ind, ' ) ')
-        #positive FB
-        temp1 = mne.Evoked(out_path + "{0}_feedback_{1}_{2}_{3}-ave.fif".format(subj, kind[0], train, frequency))
-        temp1 = temp1.pick_types("grad")
-        print('data shape', temp1.data.shape)
-        #planars
-        contr[i, 0, :204, :] = temp1.data
-        #combined planars
-        contr[i, 0, 204:, :] = temp1.data[::2] + temp1.data[1::2]
-        #negative FB
-        temp2 = mne.Evoked( out_path + "{0}_feedback_{1}_{2}_{3}-ave.fif".format(subj, kind[1], train, frequency))
-        temp2 = temp2.pick_types("grad")
-        contr[i, 1, :204, :] = temp2.data
-        contr[i, 1, 204:, :] = temp2.data[::2] + temp2.data[1::2]
-        i = i + 1
-print('CONTR shape', contr.shape)
-
-comp1 = contr[:, 0, :, :]
-comp2 = contr[:, 1, :, :]
-#check the number of stat significant sensors in a predefined time interval
-t_stat, p_val = stats.ttest_rel(comp1, comp2, axis=0)
-
-binary = p_val_binary(p_val, treshold = 0.05)
-
-if check_num_sens:
-    issue = binary[204:, 600]
-    counter = 0
-    for i in range(102):
-        if issue[i] == 1:
-            print('ch idx', i)
-            counter = counter + 1
-            print('counter', counter)
-#average the freq data over subjects
-comp1_mean = comp1.mean(axis=0)
-comp2_mean = comp2.mean(axis=0)
-print('COMP1.mean.shape', comp1_mean.shape)
-print('COMP2.mean.shape', comp2_mean.shape)
+comp1_mean, comp2_mean, contr, temp1, temp2, p_val, binary = compute_p_val(subjects, kind, train, frequency, check_num_sens)
 
 #a number for plotting time courses - enough for amplitude
 
@@ -115,11 +59,6 @@ else:
     print('time: ', len(time))
 
 if rewrite:
-    #for indx in range(comp1_mean.shape[0]):
-      #  if indx < 204:
-       #     p_mul = 0.3
-       # else:
-        #    p_mul = 1.6
     n = 1
     #settings for combined planars
     for indx in range(102):
@@ -148,10 +87,8 @@ for ind, planar in enumerate(planars):
     add_str_html(html_name, '<h1 style="font-size:48px;"><b> (%s) </b></h1>' % 3)
     #placing the channel time courses and save the html
     if ind == 2:
-        #print('Here')
         for ch_num in range(204, len(chan_labels)):
             pic = chan_labels[ch_num] + '.svg'
-            #print('pic', pic)
             add_pic_html(html_name, pic, "pos_vs_neg", pos[ch_num], [200,150])
     else:
         for ch_num in range(ind, 204, 2):
