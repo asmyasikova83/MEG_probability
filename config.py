@@ -1,11 +1,12 @@
 import os
 import numpy as np
 
-L_freq = 4
-H_freq = 8
-f_step = 1
+L_freq = 32
+H_freq = 100
+f_step = 2
 
 freqs = np.arange(L_freq, H_freq+1, f_step)
+frequency = 'gamma'
 
 mode = 'server'
 
@@ -21,15 +22,24 @@ baseline_interval_end_sub = -50
 
 kind = 'negative'
 
-trained = False
-non_trained = True
+train = 'no_train'
+#settings for visualization
+out_path = '/home/asmyasnikova83/DATA/evoked_ave/'
+sign_sensors = True
+check_num_sens = True
+
+if frequency == 'alpha' or frequency == 'beta':
+    p_mul == 1.0
+if frequency == 'gamma':
+    p_mul = 0.4 #gamma
 
 runs = ['1']
 '''
 subjects = [
-    'P026']
+    'P012']
 '''
 #P008 P025 neg negative removed
+
 subjects = [
     'P000',
     'P001',
