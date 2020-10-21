@@ -14,11 +14,12 @@ from plot_time_course_in_html_functions import to_str_ar
 from plot_time_course_in_html_functions import get_short_legend
 from plot_time_course_in_html_functions import get_full_legend
 from plot_time_course_in_html_functions import delaete_bad_sub
-from plot_time_course_in_html_functions import add_pic_html
+from plot_time_course_in_html_functions import add_pic_time_course_html
 from plot_time_course_in_html_functions import plot_stat_comparison
 from plot_time_course_in_html_functions import p_val_binary
 from compute_p_val import compute_p_val
 
+# visualization of time-course of power deviations from baseline + statistically significant intervals and sensors 
 options = {
     'page-size':'A3',
     'orientation':'Landscape',
@@ -44,12 +45,10 @@ chan_labels = to_str_ar(io.loadmat('/home/asmyasnikova83/DATA/channel_labels.mat
 #P008, P025 removed
 #P000,P012,P026 for trained is empty
 
-
+#load and compute statistics
 kind = ['positive', 'negative']
-
 comp1_mean, comp2_mean, contr, temp1, temp2, p_val, binary = compute_p_val(subjects, kind, train, frequency, check_num_sens)
 
-#a number for plotting time courses - enough for amplitude
 
 if False:
     time = np.arange(-0.5, 0.05*(comp1_mean.shape[1])-0.5, 0.05)
@@ -61,6 +60,7 @@ else:
 if rewrite:
     n = 1
     #settings for combined planars
+    #plot the time courses, mark stat significant intervals and channels
     for indx in range(102):
         res = plot_stat_comparison(comp1_mean[indx+204], comp2_mean[indx+204], p_val[indx+204], p_mul, time, title = chan_labels[indx+204],
                              folder = "pos_vs_neg", comp1_label = "positive", comp2_label = "negative")
@@ -73,7 +73,7 @@ else:
     print('\tPictures uploaded')
 
 for ind, planar in enumerate(planars):
-    #place the channel time courses on html file
+    #place the channel time courses in html file
     html_name = '/home/asmyasnikova83/GITHUB/MEG_probability/output/pic_compose_%s_%s_vs_%s_%s.html' % (planar, "Positive", "Negative", "all")
     clear_html(html_name)
     add_str_html(html_name, '<!DOCTYPE html>')
@@ -89,11 +89,11 @@ for ind, planar in enumerate(planars):
     if ind == 2:
         for ch_num in range(204, len(chan_labels)):
             pic = chan_labels[ch_num] + '.svg'
-            add_pic_html(html_name, pic, "pos_vs_neg", pos[ch_num], [200,150])
+            add_pic_time_course_html(html_name, pic, "pos_vs_neg", pos[ch_num], [200,150])
     else:
         for ch_num in range(ind, 204, 2):
             pic = chan_labels[ch_num] + '.svg'
-            add_pic_html(html_name, pic,  "pos_vs_neg", pos[ch_num], [200,150])
+            add_pic_time_course_html(html_name, pic,  "pos_vs_neg", pos[ch_num], [200,150])
 
     add_str_html(html_name, '</body>')
     add_str_html(html_name, '</html>')
@@ -101,5 +101,4 @@ for ind, planar in enumerate(planars):
     print(os.getcwd() + '/%s' % html_name)
     path = os.getcwd() + '/output/pos_vs_neg/all_pdf/'
     os.makedirs(path, exist_ok = True)
-    #pdfkit.from_file(os.getcwd() + '/%s' % html_name, 'all_pdf/%s.pdf' % pdf_file, configuration = config, options=options)
 print('\tAll printed')

@@ -1,12 +1,10 @@
-import mne
 import numpy as np
-from scipy import stats, io
 import matplotlib.pyplot as plt
-import os
 import copy
-#import pdfkit
 from config import *
 import pathlib
+
+# functions for visualization
 
 def clear_html(filename):
     with open(filename, 'w') as f:
@@ -45,10 +43,13 @@ def delaete_bad_sub(contrast, del_list):
     return contrast
 
 
-def add_pic_html(filename, pic, pic_folder, pos_n, size):
+def add_pic_time_course_html(filename, pic, pic_folder, pos_n, size):
     x = size[0]
     y = size[1]
     add_str_html(filename, '<IMG STYLE="position:absolute; TOP: %spx; LEFT: %spx; WIDTH: %spx; HEIGHT: %spx" SRC=" %s" />'%(round(y*(1-pos_n[1])*15,3), round(pos_n[0]*x*15,3), x, y, pic_folder+'/'+pic))
+
+def add_pic_topo_html(filename, pic):
+    add_str_html(filename, '<IMG SRC="%s" style="width:%spx;height:%spx;"/>'%(pic,1900,162))
 
 def space_fdr(p_val_n):
     temp = copy.deepcopy(p_val_n)
@@ -85,7 +86,7 @@ def plot_stat_comparison(comp1, comp2, p_val, p_mul, time, title='demo_title', f
     plt.tick_params(labelsize = 14)
     plt.legend(loc='upper right', fontsize = 14)
     plt.title(title, fontsize = 36)
-    output = 'outpu/'
+    output = 'output/'
     path = output + folder + '/'
     os.makedirs(path, exist_ok = True)
     plt.savefig(path+title + '.svg', transparent=True)
