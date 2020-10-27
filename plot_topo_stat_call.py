@@ -46,9 +46,10 @@ legend = ["Positive", "Negative"]
 rewrite = True
 
     ##### CONDITION1 ######
-    
+# average = 0.1 means averaging of the power data over 100 ms
+
 temp.data = comp1_mean[204:,:]
-fig = temp.plot_topomap(times = times_to_plot, average = 0.05,
+fig = temp.plot_topomap(times = times_to_plot, average = 0.1,
                             scalings = dict(eeg=1e6, grad=1, mag=1e15), 
                             ch_type='planar1', time_unit='s', show = False, 
                             title = legend[0], colorbar = True, vmax=p_mul_topo, vmin=-p_mul_topo)
@@ -59,7 +60,7 @@ plt.close()
     ##### CONDITION2 ######
     
 temp.data = comp2_mean[204:,:]
-fig = temp.plot_topomap(times = times_to_plot, average = 0.05,
+fig = temp.plot_topomap(times = times_to_plot, average = 0.1,
                             scalings = dict(eeg=1e6, grad=1, mag=1e15),
                             ch_type='planar1', time_unit='s', show = False, 
                             title = legend[1], colorbar = True, vmax=p_mul_topo, vmin=-p_mul_topo)
@@ -69,13 +70,13 @@ plt.close()
     ##### CONDITION2 - CONDITION1 with marks (no FDR) ######
 
 temp.data = comp2_mean[204:,:] - comp1_mean[204:,:]
-fig = temp.plot_topomap(times = times_to_plot, average = 0.05,
+fig = temp.plot_topomap(times = times_to_plot, average = 0.1,
                             scalings = dict(eeg=1e6, grad=1, mag=1e15), 
                             ch_type='planar1', time_unit='s', show = False, 
                             title = "%s - %s"%(legend[1], legend[0]), colorbar = True, 
                             vmax=p_mul_topo_contrast, vmin=-p_mul_topo_contrast, extrapolate="local", mask = np.bool_(binary[204:,:]),
-                            mask_params = dict(marker='o', markerfacecolor='yellow', markeredgecolor='k',
-                                               linewidth=0, markersize=10, markeredgewidth=2))
+                            mask_params = dict(marker='o', markerfacecolor='w', markeredgecolor='k',
+                                               linewidth=0, markersize=7, markeredgewidth=2))
 fig.savefig(os.path.join(output, legend[0] + "_vs_" + legend[1],"difference.png"), dpi = 300)
 plt.close()
  
@@ -85,21 +86,22 @@ binary_fdr = p_val_binary(p_val_fdr, treshold = 0.05)
 
 temp.data = comp2_mean[204:,:] - comp1_mean[204:,:]
 
-fig = temp.plot_topomap(times = times_to_plot, average = 0.05,
+fig = temp.plot_topomap(times = times_to_plot, average = 0.1,
                             scalings = dict(eeg=1e6, grad=1, mag=1e15), 
                             ch_type='planar1', time_unit='s', show = False, 
                             title = "%s - %s with_fdr"%(legend[1], legend[0]), colorbar = True, 
                             vmax=p_mul_topo_fdr_contrast, vmin=-p_mul_topo_fdr_contrast, extrapolate="local", mask = np.bool_(binary_fdr[204:,:]),
-                            mask_params = dict(marker='o', markerfacecolor='yellow', markeredgecolor='k',
-                                               linewidth=0, markersize=10, markeredgewidth=2))
+                            mask_params = dict(marker='o', markerfacecolor='w', markeredgecolor='k',
+                                               linewidth=0, markersize=7, markeredgewidth=2))
 fig.savefig(os.path.join(output, legend[0] + "_vs_" + legend[1],"difference_with_fdr.png"), dpi = 300)
 plt.close()
     
+
     ##### CONDITION2 - CONDITION1 cutted by thershold (WITH FDR) ######
     # ask Nikita about the following formula
 temp.data = (comp2_mean[204:,:] - comp1_mean[204:,:])*binary_fdr[204:,:]
 
-fig = temp.plot_topomap(times = times_to_plot, average = 0.05,
+fig = temp.plot_topomap(times = times_to_plot, average = 0.1,
                             scalings = dict(eeg=1e6, grad=1, mag=1e15), 
                             ch_type='planar1', time_unit='s', show = False, 
                             title = "%s - %s (cut) with fdr"%(legend[1], legend[0]), colorbar = True, 
@@ -113,8 +115,7 @@ clear_html(html_name)
 add_str_html(html_name, '<!DOCTYPE html>')
 add_str_html(html_name, '<html>')
 add_str_html(html_name, '<body>')
-if frequency == 'gamma':
-    add_str_html(html_name, '<p style="font-size:20px;"><b> %s, average Gamma ~8-12 Hz, non-trained,  after feedback presentation </b></p>' % (legend[0] + "_vs_" + legend[1]))
+add_str_html(html_name, '<p style="font-size:20px;"><b> %s, average Alpha ~16-30 Hz, non-trained,  after feedback presentation </b></p>' % (legend[0] + "_vs_" + legend[1]))
 add_str_html(html_name, '<p style="font-size:20px;"><b> P_val < 0.05 marked (or saved from cutting) </b></p>' )
 add_str_html(html_name, '<table>')
 for topo in topomaps:
