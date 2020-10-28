@@ -3,9 +3,6 @@ import numpy as np
 from config import *
 import pathlib
 
-os.makedirs("baseline", exist_ok=True)
-os.makedirs("Cleaned_events", exist_ok=True)
- 
 def no_mio_events(epochs_ar, thres):
     #N_events, N_chans, N_times
     epochs_ar = epochs_ar.swapaxes(0, 1)
@@ -32,19 +29,6 @@ def no_mio_events(epochs_ar, thres):
 #os.makedirs(os.path.join(os.getcwd(), "Sensor", "TFR", out_path), exist_ok = True)
 
 fpath_raw = '/net/server/data/Archive/prob_learn/experiment/ICA_cleaned/{}/run{}_{}_raw_ica.fif'
-if kind == 'positive':
-    fpath_events = '/home/asmyasnikova83/DATA/reinforced/{}_run{}_events_positive_no_train.txt'
-    fpath_mio_out = '/home/asmyasnikova83/DATA/mio_out_positive/{}_run{}_mio_corrected_positive_no_train.txt'
-if kind == 'negative':
-    fpath_events = '/home/asmyasnikova83/DATA/reinforced/{}_run{}_events_negative_no_train.txt'
-    fpath_mio_out = '/home/asmyasnikova83/DATA/mio_out_negative/{}_run{}_mio_corrected_negative_no_train.txt' 
-
-'''
-with open("config.py", "r") as f_in:
-    settings = f_in.readlines()
-    with open(os.path.join(os.getcwd(), "Sensor", "TFR", out_path, "config.log"), "w") as f_out:
-        f_out.writelines(settings)
-'''
 
 def calculate_beta(subj, run, fpath_raw, fpath_events, fpath_mio_out):
    # freqs = np.arange(L_freq, H_freq, f_step)
@@ -54,6 +38,10 @@ def calculate_beta(subj, run, fpath_raw, fpath_events, fpath_mio_out):
     picks = mne.pick_types(raw_data.info, meg = True)
     events_raw = mne.find_events(raw_data, stim_channel='STI101', output='onset', consecutive='increasing', min_duration=0, shortest_event=1, mask=None, uint_cast=False, mask_type='and', initial_event=False, verbose=None)
     events = np.loadtxt(fpath_events.format(subj, run), dtype=int)
+    print(events)
+    if events.shape == (3,):
+        events = events[np.newaxis, :]
+    print(events.shape)
     epochs = mne.Epochs(raw_data, events, event_id = None, tmin = period_start, tmax = period_end, picks=picks, preload = True)
     epochs = epochs.pick(picks="grad")
 
@@ -72,25 +60,46 @@ def calculate_beta(subj, run, fpath_raw, fpath_events, fpath_mio_out):
         event_ind += 1
 
     del events_raw
-#    evee = list(map(str, full_ev))
-#    evee = list(map(lambda x: x + "\n", evee))
-#    with open(fpath_mio_out.format(subj, run), "w") as ff:
-#        ff.writelines(evee)
 
     mio_corrected_events_file = open(fpath_mio_out.format(subj, run), "w")
     np.savetxt(mio_corrected_events_file, full_ev, fmt="%d")
     mio_corrected_events_file.close()
 
-for run in runs:
-    for subject in subjects:
+for i in range(len(kind)):
+    if kind[i] == 'positive':
+        fpath_events = '/home/asmyasnikova83/DATA/reinforced/{}_run{}_events_positive_no_train.txt'
+        fpath_mio_out = '/home/asmyasnikova83/DATA/mio_out_positive/{}_run{}_mio_corrected_positive_no_train.txt'
+        fpath_mio_dir = '/home/asmyasnikova83/DATA/mio_out_positive/'
+    if kind[i] == 'negative':
+        fpath_events = '/home/asmyasnikova83/DATA/reinforced/{}_run{}_events_negative_no_train.txt'
+        fpath_mio_out = '/home/asmyasnikova83/DATA/mio_out_negative/{}_run{}_mio_corrected_negative_no_train.txt'
+        fpath_mio_dir = '/home/asmyasnikova83/DATA/mio_out_negative/'
+    if kind[i] == 'prerisk':
+        fpath_events = '/home/asmyasnikova83/DATA/reinforced/{}_run{}_events_prerisk.txt'
+        fpath_mio_out = '/home/asmyasnikova83/DATA/mio_out_prerisk/{}_run{}_mio_corrected_prerisk.txt'
+        fpath_mio_dir = '/home/asmyasnikova83/DATA/mio_out_prerisk/'
+    if kind[i] == 'risk':
+        fpath_events = '/home/asmyasnikova83/DATA/reinforced/{}_run{}_events_risk.txt'
+        fpath_mio_out = '/home/asmyasnikova83/DATA/mio_out_risk/{}_run{}_mio_corrected_risk.txt'
+        fpath_mio_dir = '/home/asmyasnikova83/DATA/mio_out_risk/'
+    if kind[i] == 'postrisk':
+        fpath_events = '/home/asmyasnikova83/DATA/reinforced/{}_run{}_events_postrisk.txt'
+        fpath_mio_out = '/home/asmyasnikova83/DATA/mio_out_postrisk/{}_run{}_mio_corrected_postrisk.txt'
+        fpath_mio_dir = '/home/asmyasnikova83/DATA/mio_out_postrisk/'
 
-        rf = fpath_events.format(subject, run)
-        print(rf)
-        file = pathlib.Path(rf)
-        if file.exists():
-            print('This file is being processed: ', rf)
-            calculate_beta(subject, run, fpath_raw, fpath_events, fpath_mio_out)
-        else:
-            print('This file: ', rf, 'does not exit')
-            continue
+    os.makedirs(fpath_mio_dir, exist_ok = True)
+
+    for run in runs:
+        for subject in subjects:
+
+            rf = fpath_events.format(subject, run)
+            print(rf)
+            file = pathlib.Path(rf)
+            print('file', file)
+            if file.exists() and os.stat(rf).st_size != 0:
+                print('This file is being processed: ', rf)
+                calculate_beta(subject, run, fpath_raw, fpath_events, fpath_mio_out)
+            else:
+                print('This file: ', rf, 'does not exit')
+                continue
 
