@@ -12,26 +12,31 @@ def compute_p_val(subjects, kind, train, frequency, check_num_sens):
     #coordinates and channel names from matlab files - the files are here https://github.com/niherus/MNE_TFR_ToolBox/tree/master/VISUALISATION
 
     i = 0
+    subjects1 = []
     for ind, subj in enumerate(subjects):
-        rf = out_path + "{0}_feedback_{1}_{2}_{3}-ave.fif".format(subj, kind[0], train, frequency)
-        file = pathlib.Path(rf)
-        if file.exists():
+        rf1 = out_path + "{0}_feedback_{1}_{2}{3}-ave.fif".format(subj, kind[0], train, frequency)
+        file1 = pathlib.Path(rf1)
+        rf2 = out_path + "{0}_feedback_{1}_{2}{3}-ave.fif".format(subj, kind[1], train, frequency)
+        file2 = pathlib.Path(rf2)
+        if file1.exists() and file2.exists():
             print('This subject is being processed: ', subj, ' (', i, ') ( ', ind, ' ) ')
+            subjects1.append(subj)
             i = i + 1
     print('i: ', i)
     #a container for tapers in neg and pos reinforcement, i - ov
     contr = np.zeros((i, 2, 306, 876))
 
     i = 0
-    for ind, subj in enumerate(subjects):
-        rf = out_path + "{0}_feedback_{1}_{2}_{3}-ave.fif".format(subj, kind[0], train, frequency)
+    for ind, subj in enumerate(subjects1):
+        rf = out_path + "{0}_feedback_{1}_{2}{3}-ave.fif".format(subj, kind[0], train, frequency)
         print(rf)
         file = pathlib.Path(rf)
         if file.exists():
             print('exists:', rf)
             print('This subject is being processed: ', subj, ' (', i, ') ( ', ind, ' ) ')
             #positive FB
-            temp1 = mne.Evoked(out_path + "{0}_feedback_{1}_{2}_{3}-ave.fif".format(subj, kind[0], train, frequency))
+            print('kind[0]', kind[0])
+            temp1 = mne.Evoked(out_path + "{0}_feedback_{1}_{2}{3}-ave.fif".format(subj, kind[0], train, frequency))
             temp1 = temp1.pick_types("grad")
             print('data shape', temp1.data.shape)
             #planars
@@ -39,7 +44,8 @@ def compute_p_val(subjects, kind, train, frequency, check_num_sens):
             #combined planars
             contr[i, 0, 204:, :] = temp1.data[::2] + temp1.data[1::2]
             #negative FB
-            temp2 = mne.Evoked( out_path + "{0}_feedback_{1}_{2}_{3}-ave.fif".format(subj, kind[1], train, frequency))
+            print('kind[1]', kind[1])
+            temp2 = mne.Evoked( out_path + "{0}_feedback_{1}_{2}{3}-ave.fif".format(subj, kind[1], train, frequency))
             temp2 = temp2.pick_types("grad")
             contr[i, 1, :204, :] = temp2.data
             contr[i, 1, 204:, :] = temp2.data[::2] + temp2.data[1::2]
@@ -66,4 +72,4 @@ def compute_p_val(subjects, kind, train, frequency, check_num_sens):
     comp2_mean = comp2.mean(axis=0)
     print('COMP1.mean.shape', comp1_mean.shape)
     print('COMP2.mean.shape', comp2_mean.shape)
-    return comp1_mean, comp2_mean, contr, temp1, temp2, p_val, binary
+    return comp1_mean, comp2_mean, contr, temp1, temp2, p_val, binary, subjects1

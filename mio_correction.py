@@ -24,20 +24,16 @@ def no_mio_events(epochs_ar, thres):
             good_chan.append(i)
     return np.array(good_chan) 
 
-#data_path = '/home/asmyasnikova83/DATA/links/'
-#out_path = f'theta_reinforced_{L_freq}_{H_freq}/'
-#os.makedirs(os.path.join(os.getcwd(), "Sensor", "TFR", out_path), exist_ok = True)
+fpath_raw = '/net/server/data/Archive/prob_learn/vtretyakova/ICA_cleaned/{}/run{}_{}_raw_ica.fif'
 
-fpath_raw = '/net/server/data/Archive/prob_learn/experiment/ICA_cleaned/{}/run{}_{}_raw_ica.fif'
-
-def calculate_beta(subj, run, fpath_raw, fpath_events, fpath_mio_out):
+def calculate_beta(subj, run, kind, train, fpath_raw, fpath_events, fpath_mio_out):
    # freqs = np.arange(L_freq, H_freq, f_step)
         
     raw_data = mne.io.Raw(fpath_raw.format(subj, run, subj), preload=True)
     raw_data = raw_data.filter(l_freq=70, h_freq=None)
     picks = mne.pick_types(raw_data.info, meg = True)
     events_raw = mne.find_events(raw_data, stim_channel='STI101', output='onset', consecutive='increasing', min_duration=0, shortest_event=1, mask=None, uint_cast=False, mask_type='and', initial_event=False, verbose=None)
-    events = np.loadtxt(fpath_events.format(subj, run), dtype=int)
+    events = np.loadtxt(fpath_events.format(subj, run, kind, train), dtype=int)
     print(events)
     if events.shape == (3,):
         events = events[np.newaxis, :]
@@ -61,44 +57,26 @@ def calculate_beta(subj, run, fpath_raw, fpath_events, fpath_mio_out):
 
     del events_raw
 
-    mio_corrected_events_file = open(fpath_mio_out.format(subj, run), "w")
+    mio_corrected_events_file = open(fpath_mio_out.format(kind,subj, run, kind, train), "w")
     np.savetxt(mio_corrected_events_file, full_ev, fmt="%d")
     mio_corrected_events_file.close()
 
 for i in range(len(kind)):
-    if kind[i] == 'positive':
-        fpath_events = '/home/asmyasnikova83/DATA/reinforced/{}_run{}_events_positive_no_train.txt'
-        fpath_mio_out = '/home/asmyasnikova83/DATA/mio_out_positive/{}_run{}_mio_corrected_positive_no_train.txt'
-        fpath_mio_dir = '/home/asmyasnikova83/DATA/mio_out_positive/'
-    if kind[i] == 'negative':
-        fpath_events = '/home/asmyasnikova83/DATA/reinforced/{}_run{}_events_negative_no_train.txt'
-        fpath_mio_out = '/home/asmyasnikova83/DATA/mio_out_negative/{}_run{}_mio_corrected_negative_no_train.txt'
-        fpath_mio_dir = '/home/asmyasnikova83/DATA/mio_out_negative/'
-    if kind[i] == 'prerisk':
-        fpath_events = '/home/asmyasnikova83/DATA/reinforced/{}_run{}_events_prerisk.txt'
-        fpath_mio_out = '/home/asmyasnikova83/DATA/mio_out_prerisk/{}_run{}_mio_corrected_prerisk.txt'
-        fpath_mio_dir = '/home/asmyasnikova83/DATA/mio_out_prerisk/'
-    if kind[i] == 'risk':
-        fpath_events = '/home/asmyasnikova83/DATA/reinforced/{}_run{}_events_risk.txt'
-        fpath_mio_out = '/home/asmyasnikova83/DATA/mio_out_risk/{}_run{}_mio_corrected_risk.txt'
-        fpath_mio_dir = '/home/asmyasnikova83/DATA/mio_out_risk/'
-    if kind[i] == 'postrisk':
-        fpath_events = '/home/asmyasnikova83/DATA/reinforced/{}_run{}_events_postrisk.txt'
-        fpath_mio_out = '/home/asmyasnikova83/DATA/mio_out_postrisk/{}_run{}_mio_corrected_postrisk.txt'
-        fpath_mio_dir = '/home/asmyasnikova83/DATA/mio_out_postrisk/'
-
-    os.makedirs(fpath_mio_dir, exist_ok = True)
+    fpath_events = '/home/asmyasnikova83/DATA/reinforced/{0}_run{1}_events_{2}{3}.txt'
+    fpath_mio_out = '/home/asmyasnikova83/DATA/mio_out_{0}/{1}_run{2}_mio_corrected_{3}{4}.txt'
+    fpath_mio_dir = '/home/asmyasnikova83/DATA/mio_out_{}/'
+    os.makedirs(fpath_mio_dir.format(kind[i]), exist_ok = True)
 
     for run in runs:
         for subject in subjects:
 
-            rf = fpath_events.format(subject, run)
+            rf = fpath_events.format(subject, run, kind[i], train)
             print(rf)
             file = pathlib.Path(rf)
             print('file', file)
             if file.exists() and os.stat(rf).st_size != 0:
                 print('This file is being processed: ', rf)
-                calculate_beta(subject, run, fpath_raw, fpath_events, fpath_mio_out)
+                calculate_beta(subject, run, kind[i], train, fpath_raw, fpath_events, fpath_mio_out)
             else:
                 print('This file: ', rf, 'does not exit')
                 continue
