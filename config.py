@@ -10,6 +10,7 @@ freqs = np.arange(L_freq, H_freq+1, f_step)
 frequency = 'theta'
 
 mode = 'server'
+prefix = '/net/server/data/Archive/prob_learn/asmyasnikova83/'
 
 period_start = -2.350 #epoch start
 period_end = 1.850 #epoch end
@@ -28,7 +29,7 @@ spec = ''
 
 #type of analysis
 kind = ['norisk', 'risk'] #'positive', 'negative', 'prerisk', 'risk', 'postrisk'
-legend = ['Norisk', 'Risk']
+legend = ['norisk', 'Risk']
 #if trained set ytain = '', in nontrained, set train = '_no_train'
 train = ''
 #settings for visualization
