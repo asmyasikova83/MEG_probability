@@ -2,7 +2,7 @@ import mne
 import numpy as np
 from config import *
                                                                                                                                                                                                                    
-fpath = '/net/server/data/Archive/prob_learn/experiment/ICA_cleaned/{}/run{}_{}_raw_ica.fif'
+fpath = '/net/server/data/Archive/prob_learn/vtretyakova/ICA_cleaned/{}/run{}_{}_raw_ica.fif'
 fpath_events_risk = '/home/asmyasnikova83/DATA/reinforced/{}_run{}_events_risk.txt'
 fpath_events_norisk = '/home/asmyasnikova83/DATA/reinforced/{}_run{}_events_norisk.txt'
 fpath_events_prerisk = '/home/asmyasnikova83/DATA/reinforced/{}_run{}_events_prerisk.txt'
@@ -101,7 +101,6 @@ for run in runs:
                             log_risk_norisk.append('prerisk')
 
             if trained and events[i - 1][2] == 42 or trained and events[i - 1][2] == 43 or trained and events[i - 1][2] == 44 or trained and events[i - 1][2] == 45:
-                print('len events', len(events))
                 if i + 7 >= len(events):
                     print('Ready to continue')
                     continue
