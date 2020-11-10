@@ -34,7 +34,6 @@ def calculate_beta(subj, run, kind, train, fpath_raw, fpath_events, fpath_mio_ou
     picks = mne.pick_types(raw_data.info, meg = True)
     events_raw = mne.find_events(raw_data, stim_channel='STI101', output='onset', consecutive='increasing', min_duration=0, shortest_event=1, mask=None, uint_cast=False, mask_type='and', initial_event=False, verbose=None)
     events = np.loadtxt(fpath_events.format(subj, run, kind, train), dtype=int)
-    print(events)
     if events.shape == (3,):
         events = events[np.newaxis, :]
     print(events.shape)
@@ -43,23 +42,25 @@ def calculate_beta(subj, run, kind, train, fpath_raw, fpath_events, fpath_mio_ou
 
     thres = 7 #procedure to remove epochs-outliers based on thres*STD difference
     clean = no_mio_events(epochs.get_data(), thres)
-   
-    print(subj, thres, str(events.shape[0]) + " ~~~~ " + str(events[clean].shape[0]) )
-    cleaned = events[clean]
-    print(cleaned)
-    del epochs, events, clean, picks, raw_data
+    if clean.any():
+        print(subj, thres, str(events.shape[0]) + " ~~~~ " + str(events[clean].shape[0]) )
+        cleaned = events[clean]
+        print(cleaned)
+        del epochs, events, clean, picks, raw_data
 
-    full_ev = []
-    for i in range(cleaned.shape[0]):
-        event_ind = events_raw.tolist().index(cleaned[i].tolist())
-        full_ev.append(events_raw[event_ind].tolist())
-        event_ind += 1
+        full_ev = []
+        for i in range(cleaned.shape[0]):
+            event_ind = events_raw.tolist().index(cleaned[i].tolist())
+            full_ev.append(events_raw[event_ind].tolist())
+            event_ind += 1
+
+        mio_corrected_events_file = open(fpath_mio_out.format(kind,subj, run, kind, train), "w")
+        np.savetxt(mio_corrected_events_file, full_ev, fmt="%d")
+        mio_corrected_events_file.close()
+    else:
+        print('Events cleaned are empty!')
 
     del events_raw
-
-    mio_corrected_events_file = open(fpath_mio_out.format(kind,subj, run, kind, train), "w")
-    np.savetxt(mio_corrected_events_file, full_ev, fmt="%d")
-    mio_corrected_events_file.close()
 
 for i in range(len(kind)):
     fpath_events = '/home/asmyasnikova83/DATA/reinforced/{0}_run{1}_events_{2}{3}.txt'
