@@ -6,9 +6,9 @@ import pathlib
 fpath_ev = '/home/asmyasnikova83/DATA/'
 fpath_fr= '/home/asmyasnikova83/DATA/TFR/'
 temp1 = mne.Evoked('/home/asmyasnikova83/DATA/P006_run6_evoked-ave.fif')
-out_path = '/home/asmyasnikova83/DATA/evoked_ave/'
+#out_path = '/home/asmyasnikova83/DATA/evoked_ave/'
 fpath_events = fpath_ev + 'mio_out_{0}/{1}_run{2}_mio_corrected_{3}{4}.txt'
-data_path = '/net/server/data/Archive/prob_learn/asmyasnikova83/TFR/{0}/{1}_run{2}{3}_{4}_{5}{6}_int_50ms-tfr.h5'
+data_path = '{0}TFR/{1}/{2}_run{3}{4}_{5}_{6}{7}_int_50ms-tfr.h5'
 
 #get rid of runs, leave frequency data for pos and neg feedback for time course plotting 
 for i in range(len(kind)):
@@ -23,7 +23,7 @@ for i in range(len(kind)):
                 file = pathlib.Path(rf)
                 if file.exists():
                     print('This file is being processed: ', rf)
-                    freq_file = data_path.format(kind[i], subject, run, spec, frequency, kind[i], train)
+                    freq_file = data_path.format(prefix, kind[i], subject, run, spec, frequency, kind[i], train)
                     freq_data = mne.time_frequency.read_tfrs(freq_file)[0]
                     data.append(freq_data.data)
                     run_counter = run_counter + 1
@@ -58,7 +58,7 @@ for i in range(len(kind)):
                 file = pathlib.Path(rf)
                 if file.exists():
                     print('This file is being processed: ', rf)
-                    freq_file = data_path.format(kind[i], subject, run, spec, frequency, kind[i], train)
+                    freq_file = data_path.format(prefix, kind[i], subject, run, spec, frequency, kind[i], train)
                     freq_data = mne.time_frequency.read_tfrs(freq_file)[0]
                     data.append(freq_data.data)
                     run_counter = run_counter + 1

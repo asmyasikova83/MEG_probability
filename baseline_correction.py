@@ -418,11 +418,11 @@ def correct_baseline_power(epochs_of_interest, b_line, kind, b_line_manually, su
             freq_show.data = np.log10(freq_show.data/b_line[:, np.newaxis])
     else:
         freq_show.apply_baseline(baseline=(-0.5,-0.1), mode="logratio")
-    tfr_path = '/net/server/data/Archive/prob_learn/asmyasnikova83/TFR/{0}/{1}_run{2}{3}_{4}_{5}{6}_int_50ms-tfr.h5'
-    tfr_path_dir = '/net/server/data/Archive/prob_learn/asmyasnikova83/TFR/{0}/'
-    os.makedirs(tfr_path_dir.format(kind), exist_ok = True)
-    freq_show.save(tfr_path.format(kind, subject, run, spec, frequency, kind, train), overwrite=True)
-    print(tfr_path.format(kind, subject, run, spec, frequency, kind, train))
+    tfr_path = '{0}TFR/{1}/{2}_run{3}{4}_{5}_{6}{7}_int_50ms-tfr.h5'
+    tfr_path_dir = '{0}TFR/{1}/'
+    os.makedirs(tfr_path_dir.format(prefix, kind), exist_ok = True)
+    freq_show.save(tfr_path.format(prefix, kind, subject, run, spec, frequency, kind, train), overwrite=True)
+    print(tfr_path.format(prefix, kind, subject, run, spec, frequency, kind, train))
     return freq_show
 
 def topomap_one(freq_show, reduced_info, events_of_interest, raw):
