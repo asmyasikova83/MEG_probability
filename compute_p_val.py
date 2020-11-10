@@ -7,6 +7,7 @@ import copy
 from config import *
 import pathlib
 from plot_time_course_in_html_functions import p_val_binary
+import random
 
 def compute_p_val(subjects, kind, train, frequency, check_num_sens):
     #coordinates and channel names from matlab files - the files are here https://github.com/niherus/MNE_TFR_ToolBox/tree/master/VISUALISATION
@@ -25,9 +26,20 @@ def compute_p_val(subjects, kind, train, frequency, check_num_sens):
     print('i: ', i)
     #a container for tapers in neg and pos reinforcement, i - ov
     contr = np.zeros((i, 2, 306, 876))
+    if random_comp:
+       length = len(subjects1)
+       random_class_one = np.zeros(length)
+       random_class_two = np.zeros(length)
+       for l in range(length):
+           random_class_one[l] = np.around(random.uniform(0, 1))
+           random_class_two[l] = np.around(random.uniform(0, 1))
+       print('random_class', random_class_one)
+       print('random_class', random_class_two)
 
     i = 0
-    for ind, subj in enumerate(subjects1):
+    rsubjects1 = random.sample(subjects1, k = len(subjects1))
+    print('rsubjects1', rsubjects1)
+    for ind, subj in enumerate(rsubjects1):
         rf = out_path + "{0}_feedback_{1}_{2}{3}-ave.fif".format(subj, kind[0], train, frequency)
         print(rf)
         file = pathlib.Path(rf)
@@ -40,23 +52,31 @@ def compute_p_val(subjects, kind, train, frequency, check_num_sens):
             temp1 = temp1.pick_types("grad")
             print('data shape', temp1.data.shape)
             #planars
-            contr[i, 0, :204, :] = temp1.data
-            #combined planars
-            contr[i, 0, 204:, :] = temp1.data[::2] + temp1.data[1::2]
+            if random_comp:
+                contr[i, int(random_class_one[i]), :204, :] = temp1.data
+                contr[i, int(random_class_one[i]), 204:, :] = temp1.data[::2] + temp1.data[1::2]
+            else:
+                contr[i, 0, :204, :] = temp1.data
+                #combined planars
+                contr[i, 0, 204:, :] = temp1.data[::2] + temp1.data[1::2]
             #negative FB
             print('kind[1]', kind[1])
             temp2 = mne.Evoked( out_path + "{0}_feedback_{1}_{2}{3}-ave.fif".format(subj, kind[1], train, frequency))
             temp2 = temp2.pick_types("grad")
-            contr[i, 1, :204, :] = temp2.data
-            contr[i, 1, 204:, :] = temp2.data[::2] + temp2.data[1::2]
+            if random_comp:
+                contr[i, int(random_class_two[i]), :204, :] = temp2.data
+                contr[i, int(random_class_two[i]), 204:, :] = temp2.data[::2] + temp1.data[1::2]
+            else:
+                contr[i, 1, :204, :] = temp2.data
+                contr[i, 1, 204:, :] = temp2.data[::2] + temp2.data[1::2]
             i = i + 1
     print('CONTR shape', contr.shape)
-
     comp1 = contr[:, 0, :, :]
     comp2 = contr[:, 1, :, :]
+
     #check the number of stat significant sensors in a predefined time interval
     t_stat, p_val = stats.ttest_rel(comp1, comp2, axis=0)
-    save_t_stat = True
+    #save_t_stat = True
     if save_t_stat:
         t_stat_str = np.array2string(t_stat)
         print(type(t_stat_str))

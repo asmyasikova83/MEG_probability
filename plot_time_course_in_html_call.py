@@ -45,8 +45,23 @@ chan_labels = to_str_ar(io.loadmat('/home/asmyasnikova83/DATA/channel_labels.mat
 #P008, P025 removed
 #P000,P012,P026 for trained is empty
 
+if 1:
+    N = 1
+    COMP1_MEAN = np.zeros((N, 306, 876))
+    COMP2_MEAN = np.zeros((N, 306, 876))
+    CONTR = np.zeros((N, 25, 2, 306, 876))
+    P_VAL = np.zeros((N, 306, 876))
+    BINARY = np.zeros((N, 306, 876))
+    for i in range(N):
+        COMP1_MEAN[i,:, :], COMP2_MEAN[i, :, :], CONTR[i,:,:,:,:], temp1, temp2, P_VAL[i, : , :], BINARY[i, :, :], subjects1 = compute_p_val(subjects, kind, train, frequency, check_num_sens)
+    comp1_mean = COMP1_MEAN.mean(axis=0)
+    comp2_mean = COMP2_MEAN.mean(axis=0)
+    contr = CONTR.mean(axis=0)
+    p_val = P_VAL.mean(axis=0)
+    binary = BINARY.mean(axis=0)
+else:
 #load and compute statistics
-comp1_mean, comp2_mean, contr, temp1, temp2, p_val, binary, subjects1 = compute_p_val(subjects, kind, train, frequency, check_num_sens)
+    comp1_mean, comp2_mean, contr, temp1, temp2, p_val, binary, subjects1 = compute_p_val(subjects, kind, train, frequency, check_num_sens)
 
 
 if False:
@@ -77,7 +92,7 @@ for ind, planar in enumerate(planars):
     add_str_html(html_name, '<!DOCTYPE html>')
     add_str_html(html_name, '<html>')
     add_str_html(html_name, '<body>')
-    add_str_html(html_name, '<p style="font-size:32px;"><b> %s, averaged %s, trained, %d subjects <span style="color:green;"> 0.01 < p <= 0.05 </span> <span style="color:Magenta;">p <= 0.01 </span> </b></p>' % (planar, frequency, len(subjects1)))
+    add_str_html(html_name, '<p style="font-size:32px;"><b> %s, averaged %s, trained, %d subjects ORIGINAL (random over subjects) <span style="color:green;"> 0.01 < p <= 0.05 </span> <span style="color:Magenta;">p <= 0.01 </span> </b></p>' % (planar, frequency, len(subjects1)))
     #title = ["Positive Feedback", "Negative Feedback"]
     add_str_html(html_name, '<p style="font-size:32px;"><b> <span style="color: blue;"> %s </span> vs <span style="color: red;"> %s </span> </b></p>' % (legend[0], legend[1]))
     #add_str_html(html_name, '<h1 style="font-size:32px;"><b> %s participants </b></h1>' % (contr.shape[0]))
