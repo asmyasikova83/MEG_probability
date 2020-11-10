@@ -28,22 +28,27 @@ plot_spectrogram = False
 spec = ''
 
 #type of analysis
-kind = ['norisk', 'risk'] #'positive', 'negative', 'prerisk', 'risk', 'postrisk'
-legend = ['norisk', 'Risk']
+kind = ['prerisk', 'risk', 'postrisk', 'norisk'] #'positive', 'negative', 'prerisk', 'risk', 'postrisk'
+legend = ['Postrisk', 'Norisk']
 #if trained set ytain = '', in nontrained, set train = '_no_train'
 train = ''
 #settings for visualization
 out_path = '/home/asmyasnikova83/DATA/evoked_ave/'
 sign_sensors = False
 check_num_sens = False
+save_t_stat = True
+random_comp = False
 
 if frequency == 'theta':
     p_mul = 0.5
     p_mul_topo = 0.3
     if kind[0] == 'prerisk':
+        p_mul_topo_contrast = 0.15
+        p_mul_topo_fdr_contrast = 0.15
+    elif kind[0] == 'norisk':
         p_mul_topo_contrast = 0.2
         p_mul_topo_fdr_contrast = 0.2
-    elif kind[0] == 'norisk':
+    elif kind[0] == 'postrisk':
         p_mul_topo_contrast = 0.15
         p_mul_topo_fdr_contrast = 0.15
     else:
@@ -66,12 +71,24 @@ if frequency == 'gamma':
     p_mul_topo_fdr_contrast = 0.05
 '''
 runs = ['1']
-
-subjects = [
-    'P003']
 '''
-#P008 P025 neg negative removed
+subjects = [
+    'P031',
+    'P032',
+    'P033',
+    'P034',
+    'P035',
+    'P036',
+    'P037',
+    'P039',
+    'P040',
+    'P041',
+    'P042',
+    'P043',
+    'P044']
 
+#P008 P025 neg negative removed
+'''
 subjects = [
     'P000',  
     'P002',
@@ -101,5 +118,5 @@ subjects = [
     'P028',
     'P029',
     'P030']
-
+'''
 runs = ['1', '2', '3', '4', '5', '6'] #'1', '2', '3', '4', '5'
