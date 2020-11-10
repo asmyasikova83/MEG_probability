@@ -13,7 +13,7 @@ from config import *
 import pathlib
 
 fpath_raw = '/net/server/data/Archive/prob_learn/vtretyakova/ICA_cleaned/{}/run{}_{}_raw_ica.fif'
-fpath_events = '/home/asmyasnikova83/DATA/mio_out_{0}/{1}_run{2}_events_{3}{4}.txt'
+fpath_events = '/home/asmyasnikova83/DATA/mio_out_{0}/{1}_run{2}_mio_corrected_{3}{4}.txt'
 freq_path = '{0}TFR/{1}/{2}_run{3}{4}_{5}_{6}{7}_int_50ms-tfr.h5'
 data = []
 
