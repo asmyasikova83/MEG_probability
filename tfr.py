@@ -13,15 +13,15 @@ from config import *
 import pathlib
 
 fpath_raw = '/net/server/data/Archive/prob_learn/vtretyakova/ICA_cleaned/{}/run{}_{}_raw_ica.fif'
-fpath_events = '/home/asmyasnikova83/DATA/mio_out_{0}/{1}_run{2}_mio_corrected_{3}{4}.txt'
-freq_path = '{0}TFR/{1}/{2}_run{3}{4}_{5}_{6}{7}_int_50ms-tfr.h5'
+fpath_events = '/home/asmyasnikova83/DATA/mio_out_{0}/{1}_run{2}_mio_corrected_{3}{4}{5}.txt'
+freq_path = '{0}TFR/{1}/{2}_run{3}{4}_{5}_{6}{7}{8}_int_50ms-tfr.h5'
 data = []
 
 
 for i in range(len(kind)):
     for run in runs:
         for subject in subjects:
-            rf = fpath_events.format(kind[i],subject, run, kind[i], train)
+            rf = fpath_events.format(kind[i],subject, run, stimulus, kind[i], train)
             file = pathlib.Path(rf)
             if file.exists() and os.stat(rf).st_size != 0:
                 print('This file is being processed: ', rf)
@@ -56,7 +56,7 @@ for i in range(len(kind)):
                 show_one = False
                 if mode == 'server'and show_one:
                     topomap_one(freq_show)
-                    freq_file = freq_fpath.format(prefix, kind[i], subject, run, spec, frequency, KIND, train)
+                    freq_file = freq_fpath.format(prefix, kind[i], subject, run, spec, frequency, subject, KIND, train)
                     #read tfr data from (freq_file)[0]
                     freq_show = mne.time_frequency.read_tfrs(freq_file)[0]
                     #fix the hack array[5] for changed freq dim

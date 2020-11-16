@@ -5,10 +5,11 @@ import pathlib
 
 fpath_ev = '/home/asmyasnikova83/DATA/'
 fpath_fr= '/home/asmyasnikova83/DATA/TFR/'
-temp1 = mne.Evoked('/home/asmyasnikova83/DATA/P006_run6_evoked-ave.fif')
+temp1 = mne.Evoked(f'{prefix}donor-ave.fif')
+#temp1 = mne.Evoked('/home/asmyasnikova83/DATA/P006_run6_evoked-ave.fif')
 #out_path = '/home/asmyasnikova83/DATA/evoked_ave/'
-fpath_events = fpath_ev + 'mio_out_{0}/{1}_run{2}_mio_corrected_{3}{4}.txt'
-data_path = '{0}TFR/{1}/{2}_run{3}{4}_{5}_{6}{7}_int_50ms-tfr.h5'
+fpath_events = fpath_ev + 'mio_out_{0}/{1}_run{2}_mio_corrected_{3}{4}{5}.txt'
+data_path = '{0}TFR/{1}/{2}_run{3}{4}_{5}_{6}{7}{8}_int_50ms-tfr.h5'
 
 #get rid of runs, leave frequency data for pos and neg feedback for time course plotting 
 for i in range(len(kind)):
@@ -19,11 +20,11 @@ for i in range(len(kind)):
             if run == '6':
                 print('Dis is da last run!')
                 print('run', run)
-                rf = fpath_events.format(kind[i], subject, run, kind[i], train)
+                rf = fpath_events.format(kind[i], subject, run, stimulus, kind[i], train)
                 file = pathlib.Path(rf)
                 if file.exists():
                     print('This file is being processed: ', rf)
-                    freq_file = data_path.format(prefix, kind[i], subject, run, spec, frequency, kind[i], train)
+                    freq_file = data_path.format(prefix, kind[i], subject, run, spec, frequency, stimulus, kind[i], train)
                     freq_data = mne.time_frequency.read_tfrs(freq_file)[0]
                     data.append(freq_data.data)
                     run_counter = run_counter + 1
@@ -42,7 +43,7 @@ for i in range(len(kind)):
                     fq_data = fq_data.mean(axis=0).mean(axis=1)
                     print('shape', fq_data.shape)
                     new_evoked.data = fq_data
-                    out_file = out_path + "{0}_feedback_{1}{2}_{3}{4}-ave.fif".format(subject, spec, kind[i], frequency, train)
+                    out_file = out_path + "{0}_{1}{2}{3}_{4}{5}-ave.fif".format(subject, spec, stimulus,  kind[i], frequency, train)
                     print(out_file)
                     new_evoked.save(out_file)
                     run_counter = 0
@@ -54,11 +55,11 @@ for i in range(len(kind)):
                     continue
             else:
                 print('run', run)
-                rf = fpath_events.format(kind[i], subject, run, kind[i], train)
+                rf = fpath_events.format(kind[i], subject, run, stimulus, kind[i], train)
                 file = pathlib.Path(rf)
                 if file.exists():
                     print('This file is being processed: ', rf)
-                    freq_file = data_path.format(prefix, kind[i], subject, run, spec, frequency, kind[i], train)
+                    freq_file = data_path.format(prefix, kind[i], subject, run, spec, frequency, stimulus, kind[i], train)
                     freq_data = mne.time_frequency.read_tfrs(freq_file)[0]
                     data.append(freq_data.data)
                     run_counter = run_counter + 1

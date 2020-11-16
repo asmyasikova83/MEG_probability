@@ -22,7 +22,10 @@ def retrieve_events_for_baseline(raw_data, fpath_events, kind, picks):
     if kind == 'negative' or kind ==  'positive':
         p = 3
     if kind == 'prerisk' or kind == 'risk' or kind == 'postrisk' or kind == 'norisk':
-        p = 2
+        if stim:
+            p = 1
+        else:
+            p = 2
     print('p', p)
     print('events cleaned',  events_cleaned[0])
     print('ev cl shape', events_cleaned.shape)
@@ -213,7 +216,7 @@ def create_mne_epochs_evoked(kind, subject, run, CORRECTED_DATA, events_of_inter
             epochs = mne.EpochsArray(CORRECTED_DATA, info=reduced_info, events=events_of_interest, tmin=period_start, baseline=None, event_id= [46])
         else:
             epochs = mne.EpochsArray(CORRECTED_DATA, info=reduced_info, events=events_of_interest, tmin=period_start, baseline=None, event_id= [40, 41, 46, 47])
-    if kind == 'risk':
+    if stim == False and kind == 'risk':
         if subject == 'P003' and run == '1' or subject == 'P009' and run == '1' or subject == 'P021' and run == '1' or subject == 'P008' and run == '2':
             epochs = mne.EpochsArray(CORRECTED_DATA, info=reduced_info, events=events_of_interest, tmin=period_start, baseline=None, event_id= [44, 45])
         elif subject == 'P014' and run == '2' or subject == 'P017' and run == '2' or subject == 'P018' and run == '2' or subject == 'P021' and run == '2':
@@ -272,6 +275,8 @@ def create_mne_epochs_evoked(kind, subject, run, CORRECTED_DATA, events_of_inter
              epochs = mne.EpochsArray(CORRECTED_DATA, info=reduced_info, events=events_of_interest, tmin=period_start, baseline=None, event_id= [42, 43, 44])
         else:
             epochs = mne.EpochsArray(CORRECTED_DATA, info=reduced_info, events=events_of_interest, tmin=period_start, baseline=None, event_id= [42, 43, 44, 45])
+    if stim == True and kind == 'risk':
+        epochs = mne.EpochsArray(CORRECTED_DATA, info=reduced_info, events=events_of_interest, tmin=period_start, baseline=None, event_id= [11])
     if kind == 'postrisk':
         if subject == 'P003' and run == '1' or subject == 'P004' and run == '1' or subject == 'P008' and run == '1' or subject == 'P018' and run == '1':
             epochs = mne.EpochsArray(CORRECTED_DATA, info=reduced_info, events=events_of_interest, tmin=period_start, baseline=None, event_id= [40, 41])
@@ -341,7 +346,7 @@ def create_mne_epochs_evoked(kind, subject, run, CORRECTED_DATA, events_of_inter
             epochs = mne.EpochsArray(CORRECTED_DATA, info=reduced_info, events=events_of_interest, tmin=period_start, baseline=None, event_id= [40, 41])
         else:
             epochs = mne.EpochsArray(CORRECTED_DATA, info=reduced_info, events=events_of_interest, tmin=period_start, baseline=None, event_id= [40, 41, 46, 47])
-    if kind == 'norisk':
+    if stim == False and kind == 'norisk':
         if subject == 'P003' and run == '1' or subject == 'P032' and run == '1':
             epochs = mne.EpochsArray(CORRECTED_DATA, info=reduced_info, events=events_of_interest, tmin=period_start, baseline=None, event_id= [40, 41, 47])
         elif subject == 'P006' and run == '1' or subject == 'P040' and run == '3':
@@ -358,6 +363,8 @@ def create_mne_epochs_evoked(kind, subject, run, CORRECTED_DATA, events_of_inter
             epochs = mne.EpochsArray(CORRECTED_DATA, info=reduced_info, events=events_of_interest, tmin=period_start, baseline=None, event_id= [40, 41, 46])
         else:
             epochs = mne.EpochsArray(CORRECTED_DATA, info=reduced_info, events=events_of_interest, tmin=period_start, baseline=None, event_id= [40, 41, 46, 47])
+    if stim == True and kind == 'norisk':
+        epochs = mne.EpochsArray(CORRECTED_DATA, info=reduced_info, events=events_of_interest, tmin=period_start, baseline=None, event_id= [11])
     # downsample to 250 Hz
     epochs_of_interest = epochs.copy().resample(250, npad='auto')
     evoked = epochs_of_interest.average()
@@ -468,11 +475,11 @@ def correct_baseline_power(epochs_of_interest, b_line, kind, b_line_manually, su
             freq_show.data = np.log10(freq_show.data/b_line[:, np.newaxis])
     else:
         freq_show.apply_baseline(baseline=(-0.5,-0.1), mode="logratio")
-    tfr_path = '{0}TFR/{1}/{2}_run{3}{4}_{5}_{6}{7}_int_50ms-tfr.h5'
+    tfr_path = '{0}TFR/{1}/{2}_run{3}{4}_{5}_{6}{7}{8}_int_50ms-tfr.h5'
     tfr_path_dir = '{0}TFR/{1}/'
     os.makedirs(tfr_path_dir.format(prefix, kind), exist_ok = True)
-    freq_show.save(tfr_path.format(prefix, kind, subject, run, spec, frequency, kind, train), overwrite=True)
-    print(tfr_path.format(prefix, kind, subject, run, spec, frequency, kind, train))
+    freq_show.save(tfr_path.format(prefix, kind, subject, run, spec, frequency, stimulus, kind, train), overwrite=True)
+    print(tfr_path.format(prefix, kind, subject, run, spec, frequency, stimulus, kind, train))
     return freq_show
 
 def topomap_one(freq_show, reduced_info, events_of_interest, raw):

@@ -26,14 +26,14 @@ def no_mio_events(epochs_ar, thres):
 
 fpath_raw = '/net/server/data/Archive/prob_learn/vtretyakova/ICA_cleaned/{}/run{}_{}_raw_ica.fif'
 
-def calculate_beta(subj, run, kind, train, fpath_raw, fpath_events, fpath_mio_out):
+def calculate_beta(subj, run, stimulus, kind, train, fpath_raw, fpath_events, fpath_mio_out):
    # freqs = np.arange(L_freq, H_freq, f_step)
         
     raw_data = mne.io.Raw(fpath_raw.format(subj, run, subj), preload=True)
     raw_data = raw_data.filter(l_freq=70, h_freq=None)
     picks = mne.pick_types(raw_data.info, meg = True)
     events_raw = mne.find_events(raw_data, stim_channel='STI101', output='onset', consecutive='increasing', min_duration=0, shortest_event=1, mask=None, uint_cast=False, mask_type='and', initial_event=False, verbose=None)
-    events = np.loadtxt(fpath_events.format(subj, run, kind, train), dtype=int)
+    events = np.loadtxt(fpath_events.format(subj, run, stimulus, kind, train), dtype=int)
     if events.shape == (3,):
         events = events[np.newaxis, :]
     print(events.shape)
@@ -54,7 +54,7 @@ def calculate_beta(subj, run, kind, train, fpath_raw, fpath_events, fpath_mio_ou
             full_ev.append(events_raw[event_ind].tolist())
             event_ind += 1
 
-        mio_corrected_events_file = open(fpath_mio_out.format(kind,subj, run, kind, train), "w")
+        mio_corrected_events_file = open(fpath_mio_out.format(kind, subj, run, stimulus, kind, train), "w")
         np.savetxt(mio_corrected_events_file, full_ev, fmt="%d")
         mio_corrected_events_file.close()
     else:
@@ -63,21 +63,21 @@ def calculate_beta(subj, run, kind, train, fpath_raw, fpath_events, fpath_mio_ou
     del events_raw
 
 for i in range(len(kind)):
-    fpath_events = '/home/asmyasnikova83/DATA/reinforced/{0}_run{1}_events_{2}{3}.txt'
-    fpath_mio_out = '/home/asmyasnikova83/DATA/mio_out_{0}/{1}_run{2}_mio_corrected_{3}{4}.txt'
+    fpath_events = '/home/asmyasnikova83/DATA/reinforced/{0}_run{1}_events_{2}{3}{4}.txt'
+    fpath_mio_out = '/home/asmyasnikova83/DATA/mio_out_{0}/{1}_run{2}_mio_corrected_{3}{4}{5}.txt'
     fpath_mio_dir = '/home/asmyasnikova83/DATA/mio_out_{}/'
     os.makedirs(fpath_mio_dir.format(kind[i]), exist_ok = True)
 
     for run in runs:
         for subject in subjects:
 
-            rf = fpath_events.format(subject, run, kind[i], train)
+            rf = fpath_events.format(subject, run, stimulus, kind[i], train)
             print(rf)
             file = pathlib.Path(rf)
             print('file', file)
             if file.exists() and os.stat(rf).st_size != 0:
                 print('This file is being processed: ', rf)
-                calculate_beta(subject, run, kind[i], train, fpath_raw, fpath_events, fpath_mio_out)
+                calculate_beta(subject, run, stimulus, kind[i], train, fpath_raw, fpath_events, fpath_mio_out)
             else:
                 print('This file: ', rf, 'does not exit')
                 continue

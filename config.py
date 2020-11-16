@@ -28,10 +28,13 @@ plot_spectrogram = False
 spec = ''
 
 #type of analysis
-kind = ['prerisk', 'risk', 'postrisk', 'norisk'] #'positive', 'negative', 'prerisk', 'risk', 'postrisk'
+kind = ['risk', 'norisk'] #'positive', 'negative', 'prerisk', 'risk', 'postrisk'
 legend = ['Postrisk', 'Norisk']
-#if trained set ytain = '', in nontrained, set train = '_no_train'
+#if trained set train = '', in nontrained, set train = '_no_train'
 train = ''
+#if stimulus data. set 'stimulus_', if response, set ''
+stimulus = 'stimulus_'
+stim = True
 #settings for visualization
 out_path = '/home/asmyasnikova83/DATA/evoked_ave/'
 sign_sensors = False
@@ -69,26 +72,8 @@ if frequency == 'gamma':
     p_mul_topo = 0.15
     p_mul_topo_contrast = 0.05
     p_mul_topo_fdr_contrast = 0.05
-'''
-runs = ['1']
-'''
-subjects = [
-    'P031',
-    'P032',
-    'P033',
-    'P034',
-    'P035',
-    'P036',
-    'P037',
-    'P039',
-    'P040',
-    'P041',
-    'P042',
-    'P043',
-    'P044']
 
 #P008 P025 neg negative removed
-'''
 subjects = [
     'P000',  
     'P002',
@@ -117,6 +102,19 @@ subjects = [
     'P026',
     'P028',
     'P029',
-    'P030']
-'''
-runs = ['1', '2', '3', '4', '5', '6'] #'1', '2', '3', '4', '5'
+    'P030',
+    'P031',
+    'P032',
+    'P033',
+    'P034',
+    'P035',
+    'P036',
+    'P037',
+    'P039',
+    'P040',
+    'P041',
+    'P042',
+    'P043',
+    'P044']
+
+runs = ['1', '2', '3','4', '5', '6'] #'1', '2', '3', '4', '5'
