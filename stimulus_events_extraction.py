@@ -3,8 +3,8 @@ import numpy as np
 from config import *
                                                                                                                                                                                                                    
 fpath = '/net/server/data/Archive/prob_learn/vtretyakova/ICA_cleaned/{}/run{}_{}_raw_ica.fif'
-fpath_events_stimulus_risk = '/home/asmyasnikova83/DATA/reinforced/{}_run{}_events_risk.txt'
-fpath_events_stimulus_norisk = '/home/asmyasnikova83/DATA/reinforced/{}_run{}_events_norisk.txt'
+fpath_events_stimulus_risk = '/home/asmyasnikova83/DATA/reinforced/{}_run{}_events_stimulus_risk.txt'
+fpath_events_stimulus_norisk = '/home/asmyasnikova83/DATA/reinforced/{}_run{}_events_stimulus_norisk.txt'
 #fpath_events_prerisk = '/home/asmyasnikova83/DATA/reinforced/{}_run{}_events_prerisk.txt'
 #fpath_events_postrisk = '/home/asmyasnikova83/DATA/reinforced/{}_run{}_events_postrisk.txt'
 fpath_log = '/home/asmyasnikova83/DATA/reinforced/{}_run{}_log_risk_norisk.txt'
