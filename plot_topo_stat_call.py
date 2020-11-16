@@ -36,7 +36,7 @@ options = {
 os.makedirs(os.path.join(output, f'{legend[0]}_vs_{legend[1]}'), exist_ok=True)        
 
 #donor data file
-temp = mne.Evoked('/home/asmyasnikova83/DATA/donor-ave.fif')
+temp = mne.Evoked(f'{prefix}donor-ave.fif')
 temp.times = np.arange(-2.000, 1.502, 0.004)
 times_to_plot = np.arange(-2.0, 1.5, 0.2)
 

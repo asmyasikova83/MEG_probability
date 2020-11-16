@@ -40,16 +40,16 @@ rewrite = True
 os.makedirs(output, exist_ok=True)
 path = os.getcwd()
 #coordinates and channel names from matlab files - the files are here https://github.com/niherus/MNE_TFR_ToolBox/tree/master/VISUALISATION
-pos = io.loadmat('/home/asmyasnikova83/DATA/pos_store.mat')['pos']
-chan_labels = to_str_ar(io.loadmat('/home/asmyasnikova83/DATA/channel_labels.mat')['chanlabels'])
+pos = io.loadmat(f'{prefix}pos_store.mat')['pos']
+chan_labels = to_str_ar(io.loadmat(f'{prefix}channel_labels.mat')['chanlabels'])
 #P008, P025 removed
 #P000,P012,P026 for trained is empty
-
-if 1:
-    N = 1
+#do permutations
+if random_comp == True:
+    N = 100
     COMP1_MEAN = np.zeros((N, 306, 876))
     COMP2_MEAN = np.zeros((N, 306, 876))
-    CONTR = np.zeros((N, 25, 2, 306, 876))
+    CONTR = np.zeros((N, 41, 2, 306, 876)) #TODO: check len(subjects)
     P_VAL = np.zeros((N, 306, 876))
     BINARY = np.zeros((N, 306, 876))
     for i in range(N):
