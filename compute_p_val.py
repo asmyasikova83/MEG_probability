@@ -15,9 +15,9 @@ def compute_p_val(subjects, kind, train, frequency, check_num_sens):
     i = 0
     subjects1 = []
     for ind, subj in enumerate(subjects):
-        rf1 = out_path + "{0}_feedback_{1}_{2}{3}-ave.fif".format(subj, kind[0], train, frequency)
+        rf1 = out_path + "{0}_{1}{2}{3}_{4}{5}-ave.fif".format(subj, spec, stimulus, kind[0], frequency, train)
         file1 = pathlib.Path(rf1)
-        rf2 = out_path + "{0}_feedback_{1}_{2}{3}-ave.fif".format(subj, kind[1], train, frequency)
+        rf2 = out_path + "{0}_{1}{2}{3}_{4}{5}-ave.fif".format(subj, spec, stimulus, kind[1], frequency, train)
         file2 = pathlib.Path(rf2)
         if file1.exists() and file2.exists():
             print('This subject is being processed: ', subj, ' (', i, ') ( ', ind, ' ) ')
@@ -40,7 +40,7 @@ def compute_p_val(subjects, kind, train, frequency, check_num_sens):
     rsubjects1 = random.sample(subjects1, k = len(subjects1))
     print('rsubjects1', rsubjects1)
     for ind, subj in enumerate(rsubjects1):
-        rf = out_path + "{0}_feedback_{1}_{2}{3}-ave.fif".format(subj, kind[0], train, frequency)
+        rf = out_path + "{0}_{1}{2}{3}_{4}{5}-ave.fif".format(subj, spec, stimulus, kind[0], frequency, train)
         print(rf)
         file = pathlib.Path(rf)
         if file.exists():
@@ -48,7 +48,7 @@ def compute_p_val(subjects, kind, train, frequency, check_num_sens):
             print('This subject is being processed: ', subj, ' (', i, ') ( ', ind, ' ) ')
             #positive FB
             print('kind[0]', kind[0])
-            temp1 = mne.Evoked(out_path + "{0}_feedback_{1}_{2}{3}-ave.fif".format(subj, kind[0], train, frequency))
+            temp1 = mne.Evoked(out_path + "{0}_{1}{2}{3}_{4}{5}-ave.fif".format(subj, spec, stimulus, kind[0], frequency, train))
             temp1 = temp1.pick_types("grad")
             print('data shape', temp1.data.shape)
             #planars
@@ -61,7 +61,7 @@ def compute_p_val(subjects, kind, train, frequency, check_num_sens):
                 contr[i, 0, 204:, :] = temp1.data[::2] + temp1.data[1::2]
             #negative FB
             print('kind[1]', kind[1])
-            temp2 = mne.Evoked( out_path + "{0}_feedback_{1}_{2}{3}-ave.fif".format(subj, kind[1], train, frequency))
+            temp2 = mne.Evoked( out_path + "{0}_{1}{2}{3}_{4}{5}-ave.fif".format(subj, spec, stimulus, kind[1], frequency, train))
             temp2 = temp2.pick_types("grad")
             if random_comp:
                 contr[i, int(random_class_two[i]), :204, :] = temp2.data

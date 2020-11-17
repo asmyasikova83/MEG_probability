@@ -28,35 +28,35 @@ plot_spectrogram = False
 spec = ''
 
 #type of analysis
-kind = ['risk', 'norisk'] #'positive', 'negative', 'prerisk', 'risk', 'postrisk'
-legend = ['Postrisk', 'Norisk']
+kind = ['norisk', 'risk'] #'positive', 'negative', 'prerisk', 'risk', 'postrisk'
+legend = ['Norisk', 'Risk']
 #if trained set train = '', in nontrained, set train = '_no_train'
 train = ''
 #if stimulus data. set 'stimulus_', if response, set ''
-stimulus = 'stimulus_'
-stim = True
+stimulus = ''
+stim = False
 #settings for visualization
 out_path = '/home/asmyasnikova83/DATA/evoked_ave/'
 sign_sensors = False
 check_num_sens = False
-save_t_stat = True
+save_t_stat = False
 random_comp = False
 
 if frequency == 'theta':
-    p_mul = 0.5
+    p_mul = 0.6
     p_mul_topo = 0.3
     if kind[0] == 'prerisk':
         p_mul_topo_contrast = 0.15
         p_mul_topo_fdr_contrast = 0.15
     elif kind[0] == 'norisk':
-        p_mul_topo_contrast = 0.2
-        p_mul_topo_fdr_contrast = 0.2
+        p_mul_topo_contrast = 0.1
+        p_mul_topo_fdr_contrast = 0.1
     elif kind[0] == 'postrisk':
         p_mul_topo_contrast = 0.15
         p_mul_topo_fdr_contrast = 0.15
     else:
-        p_mul_topo_contrast = 0.1
-        p_mul_topo_fdr_contrast = 0.1
+        p_mul_topo_contrast = 0.2
+        p_mul_topo_fdr_contrast = 0.2
 if frequency == 'alpha':
     p_mul = 1.0
     p_mul_topo = 0.6

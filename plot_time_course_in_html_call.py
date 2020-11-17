@@ -92,7 +92,7 @@ for ind, planar in enumerate(planars):
     add_str_html(html_name, '<!DOCTYPE html>')
     add_str_html(html_name, '<html>')
     add_str_html(html_name, '<body>')
-    add_str_html(html_name, '<p style="font-size:32px;"><b> %s, averaged %s, trained, %d subjects ORIGINAL (random over subjects) <span style="color:green;"> 0.01 < p <= 0.05 </span> <span style="color:Magenta;">p <= 0.01 </span> </b></p>' % (planar, frequency, len(subjects1)))
+    add_str_html(html_name, '<p style="font-size:32px;"><b> %s, averaged %s, %s, trained, %d subjects <span style="color:green;"> 0.01 < p <= 0.05 </span> <span style="color:Magenta;">p <= 0.01 </span> </b></p>' % (planar, frequency, stimulus, len(subjects1)))
     #title = ["Positive Feedback", "Negative Feedback"]
     add_str_html(html_name, '<p style="font-size:32px;"><b> <span style="color: blue;"> %s </span> vs <span style="color: red;"> %s </span> </b></p>' % (legend[0], legend[1]))
     #add_str_html(html_name, '<h1 style="font-size:32px;"><b> %s participants </b></h1>' % (contr.shape[0]))
