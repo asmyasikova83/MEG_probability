@@ -33,8 +33,8 @@ legend = ['Norisk', 'Postrisk']
 #if trained set train = '', in nontrained, set train = '_no_train'
 train = ''
 #if stimulus data. set 'stimulus_', if response, set ''. If stimulus, don't forget to set stim at True!!
-stimulus = 'stimulus_'
-stim = True
+stimulus = ''
+stim = False
 #settings for visualization
 out_path = '/home/asmyasnikova83/DATA/evoked_ave/'
 sign_sensors = False
