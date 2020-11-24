@@ -28,13 +28,13 @@ plot_spectrogram = False
 spec = ''
 
 #type of analysis
-kind = ['norisk', 'risk'] #'positive', 'negative', 'prerisk', 'risk', 'postrisk'
-legend = ['Norisk', 'Risk']
+kind = ['norisk', 'postrisk'] #'positive', 'negative', 'prerisk', 'risk', 'postrisk'
+legend = ['Norisk', 'Postrisk']
 #if trained set train = '', in nontrained, set train = '_no_train'
 train = ''
-#if stimulus data. set 'stimulus_', if response, set ''
-stimulus = ''
-stim = False
+#if stimulus data. set 'stimulus_', if response, set ''. If stimulus, don't forget to set stim at True!!
+stimulus = 'stimulus_'
+stim = True
 #settings for visualization
 out_path = '/home/asmyasnikova83/DATA/evoked_ave/'
 sign_sensors = False

@@ -5,6 +5,8 @@ from config import *
 fpath = '/net/server/data/Archive/prob_learn/vtretyakova/ICA_cleaned/{}/run{}_{}_raw_ica.fif'
 fpath_events_stimulus_risk = '/home/asmyasnikova83/DATA/reinforced/{}_run{}_events_stimulus_risk.txt'
 fpath_events_stimulus_norisk = '/home/asmyasnikova83/DATA/reinforced/{}_run{}_events_stimulus_norisk.txt'
+fpath_events_stimulus_prerisk = '/home/asmyasnikova83/DATA/reinforced/{}_run{}_events_stimulus_prerisk.txt'
+fpath_events_stimulus_postrisk = '/home/asmyasnikova83/DATA/reinforced/{}_run{}_events_stimulus_postrisk.txt'
 #fpath_events_prerisk = '/home/asmyasnikova83/DATA/reinforced/{}_run{}_events_prerisk.txt'
 #fpath_events_postrisk = '/home/asmyasnikova83/DATA/reinforced/{}_run{}_events_postrisk.txt'
 fpath_log = '/home/asmyasnikova83/DATA/reinforced/{}_run{}_log_risk_norisk.txt'
@@ -20,6 +22,8 @@ for run in runs:
         log = []
         stimulus_risk = []
         stimulus_norisk = []
+        stimulus_prerisk = []
+        stimulus_postrisk = []
         correct_count = 0
         correct_counter = 0
         trained = False
@@ -96,7 +100,8 @@ for run in runs:
                         print('prerisk: 2d step')
                         if events[i + 7][2] == 42 or events[i + 7][2] == 43 or events[i + 7][2] == 44 or events[i + 7][2] == 45:
                             print('prerisk: 3d step')
-                            #prerisk.append(events[i + 3])
+                            if events[i + 2][2] == 11:
+                                stimulus_prerisk.append(events[i + 2])
                             #log_risk_norisk.append('prerisk')
 
             if trained and events[i - 1][2] == 42 or trained and events[i - 1][2] == 43 or trained and events[i - 1][2] == 44 or trained and events[i - 1][2] == 45:
@@ -114,7 +119,8 @@ for run in runs:
                         print('postrisk: 2d step')
                         if events[i + 7][2] == 40 or events[i + 7][2] == 41 or events[i + 7][2] == 46 or events[i+7][2] == 47:
                             print('postrisk: 3d step')
-                            #postrisk.append(events[i + 3])
+                            if events[i + 2][2] == 11:
+                                stimulus_postrisk.append(events[i + 2])
                             #log_risk_norisk.append('postrisk')
  
         if len(res) != 0:
@@ -123,11 +129,17 @@ for run in runs:
             if answer_count > 0.66:
                 events_stimulus_risk  = open(fpath_events_stimulus_risk.format(subject, run), "w")
                 events_stimulus_norisk  = open(fpath_events_stimulus_norisk.format(subject, run), "w")
-                print('events stimulus risk', stimulus_risk)
+                events_stimulus_prerisk  = open(fpath_events_stimulus_prerisk.format(subject, run), "w")
+                events_stimulus_postrisk  = open(fpath_events_stimulus_postrisk.format(subject, run), "w")
+                print('events stimulus prerisk', stimulus_prerisk)
                 np.savetxt(events_stimulus_risk, stimulus_risk, fmt = "%d")
                 np.savetxt(events_stimulus_norisk, stimulus_norisk, fmt = "%d")
+                np.savetxt(events_stimulus_prerisk, stimulus_prerisk, fmt = "%d")
+                np.savetxt(events_stimulus_postrisk, stimulus_postrisk, fmt = "%d")
                 events_stimulus_norisk.close()
                 events_stimulus_risk.close()
+                events_stimulus_prerisk.close()
+                events_stimulus_postrisk.close()
                 print('Saved!')
         else:
             print('Did not find trained!')

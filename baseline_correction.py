@@ -149,7 +149,7 @@ def create_mne_epochs_evoked(kind, subject, run, CORRECTED_DATA, events_of_inter
             epochs = mne.EpochsArray(CORRECTED_DATA, info=reduced_info, events=events_of_interest, tmin=period_start, baseline=None, event_id= [53])
         else:
             epochs = mne.EpochsArray(CORRECTED_DATA, info=reduced_info, events=events_of_interest, tmin=period_start, baseline=None, event_id= [52, 53])
-    if kind == 'prerisk':
+    if stim == False and kind == 'prerisk':
         if subject == 'P003' and run == '1' or subject == 'P004' and run == '1' or subject == 'P029' and run == '4' or subject == 'P017' and run == '6':
             epochs = mne.EpochsArray(CORRECTED_DATA, info=reduced_info, events=events_of_interest, tmin=period_start, baseline=None, event_id= [40, 41, 46])
         elif subject == 'P005'and run == '1' or subject == 'P003' and run == '2' or subject == 'P003' and run == '3' or subject == 'P016' and run == '3':
@@ -275,9 +275,7 @@ def create_mne_epochs_evoked(kind, subject, run, CORRECTED_DATA, events_of_inter
              epochs = mne.EpochsArray(CORRECTED_DATA, info=reduced_info, events=events_of_interest, tmin=period_start, baseline=None, event_id= [42, 43, 44])
         else:
             epochs = mne.EpochsArray(CORRECTED_DATA, info=reduced_info, events=events_of_interest, tmin=period_start, baseline=None, event_id= [42, 43, 44, 45])
-    if stim == True and kind == 'risk':
-        epochs = mne.EpochsArray(CORRECTED_DATA, info=reduced_info, events=events_of_interest, tmin=period_start, baseline=None, event_id= [11])
-    if kind == 'postrisk':
+    if stim == False and kind == 'postrisk':
         if subject == 'P003' and run == '1' or subject == 'P004' and run == '1' or subject == 'P008' and run == '1' or subject == 'P018' and run == '1':
             epochs = mne.EpochsArray(CORRECTED_DATA, info=reduced_info, events=events_of_interest, tmin=period_start, baseline=None, event_id= [40, 41])
         elif subject == 'P005' and run == '1' or subject == 'P017' and run == '2' or subject == 'P014' and run == '3' or subject == 'P005' and run == '6':
@@ -363,7 +361,7 @@ def create_mne_epochs_evoked(kind, subject, run, CORRECTED_DATA, events_of_inter
             epochs = mne.EpochsArray(CORRECTED_DATA, info=reduced_info, events=events_of_interest, tmin=period_start, baseline=None, event_id= [40, 41, 46])
         else:
             epochs = mne.EpochsArray(CORRECTED_DATA, info=reduced_info, events=events_of_interest, tmin=period_start, baseline=None, event_id= [40, 41, 46, 47])
-    if stim == True and kind == 'norisk':
+    if stim == True:
         epochs = mne.EpochsArray(CORRECTED_DATA, info=reduced_info, events=events_of_interest, tmin=period_start, baseline=None, event_id= [11])
     # downsample to 250 Hz
     epochs_of_interest = epochs.copy().resample(250, npad='auto')
