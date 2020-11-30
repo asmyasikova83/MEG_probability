@@ -21,7 +21,7 @@ def retrieve_events_for_baseline(raw_data, fpath_events, kind, picks):
     print('kind', kind)
     if kind == 'negative' or kind ==  'positive':
         p = 3
-    if kind == 'prerisk' or kind == 'risk' or kind == 'postrisk' or kind == 'norisk':
+    if kind == 'prerisk' or kind == 'risk' or kind == 'postrisk' or kind == 'norisk' or kind == 'norisk_fb_negative' or kind == 'norisk_fb_positive' or kind == 'risk_fb_negative' or kind == 'risk_fb_positive':
         if stim:
             p = 1
         else:
@@ -361,10 +361,49 @@ def create_mne_epochs_evoked(kind, subject, run, CORRECTED_DATA, events_of_inter
             epochs = mne.EpochsArray(CORRECTED_DATA, info=reduced_info, events=events_of_interest, tmin=period_start, baseline=None, event_id= [40, 41, 46])
         else:
             epochs = mne.EpochsArray(CORRECTED_DATA, info=reduced_info, events=events_of_interest, tmin=period_start, baseline=None, event_id= [40, 41, 46, 47])
+    if stim == False and kind == 'norisk_fb_positive':
+        if subject == 'P040' and run == '3':
+            epochs = mne.EpochsArray(CORRECTED_DATA, info=reduced_info, events=events_of_interest, tmin=period_start, baseline=None, event_id= [40])
+        else:
+            epochs = mne.EpochsArray(CORRECTED_DATA, info=reduced_info, events=events_of_interest, tmin=period_start, baseline=None, event_id= [40, 41])
+    if stim == False and kind == 'norisk_fb_negative':
+        if subject == 'P003' and run == '1' or subject == 'P018' and run == '1' or subject == 'P042' and run == '1':
+            epochs = mne.EpochsArray(CORRECTED_DATA, info=reduced_info, events=events_of_interest, tmin=period_start, baseline=None, event_id= [47])
+        elif subject == 'P019' and run == '3' or subject == 'P021' and run == '3' or subject == 'P006' and run == '4':
+            epochs = mne.EpochsArray(CORRECTED_DATA, info=reduced_info, events=events_of_interest, tmin=period_start, baseline=None, event_id= [46])
+        elif subject == 'P017' and run == '4' or subject == 'P043' and run == '4' or subject == 'P006' and run == '6':
+            epochs = mne.EpochsArray(CORRECTED_DATA, info=reduced_info, events=events_of_interest, tmin=period_start, baseline=None, event_id= [46])
+        elif subject == 'P017' and run == '4' or subject == 'P017' and run == '6' or subject == 'P022' and run == '6':
+            epochs = mne.EpochsArray(CORRECTED_DATA, info=reduced_info, events=events_of_interest, tmin=period_start, baseline=None, event_id= [46])
+        elif subject == 'P005' and run == '6':
+            epochs = mne.EpochsArray(CORRECTED_DATA, info=reduced_info, events=events_of_interest, tmin=period_start, baseline=None, event_id= [46, 47])
+        else:
+            epochs = mne.EpochsArray(CORRECTED_DATA, info=reduced_info, events=events_of_interest, tmin=period_start, baseline=None, event_id= [46, 47])
+    if stim == False and kind == 'risk_fb_positive':
+        if subject == 'P008' and run == '1' or subject == 'P011' and run == '3' or subject == 'P023' and run == '3' or subject == 'P030' and run == '3':
+           epochs = mne.EpochsArray(CORRECTED_DATA, info=reduced_info, events=events_of_interest, tmin=period_start, baseline=None, event_id= [43])
+        elif subject == 'P014' and run == '6':
+           epochs = mne.EpochsArray(CORRECTED_DATA, info=reduced_info, events=events_of_interest, tmin=period_start, baseline=None, event_id= [42])
+        else:
+           epochs = mne.EpochsArray(CORRECTED_DATA, info=reduced_info, events=events_of_interest, tmin=period_start, baseline=None, event_id= [42, 43])
+    if stim == False and kind == 'risk_fb_negative':
+        if subject == 'P003' and run == '1':
+            epochs = mne.EpochsArray(CORRECTED_DATA, info=reduced_info, events=events_of_interest, tmin=period_start, baseline=None, event_id= [44, 45])
+        elif subject == 'P016' and run == '1' or subject == 'P024' and run == '1' or subject == 'P029' and run == '1' or subject == 'P039' and run == '4':
+            epochs = mne.EpochsArray(CORRECTED_DATA, info=reduced_info, events=events_of_interest, tmin=period_start, baseline=None, event_id= [44])
+        elif subject == 'P011' and run == '3' or subject == 'P018' and run == '4' or subject == 'P020' and run == '4' or subject == 'P034' and run == '4':
+            epochs = mne.EpochsArray(CORRECTED_DATA, info=reduced_info, events=events_of_interest, tmin=period_start, baseline=None, event_id= [44])
+        elif subject == 'P030' and run == '2' or subject == 'P036' and run == '2' or subject == 'P040' and run == '3' or subject == 'P011' and run == '4':
+            epochs = mne.EpochsArray(CORRECTED_DATA, info=reduced_info, events=events_of_interest, tmin=period_start, baseline=None, event_id= [45])
+        elif subject == 'P021' and run == '4' or subject == 'P006' and run == '6' or subject == 'P028' and run == '6':
+            epochs = mne.EpochsArray(CORRECTED_DATA, info=reduced_info, events=events_of_interest, tmin=period_start, baseline=None, event_id= [45])
+        else:
+            epochs = mne.EpochsArray(CORRECTED_DATA, info=reduced_info, events=events_of_interest, tmin=period_start, baseline=None, event_id= [44, 45])
     if stim == True:
         epochs = mne.EpochsArray(CORRECTED_DATA, info=reduced_info, events=events_of_interest, tmin=period_start, baseline=None, event_id= [11])
     # downsample to 250 Hz
     epochs_of_interest = epochs.copy().resample(250, npad='auto')
+
     evoked = epochs_of_interest.average()
     print('ep of interest', epochs_of_interest)
 
@@ -442,6 +481,9 @@ def correct_baseline_substraction(BASELINE, events_of_interest, raw_data, picks)
 def correct_baseline_power(epochs_of_interest, b_line, kind, b_line_manually, subject, run, plot_spectrogram):
     # baseline power correction of TFR data after baseline I substraction from the signal
     #for theta n_cycles = 2
+    #average over epochs to eliminate inconsistency in the number of epochs over conditions (i.e., risk_vs_norisk)
+    #epochs_of_interest = epochs_of_interest.average(method='mean')
+    #print('averaging epochs of interest', epochs_of_interest)
     freq_show = mne.time_frequency.tfr_multitaper(epochs_of_interest, freqs = freqs, n_cycles =  freqs//2, use_fft = False, return_itc = False)
     #remove artifacts
     freq_show = freq_show.crop(tmin=period_start+0.350, tmax=period_end-0.350, include_tmax=True)
@@ -473,8 +515,9 @@ def correct_baseline_power(epochs_of_interest, b_line, kind, b_line_manually, su
             freq_show.data = np.log10(freq_show.data/b_line[:, np.newaxis])
     else:
         freq_show.apply_baseline(baseline=(-0.5,-0.1), mode="logratio")
-    tfr_path = '{0}TFR/{1}/{2}_run{3}{4}_{5}_{6}{7}{8}_int_50ms-tfr.h5'
-    tfr_path_dir = '{0}TFR/{1}/'
+    #avrage the trials
+    tfr_path = '{0}TFR_av/{1}/{2}_run{3}{4}_{5}_{6}{7}{8}_int_50ms-tfr.h5'
+    tfr_path_dir = '{0}TFR_av/{1}/'
     os.makedirs(tfr_path_dir.format(prefix, kind), exist_ok = True)
     freq_show.save(tfr_path.format(prefix, kind, subject, run, spec, frequency, stimulus, kind, train), overwrite=True)
     print(tfr_path.format(prefix, kind, subject, run, spec, frequency, stimulus, kind, train))
