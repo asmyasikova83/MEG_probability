@@ -10,10 +10,15 @@ freqs = np.arange(L_freq, H_freq+1, f_step)
 frequency = 'theta'
 
 mode = 'server'
-prefix = '/net/server/data/Archive/prob_learn/asmyasnikova83/'
+prefix = '/home/asmyasnikova83/DATA/'
+#prefix = '/net/server/data/Archive/prob_learn/asmyasnikova83/'
 
-period_start = -2.350 #epoch start
-period_end = 1.850 #epoch end
+period_start = -1.750 #epoch start
+period_end = 2.350 #epoch end
+#settings for topomap plotting
+time = np.arange(-1.400, 2.002, 0.004)
+#temp.times = np.arange(-1.400, 2.002, 0.004)
+times_to_plot = np.arange(-1.4, 2.0, 0.2)
 
 # time interval before the appearance of the fixation cross
 baseline_interval_start_power = -0.350
@@ -21,6 +26,8 @@ baseline_interval_end_power = -0.50
 
 baseline_interval_start_sub = -350
 baseline_interval_end_sub = -50
+baseline = 'baseline_over_fix_cross'
+
 #do not use built-in baseline correction
 b_line_manually = True
 #plot_spectrogram param, if plot_spectrogram = True, spec = '_spec'
@@ -28,8 +35,8 @@ plot_spectrogram = False
 spec = ''
 
 #type of analysis
-kind = ['norisk', 'postrisk'] #'positive', 'negative', 'prerisk', 'risk', 'postrisk'
-legend = ['Norisk', 'Postrisk']
+kind = [ 'norisk','risk'] #'positive', 'negative', 'prerisk', 'risk', 'postrisk', 'norisk_fb_positive','norisk_fb_negative'
+legend = ['Norisk','Risk']
 #if trained set train = '', in nontrained, set train = '_no_train'
 train = ''
 #if stimulus data. set 'stimulus_', if response, set ''. If stimulus, don't forget to set stim at True!!
@@ -54,6 +61,9 @@ if frequency == 'theta':
     elif kind[0] == 'postrisk':
         p_mul_topo_contrast = 0.15
         p_mul_topo_fdr_contrast = 0.15
+    elif kind[0] == 'norisk_fb_positive':
+        p_mul_topo_contrast = 0.1
+        p_mul_topo_fdr_contrast = 0.1
     else:
         p_mul_topo_contrast = 0.2
         p_mul_topo_fdr_contrast = 0.2
@@ -74,6 +84,9 @@ if frequency == 'gamma':
     p_mul_topo_fdr_contrast = 0.05
 
 #P008 P025 neg negative removed
+'''
+subjects = ['P011']
+'''
 subjects = [
     'P000',  
     'P002',
@@ -98,7 +111,6 @@ subjects = [
     'P022',
     'P023',
     'P024',
-    'P025',
     'P026',
     'P028',
     'P029',
@@ -117,4 +129,4 @@ subjects = [
     'P043',
     'P044']
 
-runs = ['1', '2', '3','4', '5', '6'] #'1', '2', '3', '4', '5'
+runs  = ['1', '2', '3', '4', '5', '6'] #'1', '2', '3', '4', '5'

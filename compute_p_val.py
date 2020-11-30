@@ -25,7 +25,7 @@ def compute_p_val(subjects, kind, train, frequency, check_num_sens):
             i = i + 1
     print('i: ', i)
     #a container for tapers in neg and pos reinforcement, i - ov
-    contr = np.zeros((i, 2, 306, 876))
+    contr = np.zeros((i, 2, 306, int(time.shape[0])))
     if random_comp:
        length = len(subjects1)
        random_class_one = np.zeros(length)
