@@ -4,7 +4,7 @@ import pathlib
 
 
 fpath_ev = '/home/asmyasnikova83/DATA/'
-fpath_fr= '/home/asmyasnikova83/DATA/TFR/'
+fpath_fr= '/home/asmyasnikova83/DATA/TFR_av/'
 temp1 = mne.Evoked(f'{prefix}donor-ave.fif')
 #temp1 = mne.Evoked('/home/asmyasnikova83/DATA/P006_run6_evoked-ave.fif')
 #out_path = '/home/asmyasnikova83/DATA/evoked_ave/'

@@ -403,7 +403,6 @@ def create_mne_epochs_evoked(kind, subject, run, CORRECTED_DATA, events_of_inter
         epochs = mne.EpochsArray(CORRECTED_DATA, info=reduced_info, events=events_of_interest, tmin=period_start, baseline=None, event_id= [11])
     # downsample to 250 Hz
     epochs_of_interest = epochs.copy().resample(250, npad='auto')
-
     evoked = epochs_of_interest.average()
     print('ep of interest', epochs_of_interest)
 
@@ -420,7 +419,7 @@ def create_mne_epochs_evoked(kind, subject, run, CORRECTED_DATA, events_of_inter
         evoked.plot_topomap(ch_type='mag', title='mag (original)', time_unit='s')
         plt.show()
         exit()
-    return epochs_of_interest, reduced_info
+    return epochs_of_interest, evoked
 
 def plot_epochs_with_without_BASELINE(events_of_interest, epochs_of_interest_w_BASELINE, raw_data, picks):
     epochs_of_interest_out_BASELINE = mne.Epochs(raw_data, events_of_interest, event_id = None, tmin = period_start,
