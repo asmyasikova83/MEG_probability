@@ -13,8 +13,8 @@ mode = 'server'
 prefix = '/home/asmyasnikova83/DATA/'
 #prefix = '/net/server/data/Archive/prob_learn/asmyasnikova83/'
 
-period_start = -1.750 #epoch start
-period_end = 2.350 #epoch end
+period_start = -1.750 #epoch start. for GA period_start = -1.400, for tfr period_start = -1.750
+period_end = 2.350 #epoch end for GA period_end = 2.000, for tfr period_end = 2.350
 #settings for topomap plotting
 time = np.arange(-1.400, 2.002, 0.004)
 #temp.times = np.arange(-1.400, 2.002, 0.004)
@@ -32,16 +32,19 @@ baseline = 'baseline_over_fix_cross'
 b_line_manually = True
 #plot_spectrogram param, if plot_spectrogram = True, spec = '_spec'
 plot_spectrogram = False
+#grand average plotting
+topomap = True
+butterfly = False
 spec = ''
 
 #type of analysis
-kind = [ 'norisk','risk'] #'positive', 'negative', 'prerisk', 'risk', 'postrisk', 'norisk_fb_positive','norisk_fb_negative'
-legend = ['Norisk','Risk']
+kind =['norisk', 'risk'] #'positive', 'negative', 'prerisk', 'risk', 'postrisk', 'norisk_fb_positive','norisk_fb_negative'
+legend = ['Norisk', 'Risk']
 #if trained set train = '', in nontrained, set train = '_no_train'
 train = ''
 #if stimulus data. set 'stimulus_', if response, set ''. If stimulus, don't forget to set stim at True!!
-stimulus = ''
-stim = False
+stimulus = 'stimulus_'
+stim  = True
 #settings for visualization
 out_path = '/home/asmyasnikova83/DATA/evoked_ave/'
 sign_sensors = False
@@ -83,7 +86,7 @@ if frequency == 'gamma':
     p_mul_topo_contrast = 0.05
     p_mul_topo_fdr_contrast = 0.05
 
-#P008 P025 neg negative removed
+#P008 P025 neg negative removed'
 '''
 subjects = ['P011']
 '''
@@ -129,4 +132,4 @@ subjects = [
     'P043',
     'P044']
 
-runs  = ['1', '2', '3', '4', '5', '6'] #'1', '2', '3', '4', '5'
+runs  = ['1','2','3', '4', '5', '6'] #'1', '2', '3', '4', '5'
