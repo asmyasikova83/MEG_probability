@@ -13,10 +13,10 @@ mode = 'server'
 prefix = '/home/asmyasnikova83/DATA/'
 #prefix = '/net/server/data/Archive/prob_learn/asmyasnikova83/'
 
-period_start = -1.750 #epoch start. for GA period_start = -1.400, for tfr period_start = -1.750
-period_end = 2.350 #epoch end for GA period_end = 2.000, for tfr period_end = 2.350
+period_start = -1.400 #epoch start. for GA period_start = -1.400, for tfr period_start = -1.750
+period_end = 2.000 #epoch end for GA period_end = 2.000, for tfr period_end = 2.350
 #settings for topomap plotting
-time = np.arange(-1.400, 2.002, 0.004)
+time = np.arange(-1.400, 2.000, 0.004) #for tfr 2.002
 #temp.times = np.arange(-1.400, 2.002, 0.004)
 times_to_plot = np.arange(-1.4, 2.0, 0.2)
 
@@ -27,24 +27,26 @@ baseline_interval_end_power = -0.50
 baseline_interval_start_sub = -350
 baseline_interval_end_sub = -50
 baseline = 'baseline_over_fix_cross'
-
+zero_point = 'averaged over reaction' #'averaged over stimulus'
 #do not use built-in baseline correction
 b_line_manually = True
 #plot_spectrogram param, if plot_spectrogram = True, spec = '_spec'
 plot_spectrogram = False
 #grand average plotting
+grand_average = True
+ERF = 'event related fields'
 topomap = True
 butterfly = False
 spec = ''
 
 #type of analysis
-kind =['norisk', 'risk'] #'positive', 'negative', 'prerisk', 'risk', 'postrisk', 'norisk_fb_positive','norisk_fb_negative'
+kind =['norisk','risk'] #'positive', 'negative', 'prerisk', 'risk', 'postrisk', 'norisk_fb_positive','norisk_fb_negative'
 legend = ['Norisk', 'Risk']
 #if trained set train = '', in nontrained, set train = '_no_train'
 train = ''
 #if stimulus data. set 'stimulus_', if response, set ''. If stimulus, don't forget to set stim at True!!
-stimulus = 'stimulus_'
-stim  = True
+stimulus = ''
+stim  = False
 #settings for visualization
 out_path = '/home/asmyasnikova83/DATA/evoked_ave/'
 sign_sensors = False
@@ -53,42 +55,46 @@ save_t_stat = False
 random_comp = False
 
 if frequency == 'theta':
-    p_mul = 0.6
-    p_mul_topo = 0.3
-    if kind[0] == 'prerisk':
+    if grand_average == True:
+        p_mul = 0.000000000003
+        p_mul_topo = 0.0000000000006
+        p_mul_topo_contrast = 0.0000000000005
+        p_mul_topo_fdr_contrast = 0.0000000000005
+    else:
+        p_mul = 0.5
+        p_mul_topo = 0.3
+    if grand_average == False and kind[0] == 'prerisk':
         p_mul_topo_contrast = 0.15
         p_mul_topo_fdr_contrast = 0.15
-    elif kind[0] == 'norisk':
+    elif grand_average == False and kind[0] == 'norisk':
         p_mul_topo_contrast = 0.1
         p_mul_topo_fdr_contrast = 0.1
-    elif kind[0] == 'postrisk':
+    elif grand_average == False and kind[0] == 'postrisk':
         p_mul_topo_contrast = 0.15
         p_mul_topo_fdr_contrast = 0.15
-    elif kind[0] == 'norisk_fb_positive':
+    elif grand_average == False and kind[0] == 'norisk_fb_positive':
         p_mul_topo_contrast = 0.1
         p_mul_topo_fdr_contrast = 0.1
     else:
-        p_mul_topo_contrast = 0.2
-        p_mul_topo_fdr_contrast = 0.2
-if frequency == 'alpha':
+        print('The options in the theta range are over')
+if grand_average == False and frequency == 'alpha':
     p_mul = 1.0
     p_mul_topo = 0.6
     p_mul_topo_contrast= 0.2
     p_mul_topo_fdr_contrast = 0.2
-if frequency == 'beta':
+if grand_average == False and frequency == 'beta':
     p_mul = 1.0
     p_mul_topo = 0.5
     p_mul_topo_contrast = 0.1
     p_mul_topo_fdr_contrast = 0.1
-if frequency == 'gamma':
+if grand_average == False and frequency == 'gamma':
     p_mul = 0.4 #gamma
     p_mul_topo = 0.15
     p_mul_topo_contrast = 0.05
     p_mul_topo_fdr_contrast = 0.05
-
 #P008 P025 neg negative removed'
 '''
-subjects = ['P011']
+subjects = ['P005']
 '''
 subjects = [
     'P000',  

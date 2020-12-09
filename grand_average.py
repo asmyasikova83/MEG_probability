@@ -106,9 +106,9 @@ for i in range(len(kind)):
                     run_counter = run_counter + 1
 
 
-sdata = []
 for subject in subjects:
-    out_file = out_path + folder + "/{0}_{1}{2}{3}_{4}{5}-grand_ave.fif".format(subject, spec, stimulus,  kind[0], frequency, train)
+    sdata = []
+    out_file = out_path + folder + "/{0}_{1}{2}{3}_{4}{5}-grand_ave.fif".format(subject, spec, stimulus, kind[0], frequency, train)
     print(out_file)
     file = pathlib.Path(out_file)
     if file.exists():
@@ -117,7 +117,6 @@ for subject in subjects:
         print(type(evoked))
         print(evoked)
         sdata.append(evoked)
-
 
 print('\n\nGrand_average:')
 grand_averages = mne.grand_average(sdata)
