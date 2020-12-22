@@ -15,7 +15,6 @@ evoked_ave = []
 
 fpath_raw = '/net/server/data/Archive/prob_learn/vtretyakova/ICA_cleaned/{}/run{}_{}_raw_ica.fif'
 fpath_events = '/home/asmyasnikova83/DATA/mio_out_{0}/{1}_run{2}_mio_corrected_{3}{4}{5}.txt'
-freq_path = '{0}TFR_av/{1}/{2}_run{3}{4}_{5}_{6}{7}{8}_int_50ms-tfr.h5'
 temp1 = mne.Evoked(f'{prefix}donor-ave.fif')
 folder = 'GA'
 run_counter = 0
@@ -38,9 +37,9 @@ for i in range(len(kind)):
                     raw_data = raw_data.filter(1., None, fir_design='firwin') #remove slow drifts
                     picks = mne.pick_types(raw_data.info, meg = 'grad')
                     KIND = kind[i]
-                    events_with_cross, events_of_interest = retrieve_events_for_baseline(raw_data, rf, KIND, picks)
+                    events_with_cross, events_of_interest = retrieve_events_for_baseline(raw_data, rf, KIND, subject, run, picks)
                     print('Done with the events!')
-                    BASELINE, b_line = compute_baseline_substraction_and_power(raw_data, events_with_cross, picks)
+                    BASELINE, b_line = compute_baseline_substraction_and_power(raw_data, events_with_cross, events_of_interest, picks)
                     if BASELINE.all== 0:
                         print('Yes, BASELINE is dummy')
                         continue
@@ -91,9 +90,9 @@ for i in range(len(kind)):
                     raw_data = raw_data.filter(1., None, fir_design='firwin') #remove slow drifts
                     picks = mne.pick_types(raw_data.info, meg = 'grad')
                     KIND = kind[i]
-                    events_with_cross, events_of_interest = retrieve_events_for_baseline(raw_data, rf, KIND, picks)
+                    events_with_cross, events_of_interest = retrieve_events_for_baseline(raw_data, rf, KIND, subject, run, picks)
                     print('Done with the events!')
-                    BASELINE, b_line = compute_baseline_substraction_and_power(raw_data, events_with_cross, picks)
+                    BASELINE, b_line = compute_baseline_substraction_and_power(raw_data, events_with_cross, events_of_interest, picks)
                     if BASELINE.all== 0:
                         print('Yes, BASELINE is dummy')
                         continue
@@ -108,6 +107,7 @@ for i in range(len(kind)):
 
 for subject in subjects:
     sdata = []
+    #change kind[0] to kind[1] to get another output.png
     out_file = out_path + folder + "/{0}_{1}{2}{3}_{4}{5}-grand_ave.fif".format(subject, spec, stimulus, kind[0], frequency, train)
     print(out_file)
     file = pathlib.Path(out_file)
