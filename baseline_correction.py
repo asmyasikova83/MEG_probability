@@ -4,11 +4,12 @@ import numpy.matlib
 import matplotlib.pyplot as plt
 from config import *
 from mne.time_frequency import tfr_morlet, psd_multitaper
+from pick_events import *
 
 with open("config.py", "r") as f_in:
     settings = f_in.readlines()
 
-def retrieve_events_for_baseline(raw_data, fpath_events, kind, picks):
+def retrieve_events_for_baseline(raw_data, fpath_events, kind, subject, run, picks):
     events_with_cross = []
     events_of_interest = []
     #takes events with fixation cross followed by the events of interest (positive and negative feedback)
@@ -17,50 +18,101 @@ def retrieve_events_for_baseline(raw_data, fpath_events, kind, picks):
                                  mask=None, uint_cast=False, mask_type='and', initial_event=False, verbose=None)
     print('fpath_events', fpath_events)
     events_cleaned = np.loadtxt(fpath_events, dtype=int)
-    print('events', events_cleaned)
-    print('kind', kind)
     if kind == 'negative' or kind ==  'positive':
         p = 3
     if kind == 'prerisk' or kind == 'risk' or kind == 'postrisk' or kind == 'norisk' or kind == 'norisk_fb_negative' or kind == 'norisk_fb_positive' or kind == 'risk_fb_negative' or kind == 'risk_fb_positive':
         if stim:
             p = 1
-        else:
+        if response:
             p = 2
-    print('p', p)
-    print('events cleaned',  events_cleaned[0])
-    print('ev cl shape', events_cleaned.shape)
     # extract events with fixation cross followed by positive or negative feedback
     for i in range(len(events_raw)):
-        # check the fixation cross
-        if events_raw[i][2] == 1:
-            str_digit1 = str(events_raw[i + 2][2])
-            str_digit2 = str(events_raw[i + 3][2])
-            d1 = [int(d) for d in str_digit1]
-            d2 = [int(d) for d in str_digit2]
+        for j in range(len(events_cleaned)):
+            # check the fixation cross and find the response after the fix cross
+            if events_raw[i][2] == 1:
+                str_digit1 = str(events_raw[i + 2][2])
+                str_digit2 = str(events_raw[i + 3][2])
+                d1 = [int(d) for d in str_digit1]
+                d2 = [int(d) for d in str_digit2]
+                if d1[0] == 4:
+                    factor = 'k'
+                    if factor == 'k' and events_cleaned.shape != (3,) and events_cleaned[j][0] == events_raw[i + p][0]:
+                        assert(events_cleaned[j][2] == events_raw[i + p][2])
+                        if baseline == 'fixation_cross_general':
+                            events_with_cross.append(events_raw[i])
+                        events_of_interest.append(events_cleaned[j])
+                        print('extracting event of interest', events_cleaned[j])
+                    elif factor == 'k' and events_cleaned.shape == (3,) and events_cleaned[j] == events_raw[i + p][0]:
+                        assert(events_cleaned[2] == events_raw[i + p][2])
+                        if baseline == 'fixation_cross_general':
+                            events_with_cross.append(events_raw[i])
+                        events_of_interest.append(events_cleaned)
+                        print('extracting event of interest', events_cleaned[j])
+                    else:
+                        continue
+                if d2[0] == 4:
+                    factor = 'l'
+                    if factor == 'l' and events_cleaned.shape != (3,) and events_cleaned[j][0] == events_raw[i + p + 1][0]:
+                        assert(events_cleaned[j][2] == events_raw[i + p + 1][2])
+                        if baseline == 'fixation_cross_general':
+                            events_with_cross.append(events_raw[i])
+                        events_of_interest.append(events_cleaned[j])
+                        print('extracting event of interest', events_cleaned[j])
+                    elif factor == 'l' and events_cleaned.shape == (3,) and events_cleaned[j] == events_raw[i + p + 1][0]:
+                        assert(events_cleaned[2] == events_raw[i + p + 1][2])
+                        if baseline == 'fixation_cross_general':
+                            events_with_cross.append(events_raw[i])
+                        events_of_interest.append(events_cleaned)
+                        print('extracting event of interest', events_cleaned[j])
+                    else:
+                        continue
+
+    if baseline == 'fixation_cross_norisks':
+        fpath_events = f'/home/asmyasnikova83/DATA/mio_out_norisk/{subject}_run{run}_mio_corrected_norisk.txt'
+        print('fpath events norisk', fpath_events)
+        events_cleaned = np.loadtxt(fpath_events, dtype=int)
+        p = 2
+        for i in range(len(events_raw)):
             for j in range(len(events_cleaned)):
-            # check that then follows the response (starting with 4*)
-            # if the timing of feedback in the events after learning is equal to that of in the set with fix cross
-            # retrieve those feedback events and put them into  events_of_interest
-            # also put the relevant fix cross events into events_with_cross  - we will need them for baseline
-                if d1[0] == 4 and events_cleaned.shape != (3,) and events_cleaned[j][0] == events_raw[i + p][0]:
-                    assert(events_cleaned[j][2] == events_raw[i + p][2])
-                    events_with_cross.append(events_raw[i])
-                    events_of_interest.append(events_cleaned[j])
-                elif d2[0] == 4 and events_cleaned.shape != (3,) and events_cleaned[j][0] == events_raw[i + p + 1][0]:
-                    assert(events_cleaned[j][2] == events_raw[i + p + 1][2])
-                    events_with_cross.append(events_raw[i])
-                    events_of_interest.append(events_cleaned[j])
-                elif d2[0] == 4 and events_cleaned.shape == (3,) and events_cleaned[j] == events_raw[i + p + 1][0]:
-                    assert(events_cleaned[2] == events_raw[i + p + 1][2])
-                    events_with_cross.append(events_raw[i])
-                    events_of_interest.append(events_cleaned)
-                elif d1[0] == 4 and events_cleaned.shape == (3,) and events_cleaned[j] == events_raw[i + p][0]:
-                    assert(events_cleaned[2] == events_raw[i + p][2])
-                    events_with_cross.append(events_raw[i])
-                    events_of_interest.append(events_cleaned)
-                else:
-                    #print('Skip the event...')
-                    continue
+                #check the fixation cross and the type of response after it: supposed to be norisk
+                if events_raw[i][2] == 1:
+                    str_digit1 = str(events_raw[i + 2][2])
+                    str_digit2 = str(events_raw[i + 3][2])
+                    d1 = [int(d) for d in str_digit1]
+                    d2 = [int(d) for d in str_digit2]
+                    if d1[0] == 4 and d1[1] == 0 or d1[0] == 4 and d1[1] == 1 or d1[0] == 4 and d1[1] == 6 or d1[0] == 4 and d1[1] == 7:
+                        #pick out fix cross preceding norisks
+                        factor = 'm'
+                        #events_with_cross, events_of_interest = pick_events(i, j, factor, events_raw, events_cleaned, kind)
+                        print('ev cl shape', events_cleaned.shape )
+                        print('ev cleaned[j][0]', events_cleaned[j])
+                        print('ev raw[i+p][0]', events_raw[i + p][0])
+                        if factor == 'm' and events_cleaned.shape != (3,) and events_cleaned[j][0] == events_raw[i + p][0]:
+                            assert(events_cleaned[j][2] == events_raw[i + p][2])
+                            events_with_cross.append(events_raw[i])
+                        elif factor == 'm' and events_cleaned.shape == (3,) and events_cleaned[j] == events_raw[i + p][0]:
+                            assert(events_cleaned[2] == events_raw[i + p][2])
+                            events_with_cross.append(events_raw[i])
+                        else:
+                            continue
+                if events_raw[i][2] == 1:
+                    str_digit1 = str(events_raw[i + 2][2])
+                    str_digit2 = str(events_raw[i + 3][2])
+                    d1 = [int(d) for d in str_digit1]
+                    d2 = [int(d) for d in str_digit2]
+                    if d2[0] == 4 and d2[1] == 0 or d2[0] == 4 and d2[1] == 1 or d2[0] == 4 and d2[1] == 6 or d2[0] == 4 and d2[1] == 7:
+                        factor = 'n'
+                        #events_with_cross, events_of_interest = pick_events(i, j, factor, events_raw, events_cleaned, kind)
+                        if factor == 'n' and events_cleaned.shape != (3,) and events_cleaned[j][0] == events_raw[i + p + 1][0]:
+                            assert(events_cleaned[2] == events_raw[i + p + 1][2])
+                            events_with_cross.append(events_raw[i])
+                        elif factor == 'n' and events_cleaned.shape == (3,) and events_cleaned[j] == events_raw[i + p + 1][0]:
+                            assert(events_cleaned[2] == events_raw[i + p + 1][2])
+                            events_with_cross.append(events_raw[i])
+                        else:
+                            continue
+    print('events_with_cross', events_with_cross)
+    print('events_of interest', events_of_interest)
     print('\nevents_for_baseline retrieved\n')
     return events_with_cross, events_of_interest
 
@@ -174,7 +226,7 @@ def create_mne_epochs_evoked(kind, subject, run, CORRECTED_DATA, events_of_inter
             epochs = mne.EpochsArray(CORRECTED_DATA, info=reduced_info, events=events_of_interest, tmin=period_start, baseline=None, event_id= [41])
         elif subject == 'P016' and run == '2' or subject == 'P025' and run == '3' or subject =='P039' and run == '3' or subject == 'P040' and run == '3':
             epochs = mne.EpochsArray(CORRECTED_DATA, info=reduced_info, events=events_of_interest, tmin=period_start, baseline=None, event_id= [40, 41])
-        elif subject == 'P017' and run == '2' or subject == 'P015' and run == '3' or subject == 'P003' and run =='4':
+        elif subject == 'P017' and run == '2'  or subject == 'P003' and run =='4' or subject == 'P042' and run == '3':
             epochs = mne.EpochsArray(CORRECTED_DATA, info=reduced_info, events=events_of_interest, tmin=period_start, baseline=None, event_id= [40])
         elif subject == 'P029' and run == '2' or subject == 'P028' and run == '4' or subject == 'P011' and run == '6':
             epochs = mne.EpochsArray(CORRECTED_DATA, info=reduced_info, events=events_of_interest, tmin=period_start, baseline=None, event_id= [40, 46])
@@ -184,7 +236,7 @@ def create_mne_epochs_evoked(kind, subject, run, CORRECTED_DATA, events_of_inter
             epochs = mne.EpochsArray(CORRECTED_DATA, info=reduced_info, events=events_of_interest, tmin=period_start, baseline=None, event_id= [41])
         elif subject == 'P018' and run == '3':
             epochs = mne.EpochsArray(CORRECTED_DATA, info=reduced_info, events=events_of_interest, tmin=period_start, baseline=None, event_id= [41, 47, 46])
-        elif subject == 'P021' and run == '6' or subject == 'P039' and run == '4':
+        elif subject == 'P021' and run == '6' or subject == 'P039' and run == '4' or subject == 'P015' and run == '3':
             epochs = mne.EpochsArray(CORRECTED_DATA, info=reduced_info, events=events_of_interest, tmin=period_start, baseline=None, event_id= [40, 47])
         elif subject == 'P030' and run == '2' or subject == 'P029' and run == '3' or subject == 'P006' and run == '4':
             epochs = mne.EpochsArray(CORRECTED_DATA, info=reduced_info, events=events_of_interest, tmin=period_start, baseline=None, event_id= [41, 46, 47])
@@ -206,7 +258,7 @@ def create_mne_epochs_evoked(kind, subject, run, CORRECTED_DATA, events_of_inter
             epochs = mne.EpochsArray(CORRECTED_DATA, info=reduced_info, events=events_of_interest, tmin=period_start, baseline=None, event_id= [41, 47])
         elif subject == 'P036' and run == '2' or subject == 'P039' and run == '2' or subject == 'P032' and run == '4' or subject == 'P041':
             epochs = mne.EpochsArray(CORRECTED_DATA, info=reduced_info, events=events_of_interest, tmin=period_start, baseline=None, event_id= [41, 46])
-        elif subject == 'P042' and run == '3' or subject == 'P044' and run == '3' or subject == 'P031' and run == '6':
+        elif subject == 'P044' and run == '3' or subject == 'P031' and run == '6':
             epochs = mne.EpochsArray(CORRECTED_DATA, info=reduced_info, events=events_of_interest, tmin=period_start, baseline=None, event_id= [40, 41])
         elif subject == 'P043' and run == '3':
             epochs = mne.EpochsArray(CORRECTED_DATA, info=reduced_info, events=events_of_interest, tmin=period_start, baseline=None, event_id= [40, 41, 47])
@@ -263,7 +315,7 @@ def create_mne_epochs_evoked(kind, subject, run, CORRECTED_DATA, events_of_inter
              epochs = mne.EpochsArray(CORRECTED_DATA, info=reduced_info, events=events_of_interest, tmin=period_start, baseline=None, event_id= [45])
         elif subject == 'P032' and run == '3':
              epochs = mne.EpochsArray(CORRECTED_DATA, info=reduced_info, events=events_of_interest, tmin=period_start, baseline=None, event_id= [42, 44])
-        elif subject == 'P035' and run == '3' or subject == 'P036' and run == '3' or subject == 'P043' and run == '3' or subject == 'P032' and run == '4':
+        elif subject == 'P035' and run == '3' or subject == 'P043' and run == '3' or subject == 'P032' and run == '4':
              epochs = mne.EpochsArray(CORRECTED_DATA, info=reduced_info, events=events_of_interest, tmin=period_start, baseline=None, event_id= [44, 45])
         elif subject == 'P042' and run == '3':
              epochs = mne.EpochsArray(CORRECTED_DATA, info=reduced_info, events=events_of_interest, tmin=period_start, baseline=None, event_id= [43, 44, 45])
@@ -273,6 +325,8 @@ def create_mne_epochs_evoked(kind, subject, run, CORRECTED_DATA, events_of_inter
              epochs = mne.EpochsArray(CORRECTED_DATA, info=reduced_info, events=events_of_interest, tmin=period_start, baseline=None, event_id= [44, 45])
         elif subject == 'P034'and run == '4' or subject == 'P043' and run == '4':
              epochs = mne.EpochsArray(CORRECTED_DATA, info=reduced_info, events=events_of_interest, tmin=period_start, baseline=None, event_id= [42, 43, 44])
+        elif subject == 'P036' and run == '3':
+            epochs = mne.EpochsArray(CORRECTED_DATA, info=reduced_info, events=events_of_interest, tmin=period_start, baseline=None, event_id= [45])
         else:
             epochs = mne.EpochsArray(CORRECTED_DATA, info=reduced_info, events=events_of_interest, tmin=period_start, baseline=None, event_id= [42, 43, 44, 45])
     if stim == False and kind == 'postrisk':
@@ -431,11 +485,12 @@ def plot_epochs_with_without_BASELINE(events_of_interest, epochs_of_interest_w_B
     plt.show()
     exit()
 
-def compute_baseline_substraction_and_power(raw_data, events_with_cross, picks):
+def compute_baseline_substraction_and_power(raw_data, events_with_cross, events_of_interest, picks):
     # average each epoch with fixation cross followed by the events of interest
     # substract this average from the relevant epoch of interest
     # prepare data for numerical calculations for events_with_cross
     N_chans, N_times, N_events, epochs_ar = reshape_epochs(raw_data, events_with_cross, picks)
+    N_chan_interests, N_times_interest, N_events_interest, epochs_ar_interest = reshape_epochs(raw_data, events_of_interest, picks)
     assert(N_events == len(events_with_cross))
     BASELINE = np.zeros((N_events, N_chans))
     for i in range(N_events):
@@ -444,6 +499,11 @@ def compute_baseline_substraction_and_power(raw_data, events_with_cross, picks):
         baseline_chunk = epochs_ar[:, baseline_interval_start_sub:baseline_interval_end_sub, i]
         #baseline computation over the time samples in column data (axis=1)
         BASELINE[i, 0:N_chans] = np.mean(baseline_chunk, axis=1)
+    if baseline == 'fixation_cross_norisks':
+        #adjust the num ov events to that of events_of_interest
+        NEW_BASELINE = np.mean(BASELINE, axis=0)
+        #add new dim according to events_of_interest
+        BASELINE = np.tile(NEW_BASELINE, (N_events_interest, 1))
     # We need to operate on further data as of (204,2001), so we need to transpose BASELINE as of (2001,25)
     BASELINE = BASELINE.transpose()
     #compute baseline II for power correction: mean  picks = picks!
@@ -494,7 +554,6 @@ def correct_baseline_power(epochs_of_interest, b_line, kind, b_line_manually, su
         print('b_line with sum')
         temp = freq_show.data.sum(axis=1)
         freq_show.freqs  = np.array([5])
-        #hack for changed dimensionality of summarized data - now we have dim 1 for freq
         freq_show.data = temp.reshape(temp.shape[0],1,temp.shape[1])
     # now fred dim == 1
     #b_line mean (306, 2) ->freq data sum (306, 875)->b_line sum reshape (306, 1)->
@@ -515,8 +574,7 @@ def correct_baseline_power(epochs_of_interest, b_line, kind, b_line_manually, su
     else:
         freq_show.apply_baseline(baseline=(-0.5,-0.1), mode="logratio")
     #avrage the trials
-    tfr_path = '{0}TFR_av/{1}/{2}_run{3}{4}_{5}_{6}{7}{8}_int_50ms-tfr.h5'
-    tfr_path_dir = '{0}TFR_av/{1}/'
+    tfr_path = data_path
     os.makedirs(tfr_path_dir.format(prefix, kind), exist_ok = True)
     freq_show.save(tfr_path.format(prefix, kind, subject, run, spec, frequency, stimulus, kind, train), overwrite=True)
     print(tfr_path.format(prefix, kind, subject, run, spec, frequency, stimulus, kind, train))
