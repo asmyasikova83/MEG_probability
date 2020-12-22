@@ -62,10 +62,22 @@ Statistics and Visualization of total power deviations from baseline over time
 Plot_time_course_in_html_call.py exploits compute_p_val.py to compute t_statistics and relevant p_vals when comparing 2 states (available - Negative feedback versus Positive feedback, Risk vs Norisk, Prerisk vs Postrisk). Time intervals with stat. significant comparisons are highlighted. The output of plot_time_course_in_html_call.py comprises .svg for each channel  + html for the overall result. Make_pdf_from_pic_and_html_time_course.py converts html into pdf. Note: pdfkit is needed.
 
 
-For plotting topomaps with marked stat. significant sensors in contrasts use plot_topo_stat_call.py. This script also calls compute_p_val.py for statistics. The resuls is plotted over time using built-in plot_topomap. Note: averaging is performed over 100 ms (+/- 50 ms from the indicated time point). Plot_topo_stat_call.py visualizes states, contrast, contrast with marked sensors, contrast with marked sensors after fdr correction (correction for multiple comparisons). The output is .png for states and contrasts and overall html which is further converted to pdf using plot_topo_fdr_pdf.py
+For plotting topomaps with marked stat. significant sensors in contrasts use plot_topo_stat_call.py. This script also calls compute_p_val.py for statistics. The resuls is plotted over time using built-in plot_topomap. Note: averaging is performed over 100 ms (+/- 50 ms from the indicated time point). Plot_topo_stat_call.py visualizes states, contrast with marked sensors via space_fdr (time is not taken into account), contrast with marked sensors, time taken into account (deep fdr).  Fdr correction = correction for multiple comparisons. The output is .png for states and contrasts and overall html which is further converted to pdf using plot_topo_fdr_pdf.py
 
 Note: settings for visualization are located in config.py.
 
+Statistics via Threshold-free cluster enhancement method
+
+In script tfce_time_course_in_html_call.py we exploit a permutation-based method for the control of Type 1 error (false positive stat. inference)
+
+TFCE, in conjunction with bootstrap is a valid method for ERP inference
+Pernet CR, Latinus M, Nichols TE, Rousselet GA. Cluster-based computational methods for mass univariate analyses of event-related brain potentials/fields: A simulation study. J Neurosci Methods. 2015;250:85-93. doi:10.1016/j.jneumeth.2014.08.003 
+
+Alternative baseline correction and trend removal in ERF
+Script config.py contains settings (baseline == 'fixation_cross_norisks') and baseline_correction.py implements logic of baseline correction via norisk epochs in the interval preceding the appearance of fixation cross. Script baseline_GA.py and additional branches in compute_p_val.py allows to remove trend in Events Related Fields analysis. Using relevant settings in config.py, this trend removal from ERF can be carried out via baseline over fix cross and baseline from norisks. 
+
+T-statistics over blocks (runs)
+Along with averaging over blocks (runs) we perform statistical comparisons without averaging over blocks in compute_p_val.py.
 TODO
 Change paths in tfr_for_spec.py, do_spec.py, settings in pdf makers
 
