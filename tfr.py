@@ -14,7 +14,7 @@ import pathlib
 
 fpath_raw = '/net/server/data/Archive/prob_learn/vtretyakova/ICA_cleaned/{}/run{}_{}_raw_ica.fif'
 fpath_events = '/home/asmyasnikova83/DATA/mio_out_{0}/{1}_run{2}_mio_corrected_{3}{4}{5}.txt'
-freq_path = '{0}TFR_av/{1}/{2}_run{3}{4}_{5}_{6}{7}{8}_int_50ms-tfr.h5'
+freq_path = data_path
 data = []
 
 
@@ -36,9 +36,9 @@ for i in range(len(kind)):
                 picks = mne.pick_types(raw_data.info, meg = 'grad')
                 #raw_data.info['bads'] = ['MEG 2443']
                 KIND = kind[i]
-                events_with_cross, events_of_interest = retrieve_events_for_baseline(raw_data, rf, KIND, picks)
+                events_with_cross, events_of_interest = retrieve_events_for_baseline(raw_data, rf, KIND, subject, run, picks)
                 print('\n\nDone with the events!')
-                BASELINE, b_line = compute_baseline_substraction_and_power(raw_data, events_with_cross, picks)
+                BASELINE, b_line = compute_baseline_substraction_and_power(raw_data, events_with_cross, events_of_interest, picks)
                 print('\n\nDone with the BASELINE I!')
                 if BASELINE.all== 0:
                     print('Yes, BASELINE is dummy')
@@ -48,8 +48,6 @@ for i in range(len(kind)):
                 plot_created_epochs_evoked = False
                 epochs_of_interest, evoked = create_mne_epochs_evoked(KIND, subject, run, CORRECTED_DATA, events_of_interest, plot_created_epochs_evoked, raw_data, picks)
                 # for time frequency analysis we need baseline II (power correction)
-                #b_line_manually = True
-                #plot_spectrogram = False
                 freq_show = correct_baseline_power(epochs_of_interest, b_line, KIND, b_line_manually, subject, run, plot_spectrogram)
                 print('\n\nDone with the BASELINE II!')
                 #plot an example of topomap
