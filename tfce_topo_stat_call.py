@@ -88,6 +88,7 @@ res_tfce = res_tfce.transpose(1,0)
 print('res_tfce shape new', res_tfce.shape)
 #donor data file
 
+print('BINARY SHAPE', binary.shape)
 ##### CONDITION1 ######
 # average = 0.1 means averaging of the power data over 100 ms
 
@@ -145,7 +146,10 @@ if grand_average == True:
     add_str_html(html_name, '<p style="font-size:20px;"><b> %s, %s, %s, trained, %s, %d subjects </b></p>' % (legend[0] + '_vs_' + legend[1], ERF, stimulus, baseline, len(subjects1)))
 else:
     assert(grand_average == False)
-    add_str_html(html_name, '<p style="font-size:20px;"><b> %s, %s, %s, trained, %s, %d subjects </b></p>' % (legend[0] + '_vs_' + legend[1], frequency, stimulus, baseline, len(subjects1)))
+    if response:
+        add_str_html(html_name, '<p style="font-size:20px;"><b> %s, averaged %s, trained, %s, %s, %d subjects </b></p>' % (legend[0] + '_vs_' + legend[1], frequency, baseline, zero_point, len(subjects1)))
+    if stim:
+        add_str_html(html_name, '<p style="font-size:20px;"><b> %s, averaged %s, trained, %s, zero_point at stimulus %d subjects </b></p>' % (legend[0] + '_vs_' + legend[1], frequency,  baseline, len(subjects1)))
 add_str_html(html_name, '<p style="font-size:20px;"><b> P_val < 0.05 marked (or saved from cutting) </b></p>' )
 add_str_html(html_name, '<table>')
 for topo in topomaps:

@@ -87,7 +87,10 @@ for ind, planar in enumerate(planars):
         add_str_html(html_name, '<p style="font-size:32px;"><b> %s, %s, %s, trained, TFCE corrected, %s,  %d subjects <span style="color:cyan;"> (p_val < 0.05)*(res_tfce==0)) </span> <span style="color:crimson;"> res_tfce == 1 </span> </b></p>' % (planar, ERF, stimulus, baseline, len(subjects1)))
     else:
         assert(grand_average == False)
-        add_str_html(html_name, '<p style="font-size:32px;"><b> %s, averaged %s, %s, trained, TFCE corrected, %s,  %d subjects <span style="color:cyan;"> (p_val < 0.05)*(res_tfce==0)) </span> <span style="color:crimson;"> res_tfce == 1 </span> </b></p>' % (planar, frequency, stimulus, baseline, len(subjects1)))
+        if response:
+            add_str_html(html_name, '<p style="font-size:32px;"><b> %s, averaged %s, trained, TFCE corrected, %s, %s, %d subjects <span style="color:cyan;"> (p_val < 0.05)*(res_tfce==0)) </span> <span style="color:crimson;"> res_tfce == 1 </span> </b></p>' % (planar, frequency, baseline, zero_point, len(subjects1)))
+        if stim:
+            add_str_html(html_name, '<p style="font-size:32px;"><b> %s, averaged %s, trained, TFCE corrected, %s, zero point at stimulus, %d subjects <span style="color:cyan;"> (p_val < 0.05)*(res_tfce==0)) </span> <span style="color:crimson;"> res_tfce == 1 </span> </b></p>' % (planar, frequency, baseline, len(subjects1)))
     add_str_html(html_name, '<p style="font-size:32px;"><b> <span style="color: blue;"> %s </span> vs <span style="color: red;"> %s </span> </b></p>' % (legend[0], legend[1]))
     #placing the channel time courses and save the html
     if ind == 2:
