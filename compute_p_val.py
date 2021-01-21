@@ -40,7 +40,6 @@ def compute_p_val(subjects, kind, train, frequency, check_num_sens):
     subject_counter = i
     #a container for tapers in neg and pos reinforcement
     contr = np.zeros((i, 2, 306, int(time.shape[0])))
-
     print('time.shape[0]', time.shape[0])
     if random_comp:
        #not for grand_average
@@ -85,16 +84,21 @@ def compute_p_val(subjects, kind, train, frequency, check_num_sens):
                 #combined plana:us
                 if grand_average == False:
                     contr[i, 0, 204:, :] = temp1.data[::2] + temp1.data[1::2]
+                    NEW_BASELINE1 = np.mean(contr[i, 0, 204:, 125:250], axis = 1)
+                    NEW_BASELINE1 = NEW_BASELINE1[:, np.newaxis]
+                    NEW_BASELINE1 = np.tile(NEW_BASELINE1, time.shape[0])
+                    contr[i, 0, 204:, :] = contr[i, 0, 204:, :] - NEW_BASELINE1
                 else:
                     assert(grand_average == True)
                     #combined planars for grand average
                     contr[i, 0, 204:, :] = np.power(np.power(temp1.data[::2], 2) + np.power(temp1.data[1::2],2),0.5)
-                    #remove trend
-                    KIND = kind[0] 
+                    #remove trend using baseline
+                    KIND = kind[0]
+                    NEW_BASELINE1 = np.mean(contr[i, 0, 204:, 125:250], axis = 1)
+                    NEW_BASELINE1 = NEW_BASELINE1[:, np.newaxis]
+                    NEW_BASELINE1 = np.tile(NEW_BASELINE1, time.shape[0])
                     #compute baseline to remove trend
-                    SUBJ_BASE1 = baseline_GA(subj, subjects1, KIND)
-                    SUBJ_BASE_comb1 = np.power(np.power(SUBJ_BASE1[::2], 2) + np.power(SUBJ_BASE1[1::2],2),0.5)
-                    contr[i, 0, 204:, :]  = contr[i, 0, 204:, :] - SUBJ_BASE_comb1
+                    contr[i, 0, 204:, :] = contr[i, 0, 204:, :] - NEW_BASELINE1
             #second 'condition'
             print('kind[1]', kind[1])
             if grand_average == False:
@@ -112,16 +116,20 @@ def compute_p_val(subjects, kind, train, frequency, check_num_sens):
                 if grand_average == False:
                     contr[i, 1, :204, :] = temp2.data
                     contr[i, 1, 204:, :] = temp2.data[::2] + temp2.data[1::2]
+                    NEW_BASELINE2= np.mean(contr[i, 1, 204:, 125:250], axis = 1)
+                    NEW_BASELINE2 = NEW_BASELINE2[:, np.newaxis]
+                    NEW_BASELINE2 = np.tile(NEW_BASELINE2, time.shape[0])
+                    contr[i, 1, 204:, :] = contr[i, 1, 204:, :] - NEW_BASELINE2
                 else:
                     assert(grand_average == True)
                     #combined planars for grand average
                     contr[i, 1, 204:, :] = np.power(np.power(temp2.data[::2], 2) + np.power(temp2.data[1::2],2),0.5)
-                    #remove trend
+                    #remove trend using baseline
                     KIND = kind[1]
-                    #compute baseline to remove trend
-                    SUBJ_BASE2 = baseline_GA(subj, subjects1, KIND)
-                    SUBJ_BASE_comb2 = np.power(np.power(SUBJ_BASE2[::2], 2) + np.power(SUBJ_BASE2[1::2],2),0.5)
-                    contr[i, 1, 204:, :] = contr[i, 1, 204:, :] - SUBJ_BASE_comb2
+                    NEW_BASELINE2= np.mean(contr[i, 1, 204:, 125:250], axis = 1)
+                    NEW_BASELINE2 = NEW_BASELINE2[:, np.newaxis]
+                    NEW_BASELINE2 = np.tile(NEW_BASELINE2, time.shape[0])
+                    contr[i, 1, 204:, :] = contr[i, 1, 204:, :] - NEW_BASELINE2
             i = i + 1
     print('CONTR shape', contr.shape)
     comp1 = contr[:, 0, :, :]
