@@ -18,6 +18,7 @@ from plot_time_course_in_html_functions import space_fdr
 from compute_p_val import compute_p_val
 from tfce import *
 from scipy import stats, io
+from compute_p_val_stat_over_runs import compute_p_val_over_runs
 import statsmodels.stats.multitest as mul
 
 path = os.getcwd()
@@ -44,6 +45,7 @@ temp = mne.Evoked(f'{prefix}donor-ave.fif')
 temp.times = time
 
 comp1_mean, comp2_mean, contr, temp1, temp2, p_val, binary, subjects1  = compute_p_val(subjects, kind, train, frequency, check_num_sens)
+#comp1_mean, comp2_mean, contr, temp1, temp2, p_val, binary, subjects1  = compute_p_val_over_runs(subjects, kind, train, frequency, check_num_sens)
 rewrite = True
 df1 = contr[:, 0, 204:, :] #per channel
 df2 = contr[:, 1, 204:, :]
