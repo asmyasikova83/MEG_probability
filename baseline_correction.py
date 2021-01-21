@@ -20,7 +20,8 @@ def retrieve_events_for_baseline(raw_data, fpath_events, kind, subject, run, pic
     events_cleaned = np.loadtxt(fpath_events, dtype=int)
     if kind == 'negative' or kind ==  'positive':
         p = 3
-    if kind == 'prerisk' or kind == 'risk' or kind == 'postrisk' or kind == 'norisk' or kind == 'norisk_fb_negative' or kind == 'norisk_fb_positive' or kind == 'risk_fb_negative' or kind == 'risk_fb_positive':
+    if kind == 'prerisk' or kind == 'risk' or kind == 'postrisk' or kind == 'norisk' or kind == 'fb_negative_norisk' or kind == 'fb_positive_norisk' or kind == 'fb_negative_risk' or kind == 'fb_positive_risk' or  kind == 'risk_fb_negative' or kind == 'risk_fb_positive':
+        # kind == 'norisk_fb_negative' or kind == 'norisk_fb_positive'
         if stim:
             p = 1
         if response:
@@ -84,9 +85,6 @@ def retrieve_events_for_baseline(raw_data, fpath_events, kind, subject, run, pic
                         #pick out fix cross preceding norisks
                         factor = 'm'
                         #events_with_cross, events_of_interest = pick_events(i, j, factor, events_raw, events_cleaned, kind)
-                        print('ev cl shape', events_cleaned.shape )
-                        print('ev cleaned[j][0]', events_cleaned[j])
-                        print('ev raw[i+p][0]', events_raw[i + p][0])
                         if factor == 'm' and events_cleaned.shape != (3,) and events_cleaned[j][0] == events_raw[i + p][0]:
                             assert(events_cleaned[j][2] == events_raw[i + p][2])
                             events_with_cross.append(events_raw[i])
@@ -453,6 +451,144 @@ def create_mne_epochs_evoked(kind, subject, run, CORRECTED_DATA, events_of_inter
             epochs = mne.EpochsArray(CORRECTED_DATA, info=reduced_info, events=events_of_interest, tmin=period_start, baseline=None, event_id= [45])
         else:
             epochs = mne.EpochsArray(CORRECTED_DATA, info=reduced_info, events=events_of_interest, tmin=period_start, baseline=None, event_id= [44, 45])
+    if stim == False and kind == 'fb_negative_norisk':#kind == 'norisk_fb_positive'
+        if subject == 'P042' and run == '3':
+            epochs = mne.EpochsArray(CORRECTED_DATA, info=reduced_info, events=events_of_interest, tmin=period_start, baseline=None, event_id= [40, 47])
+        elif subject == 'P039' and run == '3' or subject == 'P020' and run == '4' or subject == 'P021' and run == '6':
+            epochs = mne.EpochsArray(CORRECTED_DATA, info=reduced_info, events=events_of_interest, tmin=period_start, baseline=None, event_id= [40, 46])
+        elif subject == 'P021' and run == '4':
+            epochs = mne.EpochsArray(CORRECTED_DATA, info=reduced_info, events=events_of_interest, tmin=period_start, baseline=None, event_id= [41, 46])
+        elif subject == 'P015' and run == '2' or subject == 'P023' and run == '3' or subject == 'P034' and run == '4':
+            epochs = mne.EpochsArray(CORRECTED_DATA, info=reduced_info, events=events_of_interest, tmin=period_start, baseline=None, event_id= [41])
+        elif subject == 'P029' and run == '2' or subject == 'P032' and run == '2' or subject == 'P037' and run == '2' or subject == 'P018' and run == '4':
+            epochs = mne.EpochsArray(CORRECTED_DATA, info=reduced_info, events=events_of_interest, tmin=period_start, baseline=None, event_id= [40, 41, 47])
+        elif subject == 'P016' and run == '2' or subject ==  'P023' and run == '2' or subject == 'P037' and run == '3':
+            epochs = mne.EpochsArray(CORRECTED_DATA, info=reduced_info, events=events_of_interest, tmin=period_start, baseline=None, event_id= [40, 41])
+        elif subject == 'P030' and run == '2' or subject == 'P017' and run == '3' or subject == 'P019' and run == '3' or subject == 'P032' and run == '6':
+            epochs = mne.EpochsArray(CORRECTED_DATA, info=reduced_info, events=events_of_interest, tmin=period_start, baseline=None, event_id= [41, 46, 40])
+        elif subject == 'P006'and run == '4':
+            epochs = mne.EpochsArray(CORRECTED_DATA, info=reduced_info, events=events_of_interest, tmin=period_start, baseline=None, event_id= [40, 41, 47])
+        elif subject == 'P005'and run == '6' or subject == 'P011' and run == '6' or subject == 'P017' and run == '6' or subject == 'P041' and run == '6':
+            epochs = mne.EpochsArray(CORRECTED_DATA, info=reduced_info, events=events_of_interest, tmin=period_start, baseline=None, event_id= [40, 46, 47])
+        elif subject == 'P007' and run == '2':
+            epochs = mne.EpochsArray(CORRECTED_DATA, info=reduced_info, events=events_of_interest, tmin=period_start, baseline=None, event_id= [41, 46, 47])
+        elif subject == 'P039' and run == '1' or subject == 'P007' and run == '6' or subject == 'P011' and run == '6':
+            epochs = mne.EpochsArray(CORRECTED_DATA, info=reduced_info, events=events_of_interest, tmin=period_start, baseline=None, event_id= [46, 47])
+        elif subject == 'P017' and run == '4' or subject == 'P035' and run == '4' or subject == 'P006' and run == '6':
+            epochs = mne.EpochsArray(CORRECTED_DATA, info=reduced_info, events=events_of_interest, tmin=period_start, baseline=None, event_id= [40, 41, 46])
+        elif subject == 'P044' and run == '2':
+            epochs = mne.EpochsArray(CORRECTED_DATA, info=reduced_info, events=events_of_interest, tmin=period_start, baseline=None, event_id= [41, 47])
+        elif subject == 'P043' and run == '4':
+            epochs = mne.EpochsArray(CORRECTED_DATA, info=reduced_info, events=events_of_interest, tmin=period_start, baseline=None, event_id= [40, 41, 47])
+        elif subject == 'P029' and run == '1' or subject == 'P043' and run == '4':
+            epochs = mne.EpochsArray(CORRECTED_DATA, info=reduced_info, events=events_of_interest, tmin=period_start, baseline=None, event_id= [40, 41])
+        elif subject == 'P018' and run == '2' or subject == 'P029' and run == '3' or subject == 'P030' and run == '3' or subject == 'P043' and run == '3':
+            epochs = mne.EpochsArray(CORRECTED_DATA, info=reduced_info, events=events_of_interest, tmin=period_start, baseline=None, event_id= [40, 46, 47])
+        elif subject == 'P042' and run == '1' or subject == 'P029' and run == '4' or subject == 'P030' and run == '4' or subject == 'P033' and run == '4':
+            epochs = mne.EpochsArray(CORRECTED_DATA, info=reduced_info, events=events_of_interest, tmin=period_start, baseline=None, event_id= [40, 41, 47])
+        elif subject == 'P009' and run == '1' or subject == 'P018' and run == '1' or subject == 'P032' and run == '1' or subject == 'P036' and run == '1':
+            epochs = mne.EpochsArray(CORRECTED_DATA, info=reduced_info, events=events_of_interest, tmin=period_start, baseline=None, event_id= [40, 41, 46])
+        elif subject == 'P003' and run == '1' or subject == 'P016' and run == '1' or subject == 'P024' and run == '1' or subject == 'P042' and run == '1':
+            epochs = mne.EpochsArray(CORRECTED_DATA, info=reduced_info, events=events_of_interest, tmin=period_start, baseline=None, event_id= [40, 46, 47])
+        elif subject == 'P044' and run == '1':
+            epochs = mne.EpochsArray(CORRECTED_DATA, info=reduced_info, events=events_of_interest, tmin=period_start, baseline=None, event_id= [40, 46, 47])
+        else:
+            epochs = mne.EpochsArray(CORRECTED_DATA, info=reduced_info, events=events_of_interest, tmin=period_start, baseline=None, event_id= [40, 41, 46, 47])
+    if stim == False and kind == 'fb_negative_risk': #kind == 'risk_fb_negative'
+        if subject == 'P003' and run == '1':
+            epochs = mne.EpochsArray(CORRECTED_DATA, info=reduced_info, events=events_of_interest, tmin=period_start, baseline=None, event_id= [44, 45])
+        elif subject == 'P034' and run == '4':
+            epochs = mne.EpochsArray(CORRECTED_DATA, info=reduced_info, events=events_of_interest, tmin=period_start, baseline=None, event_id= [43, 44])
+        elif subject == 'P028' and run == '6':
+            epochs = mne.EpochsArray(CORRECTED_DATA, info=reduced_info, events=events_of_interest, tmin=period_start, baseline=None, event_id= [43, 45])
+        elif subject == 'P008' and run == '1' or subject == 'P032' and run == '1' or subject == 'P015' and run == '2' or subject == 'P040' and run == '3':
+            epochs = mne.EpochsArray(CORRECTED_DATA, info=reduced_info, events=events_of_interest, tmin=period_start, baseline=None, event_id= [43, 45])
+        elif subject == 'P032' and run == '6':
+            epochs = mne.EpochsArray(CORRECTED_DATA, info=reduced_info, events=events_of_interest, tmin=period_start, baseline=None, event_id= [42, 43])
+        elif  subject == 'P029' and run == '3' or subject == 'P014' and run == '6':
+            epochs = mne.EpochsArray(CORRECTED_DATA, info=reduced_info, events=events_of_interest, tmin=period_start, baseline=None, event_id= [42, 45])
+        elif subject == 'P035' and run == '4':
+            epochs = mne.EpochsArray(CORRECTED_DATA, info=reduced_info, events=events_of_interest, tmin=period_start, baseline=None, event_id= [44])
+        elif subject == 'P016' and run == '2':
+            epochs = mne.EpochsArray(CORRECTED_DATA, info=reduced_info, events=events_of_interest, tmin=period_start, baseline=None, event_id= [42, 44, 45])
+        elif subject == 'P029' and run == '1':
+            epochs = mne.EpochsArray(CORRECTED_DATA, info=reduced_info, events=events_of_interest, tmin=period_start, baseline=None, event_id= [43, 44])
+        elif subject == 'P006' and run == '6':
+            epochs = mne.EpochsArray(CORRECTED_DATA, info=reduced_info, events=events_of_interest, tmin=period_start, baseline=None, event_id= [42, 43, 45])
+        elif subject == 'P016' and run == '1' or subject == 'P024' and run == '1' or subject == 'P029' and run == '1' or subject == 'P039' and run == '4':
+            epochs = mne.EpochsArray(CORRECTED_DATA, info=reduced_info, events=events_of_interest, tmin=period_start, baseline=None, event_id= [44])
+        elif subject == 'P011' and run == '3' or subject == 'P018' and run == '4' or subject == 'P020' and run == '4' or subject == 'P034' and run == '4':
+            epochs = mne.EpochsArray(CORRECTED_DATA, info=reduced_info, events=events_of_interest, tmin=period_start, baseline=None, event_id= [44])
+        elif subject == 'P030' and run == '2' or subject == 'P036' and run == '2' or subject == 'P040' and run == '3' or subject == 'P011' and run == '4':
+            epochs = mne.EpochsArray(CORRECTED_DATA, info=reduced_info, events=events_of_interest, tmin=period_start, baseline=None, event_id= [45])
+        elif subject == 'P021' and run == '4' or subject == 'P028' and run == '6':
+            epochs = mne.EpochsArray(CORRECTED_DATA, info=reduced_info, events=events_of_interest, tmin=period_start, baseline=None, event_id= [45])
+        else:
+            epochs = mne.EpochsArray(CORRECTED_DATA, info=reduced_info, events=events_of_interest, tmin=period_start, baseline=None, event_id= [44, 45])
+    if stim == False and kind == 'fb_positive_norisk':
+        if subject == 'P003' and run == '1' or subject == 'P008' and run == '1' or subject == 'P016' and run == '1' or subject == 'P018' and run == '1':
+            epochs = mne.EpochsArray(CORRECTED_DATA, info=reduced_info, events=events_of_interest, tmin=period_start, baseline=None, event_id= [40, 41, 47])
+        elif subject == 'P032' and run == '1' or subject == 'P042' and run == '1' or subject == 'P020' and run == '4' or subject == 'P040' and run == '4':
+            epochs = mne.EpochsArray(CORRECTED_DATA, info=reduced_info, events=events_of_interest, tmin=period_start, baseline=None, event_id= [40, 41, 47])
+        elif subject == 'P009' and run == '1':
+            epochs = mne.EpochsArray(CORRECTED_DATA, info=reduced_info, events=events_of_interest, tmin=period_start, baseline=None, event_id= [41, 46, 47])
+        elif subject == 'P039' and run == '1' or subject == 'P019' and run == '3' or subject == 'P006' and run == '3' or subject == 'P017' and run == '4':
+            epochs = mne.EpochsArray(CORRECTED_DATA, info=reduced_info, events=events_of_interest, tmin=period_start, baseline=None, event_id= [40, 41, 46])
+        elif subject == 'P018' and run == '4' or subject == 'P021' and run == '4' or subject == 'P037' and run == '4' or subject == 'P006' and run == '6':
+            epochs = mne.EpochsArray(CORRECTED_DATA, info=reduced_info, events=events_of_interest, tmin=period_start, baseline=None, event_id= [40, 41, 46])
+        elif subject == 'P043' and run == '4' or subject == 'P006' and run == '4' or subject == 'P022' and run == '6' or subject == 'P032' and run == '6':
+            epochs = mne.EpochsArray(CORRECTED_DATA, info=reduced_info, events=events_of_interest, tmin=period_start, baseline=None, event_id= [40, 41, 46])
+        elif subject == 'P006' and run == '1' or subject == 'P014' and run == '6' or subject == 'P021' and run == '6':
+            epochs = mne.EpochsArray(CORRECTED_DATA, info=reduced_info, events=events_of_interest, tmin=period_start, baseline=None, event_id= [40, 41])
+        elif subject == 'P040' and run == '3':
+            epochs = mne.EpochsArray(CORRECTED_DATA, info=reduced_info, events=events_of_interest, tmin=period_start, baseline=None, event_id= [40, 46])
+        else:
+            epochs = mne.EpochsArray(CORRECTED_DATA, info=reduced_info, events=events_of_interest, tmin=period_start, baseline=None, event_id= [40, 41, 46, 47])
+    if stim == False and kind == 'fb_positive_risk':
+        if subject == 'P003' and run == '1' or subject == 'P009' and run == '1' or subject == 'P021' and run == '1' or subject == 'P036' and run == '1':
+            epochs = mne.EpochsArray(CORRECTED_DATA, info=reduced_info, events=events_of_interest, tmin=period_start, baseline=None, event_id= [44, 45])
+        elif subject == 'P004' and run == '1' or subject == 'P011' and run == '1' or subject == 'P032' and run == '2' or subject == 'P044' and run == '2':
+            epochs = mne.EpochsArray(CORRECTED_DATA, info=reduced_info, events=events_of_interest, tmin=period_start, baseline=None, event_id= [42, 44, 45])
+        elif subject == 'P011' and run == '1' or subject == 'P016' and run == '1' or subject == 'P020' and run == '4':
+            epochs = mne.EpochsArray(CORRECTED_DATA, info=reduced_info, events=events_of_interest, tmin=period_start, baseline=None, event_id= [44])
+        elif subject == 'P030' and run == '4':
+            epochs = mne.EpochsArray(CORRECTED_DATA, info=reduced_info, events=events_of_interest, tmin=period_start, baseline=None, event_id= [42, 44, 45])
+        elif subject == 'P030' and run == '2' or subject == 'P036' and run == '3' or subject == 'P035' and run == '4':
+            epochs = mne.EpochsArray(CORRECTED_DATA, info=reduced_info, events=events_of_interest, tmin=period_start, baseline=None, event_id= [45])
+        elif subject == 'P011' and run == '3' or subject == 'P015' and run == '3' or subject == 'P030' and run == '3' or subject == 'P042' and run == '3':
+            epochs = mne.EpochsArray(CORRECTED_DATA, info=reduced_info, events=events_of_interest, tmin=period_start, baseline=None, event_id= [43, 44])
+        elif subject == 'P024' and run == '1' or subject == 'P039' and run == '4':
+            epochs = mne.EpochsArray(CORRECTED_DATA, info=reduced_info, events=events_of_interest, tmin=period_start, baseline=None, event_id= [43, 44])
+        elif subject == 'P018' and run == '1' or subject == 'P018' and run == '4' or subject == 'P014' and run == '6' or subject == 'P022' and run == '6':
+            epochs = mne.EpochsArray(CORRECTED_DATA, info=reduced_info, events=events_of_interest, tmin=period_start, baseline=None, event_id= [42, 44])
+        elif subject == 'P008' and run == '2' or subject == 'P014' and run == '2' or subject == 'P015' and run == '2' or subject == 'P016' and run == '2':
+            epochs = mne.EpochsArray(CORRECTED_DATA, info=reduced_info, events=events_of_interest, tmin=period_start, baseline=None, event_id= [44, 45])
+        elif subject == 'P018' and run == '2' or subject == 'P021' and run == '2' or subject == 'P022' and run == '2' or subject == 'P029' and run == '2':
+            epochs = mne.EpochsArray(CORRECTED_DATA, info=reduced_info, events=events_of_interest, tmin=period_start, baseline=None, event_id= [44, 45])
+        elif subject == 'P021' and run == '3' or subject == 'P028' and run == '3' or  subject == 'P035' and run == '3' or subject == 'P033' and run == '4':
+            epochs = mne.EpochsArray(CORRECTED_DATA, info=reduced_info, events=events_of_interest, tmin=period_start, baseline=None, event_id= [44, 45])
+        elif subject == 'P041' and run == '2' or subject == 'P017' and run == '3' or subject == 'P018' and run == '3' or subject == 'P019' and run == '3':
+            epochs = mne.EpochsArray(CORRECTED_DATA, info=reduced_info, events=events_of_interest, tmin=period_start, baseline=None, event_id= [44, 45])
+        elif subject == 'P023' and run == '3':
+            epochs = mne.EpochsArray(CORRECTED_DATA, info=reduced_info, events=events_of_interest, tmin=period_start, baseline=None, event_id= [43, 45])
+        elif subject == 'P011' and run == '2':
+            epochs = mne.EpochsArray(CORRECTED_DATA, info=reduced_info, events=events_of_interest, tmin=period_start, baseline=None, event_id= [43, 45])
+        elif subject == 'P043' and run == '3' or subject == 'P023' and run == '4' or subject == 'P006' and run == '4' or subject == 'P017' and run == '6':
+            epochs = mne.EpochsArray(CORRECTED_DATA, info=reduced_info, events=events_of_interest, tmin=period_start, baseline=None, event_id= [44, 45])
+        elif subject == 'P032' and run == '1' or subject == 'P043' and run == '4':
+            epochs = mne.EpochsArray(CORRECTED_DATA, info=reduced_info, events=events_of_interest, tmin=period_start, baseline=None, event_id= [42, 43, 44])
+        elif subject == 'P007' and run == '1' or subject == 'P034' and run == '4':
+            epochs = mne.EpochsArray(CORRECTED_DATA, info=reduced_info, events=events_of_interest, tmin=period_start, baseline=None, event_id= [42, 43, 44])
+        elif subject == 'P008' and run == '1' or subject == 'P042' and run == '1' or subject == 'P029' and run == '3' or subject == 'P006' and run == '3':
+            epochs = mne.EpochsArray(CORRECTED_DATA, info=reduced_info, events=events_of_interest, tmin=period_start, baseline=None, event_id= [43, 44, 45])
+        elif subject == 'P035' and run == '3' or subject == 'P021' and run == '6' or subject == 'P006' and run == '6':
+            epochs = mne.EpochsArray(CORRECTED_DATA, info=reduced_info, events=events_of_interest, tmin=period_start, baseline=None, event_id= [43, 45])
+        elif subject == 'P044' and run == '3':
+            epochs = mne.EpochsArray(CORRECTED_DATA, info=reduced_info, events=events_of_interest, tmin=period_start, baseline=None, event_id= [42, 43])
+        elif subject == 'P021' and run == '4':
+            epochs = mne.EpochsArray(CORRECTED_DATA, info=reduced_info, events=events_of_interest, tmin=period_start, baseline=None, event_id= [42, 45])
+        else:
+            epochs = mne.EpochsArray(CORRECTED_DATA, info=reduced_info, events=events_of_interest, tmin=period_start, baseline=None, event_id= [42, 43, 44, 45])
     if stim == True:
         epochs = mne.EpochsArray(CORRECTED_DATA, info=reduced_info, events=events_of_interest, tmin=period_start, baseline=None, event_id= [11])
     # downsample to 250 Hz

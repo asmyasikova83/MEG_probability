@@ -12,13 +12,14 @@ frequency = 'theta'
 mode = 'server'
 prefix = '/home/asmyasnikova83/DATA/'
 #prefix = '/net/server/data/Archive/prob_learn/asmyasnikova83/'
-grand_average = False
+grand_average = True
 #remove trend from GA
 GA_correction = False
 if grand_average:
     period_start = -1.400 #epoch start. for GA period_start = -1.400, for tfr period_start = -1.750
     period_end = 2.000 #epoch end for GA period_end = 2.000, for tfr period_end = 2.350
     time = np.arange(-1.400, 2.000, 0.004)
+    times_to_plot = np.arange(-1.4, 2.0, 0.2)
 else:
     period_start = -1.750
     period_end = 2.350
@@ -35,7 +36,7 @@ baseline_interval_end_power = -0.50
 
 baseline_interval_start_sub = -350
 baseline_interval_end_sub = -50
-baseline = 'fixation_cross_norisks'# 'fixation_cross_general'# 'fixation_cross_norisks'# 'fixation_cross_general'
+baseline =  'fixation_cross_norisks'#'fixation_cross_general'# 'fixation_cross_norisks'# 'fixation_cross_general'
 if baseline == 'fixation_cross_norisks':
     data_path = '{0}TFR_new_base/{1}/{2}_run{3}{4}_{5}_{6}{7}{8}_int_50ms-tfr.h5'
     tfr_path_dir = '{0}TFR_new_base/{1}/'
@@ -55,8 +56,8 @@ butterfly = False
 spec = ''
 
 #type of analysis
-kind =['norisk', 'risk'] #'positive', 'negative', 'prerisk', 'risk', 'postrisk', 'norisk_fb_positive','norisk_fb_negative'
-legend = ['Norisk', 'Risk']
+kind =['fb_positive_norisk', 'fb_positive_risk'] #'positive', 'negative', 'prerisk', 'risk', 'postrisk', 'norisk_fb_positive','norisk_fb_negative', 'fb_negative_norisk'
+legend = ['fb_positive_norisk', 'fb_positive_risk']
 #if trained set train = '', in nontrained, set train = '_no_train'
 train = ''
 #if stimulus data. set 'stimulus_', if response, set ''. If stimulus, don't forget to set stim at True!!
@@ -73,25 +74,30 @@ random_comp = False
 stat_over_subjects = False
 stat_over_runs = True
 
-if frequency == 'theta':
-    if grand_average == True:
-        p_mul = 0.000000000005
-        p_mul_topo = 0.0000000000006
-        p_mul_topo_contrast = 0.0000000000005
-        p_mul_topo_fdr_contrast = 0.0000000000005
-    else:
-        p_mul = 0.5
-        p_mul_topo = 0.3
-    if grand_average == False and kind[0] == 'prerisk':
+
+
+if grand_average == True:
+    p_mul = 0.000000000005
+    p_mul_topo = 0.0000000000006
+    p_mul_topo_contrast = 0.0000000000005
+    p_mul_topo_fdr_contrast = 0.0000000000005
+
+if grand_average == False and frequency == 'theta':
+    p_mul = 0.5
+    p_mul_topo = 0.2
+    if kind[0] == 'prerisk':
         p_mul_topo_contrast = 0.15
         p_mul_topo_fdr_contrast = 0.15
-    elif grand_average == False and kind[0] == 'norisk':
+    elif kind[0] == 'norisk':
         p_mul_topo_contrast = 0.1
         p_mul_topo_fdr_contrast = 0.1
-    elif grand_average == False and kind[0] == 'postrisk':
+    elif kind[0] == 'postrisk':
         p_mul_topo_contrast = 0.15
         p_mul_topo_fdr_contrast = 0.15
-    elif grand_average == False and kind[0] == 'norisk_fb_positive':
+    elif kind[0] == 'norisk_fb_positive':
+        p_mul_topo_contrast = 0.1
+        p_mul_topo_fdr_contrast = 0.1
+    elif kind[0] == 'fb_positive_norisk' or grand_average == False and kind[0] == 'fb_negative_norisk':
         p_mul_topo_contrast = 0.1
         p_mul_topo_fdr_contrast = 0.1
     else:
@@ -113,7 +119,8 @@ if grand_average == False and frequency == 'gamma':
     p_mul_topo_fdr_contrast = 0.05
 #P008 P025 neg negative removed'
 '''
-subjects = ['P014', 'P023']
+subjects = [
+    'P006']
 '''
 subjects = [
     'P000',  
@@ -157,7 +164,7 @@ subjects = [
     'P044',
     'P006']
 
-runs  = ['1', '2', '3', '4', '5', '6'] #'1', '2', '3', '4', '5'
+runs  = ['1', '2', '3', '4','5', '6'] #'1', '2', '3', '4', '5'
 '''
-runs = ['4', '6']
+runs = ['3']
 '''
