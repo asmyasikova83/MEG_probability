@@ -26,6 +26,7 @@ for i in range(len(kind)):
             if run == '6':
                 print('Dis is da last run!')
                 rf = fpath_events.format(kind[i], subject, run, stimulus, kind[i], train)
+                print('rf', rf)
                 file = pathlib.Path(rf)
                 if file.exists():
                     if mode  == 'server':
