@@ -6,6 +6,7 @@ from config import *
 from mne.time_frequency import tfr_morlet, psd_multitaper
 from pick_events import *
 
+
 with open("config.py", "r") as f_in:
     settings = f_in.readlines()
 
