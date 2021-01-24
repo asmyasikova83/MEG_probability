@@ -56,8 +56,8 @@ butterfly = False
 spec = ''
 
 #type of analysis
-kind =['fb_positive_norisk', 'fb_positive_risk'] #'positive', 'negative', 'prerisk', 'risk', 'postrisk', 'norisk_fb_positive','norisk_fb_negative', 'fb_negative_norisk'
-legend = ['fb_positive_norisk', 'fb_positive_risk']
+kind = ['norisk', 'risk'] #'positive', 'negative', 'prerisk', 'risk', 'postrisk', 'norisk_fb_positive','norisk_fb_negative', 'fb_negative_norisk'
+legend = ['norisk', 'risk']
 #if trained set train = '', in nontrained, set train = '_no_train'
 train = ''
 #if stimulus data. set 'stimulus_', if response, set ''. If stimulus, don't forget to set stim at True!!
@@ -120,7 +120,24 @@ if grand_average == False and frequency == 'gamma':
 #P008 P025 neg negative removed'
 '''
 subjects = [
-    'P006']
+    'P045',
+    'P046',
+    'P047',
+    'P048',
+    'P049',
+    'P050',
+    'P051',
+    'P052',
+    'P053',
+    'P054',
+    'P055',
+    'P056',
+    'P057',
+    'P058',
+    'P059',
+    'P060',
+    'P061',
+    'P062']
 '''
 subjects = [
     'P000',  
@@ -162,9 +179,29 @@ subjects = [
     'P042',
     'P043',
     'P044',
+    'P006',
+    'P045',
+    'P046',
+    'P047',
+    'P048',
+    'P049',
+    'P050',
+    'P051',
+    'P052',
+    'P053',
+    'P054',
+    'P055',
+    'P056',
+    'P057',
+    'P058',
+    'P059',
+    'P060',
+    'P061',
+    'P062',
     'P006']
 
-runs  = ['1', '2', '3', '4','5', '6'] #'1', '2', '3', '4', '5'
+
+runs  = ['1', '2', '3', '4', '5', '6'] #'1', '2', '3', '4', '5'
 '''
 runs = ['3']
 '''
