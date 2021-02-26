@@ -7,7 +7,11 @@ from config import *
 rm_events = True
 create_events = True
 run_events_extraction = True
-run_mio_correction = True
+run_mio_correction = False
+run_grand_average = True
+
+if not run_mio_correction:
+    run_events_extraction = False
 
 if not run_events_extraction:
     rm_events = False
@@ -26,4 +30,9 @@ if run_events_extraction:
 
 if run_mio_correction:
     subprocess.call("python mio_correction.py", shell=True)
+
+if run_grand_average:
+    path_GA = prefix_out + 'GA/'
+    os.makedirs(path_GA, exist_ok = True)
+    subprocess.call("python grand_average.py", shell=True)
 

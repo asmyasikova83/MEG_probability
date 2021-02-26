@@ -4,8 +4,6 @@ import numpy.matlib
 import matplotlib.pyplot as plt
 from config import *
 from mne.time_frequency import tfr_morlet, psd_multitaper
-from pick_events import *
-
 
 with open("config.py", "r") as f_in:
     settings = f_in.readlines()
@@ -70,7 +68,7 @@ def retrieve_events_for_baseline(raw_data, fpath_events, kind, subject, run, pic
                         continue
 
     if baseline == 'fixation_cross_norisks':
-        fpath_events = f'/home/asmyasnikova83/DATA/mio_out_norisk/{subject}_run{run}_mio_corrected_norisk.txt'
+        fpath_events = f'{prefix_out}/mio_out_norisk/{subject}_run{run}_mio_corrected_norisk.txt'
         print('fpath events norisk', fpath_events)
         events_cleaned = np.loadtxt(fpath_events, dtype=int)
         p = 2
