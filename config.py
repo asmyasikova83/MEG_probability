@@ -12,7 +12,9 @@ frequency = 'theta'
 mode = 'server'
 #prefix = '/home/asmyasnikova83/DATA/'
 prefix_in = '/net/server/data/Archive/prob_learn/asmyasnikova83/'
-prefix_out = '/net/server/data/Archive/prob_learn/asmyasnikova83/WORK/'
+path_home = '/net/server/data/Archive/prob_learn/asmyasnikova83/'
+work_dir = 'WORK/'
+prefix_out = path_home + work_dir
 events_dir = 'events/'
 grand_average = True
 #remove trend from GA

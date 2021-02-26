@@ -6,7 +6,8 @@ from config import *
 
 rm_events = True
 create_events = True
-run_events_extraction = False
+run_events_extraction = True
+run_mio_correction = True
 
 if not run_events_extraction:
     rm_events = False
@@ -22,4 +23,7 @@ if create_events:
 
 if run_events_extraction:
     subprocess.call("python risk_norisk_events_extraction.py", shell=True)
+
+if run_mio_correction:
+    subprocess.call("python mio_correction.py", shell=True)
 
