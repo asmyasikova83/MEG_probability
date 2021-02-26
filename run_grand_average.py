@@ -4,28 +4,21 @@ import subprocess
 
 from config import *
 
-rm_events = True
-create_events = True
 run_events_extraction = True
-run_mio_correction = False
+run_mio_correction = True
 run_grand_average = True
+
+if not run_grand_average:
+    run_mio_correction = False
 
 if not run_mio_correction:
     run_events_extraction = False
 
-if not run_events_extraction:
-    rm_events = False
-    create_events = False
-
-if rm_events:
+if run_events_extraction:
     path_events = prefix_out + events_dir
     if os.path.exists(path_events) and os.path.isdir(path_events):
         shutil.rmtree(path_events)
-
-if create_events:
     os.makedirs(path_events, exist_ok = True)
-
-if run_events_extraction:
     subprocess.call("python risk_norisk_events_extraction.py", shell=True)
 
 if run_mio_correction:
