@@ -10,8 +10,10 @@ freqs = np.arange(L_freq, H_freq+1, f_step)
 frequency = 'theta'
 
 mode = 'server'
-prefix = '/home/asmyasnikova83/DATA/'
-#prefix = '/net/server/data/Archive/prob_learn/asmyasnikova83/'
+#prefix = '/home/asmyasnikova83/DATA/'
+prefix_in = '/net/server/data/Archive/prob_learn/asmyasnikova83/'
+prefix_out = '/net/server/data/Archive/prob_learn/asmyasnikova83/WORK/'
+events_dir = 'events/'
 grand_average = True
 #remove trend from GA
 GA_correction = False
@@ -118,25 +120,10 @@ if grand_average == False and frequency == 'gamma':
     p_mul_topo_contrast = 0.05
     p_mul_topo_fdr_contrast = 0.05
 #P008 P025 neg negative removed'
-'''
+
 subjects = [
     'P045',
-    'P046',
-    'P047',
-    'P048',
     'P049',
-    'P050',
-    'P051',
-    'P052',
-    'P053',
-    'P054',
-    'P055',
-    'P056',
-    'P057',
-    'P058',
-    'P059',
-    'P060',
-    'P061',
     'P062']
 '''
 subjects = [
@@ -203,5 +190,5 @@ subjects = [
 
 runs  = ['1', '2', '3', '4', '5', '6'] #'1', '2', '3', '4', '5'
 '''
-runs = ['3']
-'''
+runs = ['1','3']
+
