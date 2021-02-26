@@ -16,6 +16,10 @@ path_home = '/net/server/data/Archive/prob_learn/asmyasnikova83/'
 work_dir = 'WORK/'
 prefix_out = path_home + work_dir
 events_dir = 'events/'
+out_path = prefix_out
+tfce_dir = 'TFCE/'
+
+
 grand_average = True
 #remove trend from GA
 GA_correction = False
@@ -70,7 +74,6 @@ stim  = False
 response = True
 zero_point = 'averaged_over_response'
 #settings for visualization
-out_path = '/home/asmyasnikova83/DATA/evoked_ave/'
 sign_sensors = False
 check_num_sens = False
 save_t_stat = False

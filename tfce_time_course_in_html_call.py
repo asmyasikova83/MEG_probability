@@ -37,7 +37,7 @@ options = {
 }
 planars = ['planar1', 'planar2', 'combine_planar']
 
-os.chdir('/home/asmyasnikova83/GITHUB/MEG_probability') #папка где будут сохраняться картинки
+os.chdir(prefix_out + tfce_dir) #папка где будут сохраняться картинки
 output = 'output_tfce/'
 rewrite = True
 os.makedirs (output, exist_ok=True)
@@ -60,8 +60,8 @@ p_val =  np.zeros((df1.shape[0], df1.shape[2]))
 res_tfce = np.zeros((df1.shape[0], df1.shape[2]))
 print(res_tfce.shape)
 
-pos = io.loadmat(f'{prefix}pos_store.mat')['pos']
-chan_labels = to_str_ar(io.loadmat(f'{prefix}channel_labels.mat')['chanlabels'])
+pos = io.loadmat(f'{path_home}pos_store.mat')['pos']
+chan_labels = to_str_ar(io.loadmat(f'{path_home}channel_labels.mat')['chanlabels'])
 dict_col = { 'risk': 'salmon', 'norisk': 'olivedrab', 'prerisk': 'mediumpurple' , 'postrisk':'darkturquoise','risk_fb_negative':'crimson','risk_fb_positive':'cyan', 'norisk_fb_negative':'red','norisk_fb_positive':'blue', 'fb_positive_risk':'cyan', 'fb_negative_risk':'red', 'fb_positive_norisk':'salmon',  'fb_negative_norisk':'crimson' }
 
 #working with combined planars
@@ -78,7 +78,7 @@ print('\tPictures generated')
 
 for ind, planar in enumerate(planars):
     #place the channel time courses in html file
-    html_name = '/home/asmyasnikova83/GITHUB/MEG_probability/output_tfce/pic_compose_%s_%s_vs_%s_%s.html' % (planar, f'{legend[0]}', f'{legend[1]}', 'all')
+    html_name = prefix_out + tfce_dir +  'output_tfce/pic_compose_%s_%s_vs_%s_%s.html' % (planar, f'{legend[0]}', f'{legend[1]}', 'all')
     clear_html(html_name)
     add_str_html(html_name, '<!DOCTYPE html>')
     add_str_html(html_name, '<html>')
@@ -105,7 +105,7 @@ for ind, planar in enumerate(planars):
     add_str_html(html_name, '</body>')
     add_str_html(html_name, '</html>')
     pdf_file = html_name.split("/")[1].split('.')[0]
-    print(os.getcwd() + '/%s' % html_name)
+    print('/%s' % html_name)
     path = os.getcwd() + f'/output_tfce/{legend[0]}_vs_{legend[1]}/all_pdf/'
     os.makedirs(path, exist_ok = True)
 print('\tAll printed')

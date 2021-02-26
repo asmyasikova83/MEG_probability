@@ -3,6 +3,8 @@ from array import array
 import subprocess
 import os
 
+from config import *
+
 def tfce (df1,df2, title): #модифицированный пример из гитхаба Платона
     # create random data arrays
     A = df1
@@ -29,7 +31,7 @@ def tfce (df1,df2, title): #модифицированный пример из �
     print(f'df1 shape is {df1.shape}')
     # call libtfce binary
     subprocess.call([
-        "/home/asmyasnikova83/DATA/libtfce",
+        path_home + 'libtfce',
     #    "--explore",
         "-e", "1",
         "-h", "2",
