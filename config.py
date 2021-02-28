@@ -19,6 +19,7 @@ events_dir = 'events/'
 out_path = prefix_out
 mio_dir = 'MIO/'
 tfce_dir = 'TFCE/'
+pdf_dir = 'PDF/'
 
 
 grand_average = True

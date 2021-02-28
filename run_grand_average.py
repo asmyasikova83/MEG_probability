@@ -8,6 +8,7 @@ run_events_extraction = True
 run_mio_correction = True
 run_grand_average = True
 run_tfce = True
+convert_pdf = True
 
 if not run_tfce:
     run_grand_average = False
@@ -44,4 +45,11 @@ if run_tfce:
         shutil.rmtree(path_tfce)
     os.makedirs(path_tfce, exist_ok = True)
     subprocess.call("python tfce_time_course_in_html_call.py", shell=True)
+
+if convert_pdf:
+    path_pdf = prefix_out + pdf_dir
+    if os.path.exists(path_pdf) and os.path.isdir(path_pdf):
+        shutil.rmtree(path_pdf)
+    os.makedirs(path_pdf, exist_ok = True)
+    subprocess.call("python make_pdf_from_pic_and_html_time_course.py", shell=True)
 
