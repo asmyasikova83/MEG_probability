@@ -41,8 +41,6 @@ def tfce (df1,df2, title): #модифицированный пример из �
         "--type", "1d"])
 
     # read result back
-    output = 'result'
-    os.makedirs (output, exist_ok=True)
 
     result_file = open(f"{title}.bin", "rb")
     result_size = array("I", [])

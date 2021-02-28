@@ -38,17 +38,12 @@ options = {
 planars = ['planar1', 'planar2', 'combine_planar']
 
 os.chdir(prefix_out + tfce_dir) #папка где будут сохраняться картинки
-output = 'output_tfce/'
-rewrite = True
-os.makedirs (output, exist_ok=True)
 
 comp1_mean, comp2_mean, contr, temp1, temp2, p_val, binary, subjects1 = compute_p_val(subjects, kind, train, frequency, check_num_sens)
 df1 = contr[:, 0, 204:, :]
 df2 = contr[:, 1, 204:, :]
 print('df1 shape', df1.shape)
 print('df2 shape', df2.shape)
-#df1 = cond1[:, 204:, :]
-#df2 = cond2[:, 204:, :]
 df1 = df1.transpose(2, 0, 1)
 df2 = df2.transpose(2, 0, 1)
 df1_mean = df1.mean(axis = 1)

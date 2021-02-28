@@ -26,6 +26,9 @@ if run_events_extraction:
     subprocess.call("python risk_norisk_events_extraction.py", shell=True)
 
 if run_mio_correction:
+    path_mio = prefix_out + mio_dir
+    if os.path.exists(path_events) and os.path.isdir(path_events):
+        shutil.rmtree(path_events)
     subprocess.call("python mio_correction.py", shell=True)
 
 if run_grand_average:

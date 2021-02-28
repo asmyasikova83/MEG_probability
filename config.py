@@ -17,6 +17,7 @@ work_dir = 'WORK/'
 prefix_out = path_home + work_dir
 events_dir = 'events/'
 out_path = prefix_out
+mio_dir = 'MIO/'
 tfce_dir = 'TFCE/'
 
 
