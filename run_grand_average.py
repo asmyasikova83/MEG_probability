@@ -10,6 +10,9 @@ run_grand_average = True
 run_tfce = True
 convert_pdf = True
 
+if not convert_pdf:
+        run_tfce = False
+
 if not run_tfce:
     run_grand_average = False
 
