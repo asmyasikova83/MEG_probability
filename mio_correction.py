@@ -64,8 +64,8 @@ def calculate_beta(subj, run, stimulus, kind, train, fpath_raw, fpath_events, fp
 
 for i in range(len(kind)):
     fpath_events = prefix_out + events_dir + '{0}_run{1}_events_{2}{3}{4}.txt'
-    fpath_mio_out = prefix_out + 'mio_out_{0}/{1}_run{2}_mio_corrected_{3}{4}{5}.txt'
-    fpath_mio_dir = prefix_out + 'mio_out_{}/'
+    fpath_mio_out = prefix_out + mio_dir + 'mio_out_{0}/{1}_run{2}_mio_corrected_{3}{4}{5}.txt'
+    fpath_mio_dir = prefix_out + mio_dir + 'mio_out_{}/'
     os.makedirs(fpath_mio_dir.format(kind[i]), exist_ok = True)
 
     for run in runs:

@@ -14,7 +14,7 @@ from mne import read_evokeds
 evoked_ave = []
 
 fpath_raw = '/net/server/data/Archive/prob_learn/vtretyakova/ICA_cleaned/{}/run{}_{}_raw_ica.fif'
-fpath_events = prefix_out + '/mio_out_{0}/{1}_run{2}_mio_corrected_{3}{4}{5}.txt'
+fpath_events = prefix_out + mio_dir + '/mio_out_{0}/{1}_run{2}_mio_corrected_{3}{4}{5}.txt'
 temp1 = mne.Evoked(f'{path_home}donor-ave.fif')
 folder = 'GA'
 run_counter = 0
