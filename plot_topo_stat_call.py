@@ -1,10 +1,8 @@
 import mne
 import numpy as np
 import os
-import copy
-import matplotlib.pyplot as plt
 import statsmodels.stats.multitest as mul
-#import pdfkit
+import matplotlib.pyplot as plt
 from config import *
 import pathlib
 from plot_time_course_in_html_functions import clear_html
@@ -19,12 +17,7 @@ from compute_p_val import compute_p_val
 from tfce import *
 from scipy import stats, io
 from compute_p_val_stat_over_runs import compute_p_val_over_runs
-import statsmodels.stats.multitest as mul
 
-#path = os.getcwd()
-#list_files = os.listdir(path)
-
-#output = 'output_topo_fdr/'
 os.chdir(prefix_out + fdr_dir)
 
 topomaps = [f'{legend[0]}',
@@ -46,7 +39,6 @@ temp.times = time
 
 comp1_mean, comp2_mean, contr, temp1, temp2, p_val, binary, subjects1  = compute_p_val(subjects, kind, train, frequency, check_num_sens)
 #comp1_mean, comp2_mean, contr, temp1, temp2, p_val, binary, subjects1  = compute_p_val_over_runs(subjects, kind, train, frequency, check_num_sens)
-#rewrite = True
 df1 = contr[:, 0, 204:, :] #per channel
 df2 = contr[:, 1, 204:, :]
 print('df1 shape', df1.shape)
@@ -62,8 +54,6 @@ p_val_fdr = space_fdr(p_val)
 # average = 0.1 means averaging of the power data over 100 ms
 
 print('comp1_mean', comp1_mean.shape)
-#t_stat_con1, p_val_con1 = stats.ttest_1samp(comp1, 0, axis=0)
-
 
 print('df1', df1.shape)
 print('time', len(time))
@@ -162,5 +152,4 @@ add_str_html(html_name, "</tr>")
 add_str_html(html_name, '</body>')
 add_str_html(html_name, '</html>')
 pdf_file = html_name.replace("html", "pdf")
-#pdfkit.from_file(html_name, pdf_file, configuration = config, options=options)
 print('All done!')
