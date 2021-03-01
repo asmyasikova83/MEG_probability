@@ -4,14 +4,18 @@ import subprocess
 
 from config import *
 
-run_events_extraction = True
-run_mio_correction = True
-run_grand_average = True
-run_tfce = True
-convert_pdf = True
+run_events_extraction = False
+run_mio_correction = False
+run_grand_average = False
+run_tfce = False
+convert_pdf = False
+run_fdr = True
+
+if not run_fdr:
+    convert_pdf = False
 
 if not convert_pdf:
-        run_tfce = False
+    run_tfce = False
 
 if not run_tfce:
     run_grand_average = False
@@ -55,4 +59,11 @@ if convert_pdf:
         shutil.rmtree(path_pdf)
     os.makedirs(path_pdf, exist_ok = True)
     subprocess.call("python make_pdf_from_pic_and_html_time_course.py", shell=True)
+
+if run_fdr:
+    path_fdr = prefix_out + fdr_dir
+    if os.path.exists(path_fdr) and os.path.isdir(path_fdr):
+         shutil.rmtree(path_fdr)
+    os.makedirs(path_fdr, exist_ok = True)
+    subprocess.call("python plot_topo_stat_call.py", shell=True)
 

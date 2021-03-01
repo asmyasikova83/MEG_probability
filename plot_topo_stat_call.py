@@ -21,11 +21,11 @@ from scipy import stats, io
 from compute_p_val_stat_over_runs import compute_p_val_over_runs
 import statsmodels.stats.multitest as mul
 
-path = os.getcwd()
-list_files = os.listdir(path)
+#path = os.getcwd()
+#list_files = os.listdir(path)
 
-output = 'output_topo_fdr/'
-
+#output = 'output_topo_fdr/'
+os.chdir(prefix_out + fdr_dir)
 
 topomaps = [f'{legend[0]}',
             f'{legend[1]}',
@@ -38,23 +38,23 @@ options = {
     'no-outline':None,
     'quiet':''
 }
-os.makedirs(os.path.join(output, f'{legend[0]}_vs_{legend[1]}'), exist_ok=True)        
+os.makedirs(os.path.join(prefix_out + fdr_dir, f'{legend[0]}_vs_{legend[1]}'), exist_ok=True)
 
 #donor data file
-temp = mne.Evoked(f'{prefix}donor-ave.fif')
+temp = mne.Evoked(f'{path_home}donor-ave.fif')
 temp.times = time
 
 comp1_mean, comp2_mean, contr, temp1, temp2, p_val, binary, subjects1  = compute_p_val(subjects, kind, train, frequency, check_num_sens)
 #comp1_mean, comp2_mean, contr, temp1, temp2, p_val, binary, subjects1  = compute_p_val_over_runs(subjects, kind, train, frequency, check_num_sens)
-rewrite = True
+#rewrite = True
 df1 = contr[:, 0, 204:, :] #per channel
 df2 = contr[:, 1, 204:, :]
 print('df1 shape', df1.shape)
 print('df2 shape', df2.shape)
 
 res_tfce = np.zeros((876, 102))
-pos = io.loadmat(f'{prefix}pos_store.mat')['pos']
-chan_labels = to_str_ar(io.loadmat(f'{prefix}channel_labels.mat')['chanlabels'])
+pos = io.loadmat(f'{path_home}pos_store.mat')['pos']
+chan_labels = to_str_ar(io.loadmat(f'{path_home}channel_labels.mat')['chanlabels'])
 dict_col = { 'risk': 'salmon', 'norisk': 'olivedrab', 'prerisk': 'mediumpurple' , 'postrisk':'darkturquoise'  }
 p_val_fdr = space_fdr(p_val)
 
@@ -86,7 +86,7 @@ fig = temp.plot_topomap(times = times_to_plot, average = 0.1, units = "dB",
                             mask_params = dict(marker='o', markerfacecolor='w', markeredgecolor='k',
                                               linewidth=0, markersize=7, markeredgewidth=2))
 
-fig.savefig(os.path.join(output, legend[0] + '_vs_' + legend[1], legend[0] + '.png'), dpi = 300)
+fig.savefig(os.path.join(prefix_out + fdr_dir, legend[0] + '_vs_' + legend[1], legend[0] + '.png'), dpi = 300)
 plt.close()
 
     ##### CONDITION2 and Stat ######
@@ -108,7 +108,7 @@ fig = temp.plot_topomap(times = times_to_plot, average = 0.1, units = 'dB',
                             mask_params = dict(marker='o', markerfacecolor='w', markeredgecolor='k',
                                                linewidth=0, markersize=7, markeredgewidth=2))
 
-fig.savefig(os.path.join(output, legend[0] + '_vs_' + legend[1], legend[1] + '.png'), dpi = 300)
+fig.savefig(os.path.join(prefix_out + fdr_dir, legend[0] + '_vs_' + legend[1], legend[1] + '.png'), dpi = 300)
 plt.close()
     
     ##### CONDITION2 - CONDITION1 with marks no time  (space FDR) ######
@@ -122,7 +122,7 @@ fig = temp.plot_topomap(times = times_to_plot, average = 0.1, units = 'dB',
                             vmax=p_mul_topo_contrast, vmin=-p_mul_topo_contrast, extrapolate="local", mask = np.bool_(binary_fdr[204:,:]),
                             mask_params = dict(marker='o', markerfacecolor='w', markeredgecolor='k',
                                                linewidth=0, markersize=7, markeredgewidth=2))
-fig.savefig(os.path.join(output, legend[0] + '_vs_' + legend[1],'difference_fdr.png'), dpi = 300)
+fig.savefig(os.path.join(prefix_out + fdr_dir, legend[0] + '_vs_' + legend[1],'difference_fdr.png'), dpi = 300)
 plt.close()
  
     #### CONDITION2 - CONDITION1 with marks (WITH FDR) deep FDR with time ####
@@ -142,12 +142,12 @@ fig = temp.plot_topomap(times = times_to_plot, average = 0.1, units = 'dB',
                             vmax=p_mul_topo_fdr_contrast, vmin=-p_mul_topo_fdr_contrast, extrapolate="local", mask = np.bool_(binary_deep_fdr),
                             mask_params = dict(marker='o', markerfacecolor='w', markeredgecolor='k',
                                                linewidth=0, markersize=7, markeredgewidth=2))
-fig.savefig(os.path.join(output, legend[0] + '_vs_' + legend[1],'difference_deep_fdr.png'), dpi = 300)
+fig.savefig(os.path.join(prefix_out + fdr_dir, legend[0] + '_vs_' + legend[1],'difference_deep_fdr.png'), dpi = 300)
 plt.close()
     
    
 
-html_name = os.path.join(output, legend[0] + '_vs_' + legend[1] + '.html')
+html_name = os.path.join(prefix_out + fdr_dir, legend[0] + '_vs_' + legend[1] + '.html')
 clear_html(html_name)
 add_str_html(html_name, '<!DOCTYPE html>')
 add_str_html(html_name, '<html>')

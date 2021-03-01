@@ -20,7 +20,7 @@ out_path = prefix_out
 mio_dir = 'MIO/'
 tfce_dir = 'TFCE/'
 pdf_dir = 'PDF/'
-
+fdr_dir = 'FDR/'
 
 grand_average = True
 #remove trend from GA
