@@ -10,6 +10,10 @@ run_grand_average = False
 run_tfce = False
 convert_pdf = False
 run_fdr = True
+convert_fdr_pdf = True
+
+if not convert_fdr_pdf:
+    run_fdr = False
 
 if not run_fdr:
     convert_pdf = False
@@ -67,3 +71,9 @@ if run_fdr:
     os.makedirs(path_fdr, exist_ok = True)
     subprocess.call("python plot_topo_stat_call.py", shell=True)
 
+if convert_fdr_pdf:
+    path_fdr_pdf = prefix_out + fdr_pdf_dir
+    if os.path.exists(path_fdr_pdf) and os.path.isdir(path_fdr_pdf):
+         shutil.rmtree(path_fdr_pdf)
+    os.makedirs(path_fdr_pdf, exist_ok = True)
+    subprocess.call("python plot_topo_fdr_pdf.py", shell=True)

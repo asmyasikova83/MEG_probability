@@ -21,6 +21,7 @@ mio_dir = 'MIO/'
 tfce_dir = 'TFCE/'
 pdf_dir = 'PDF/'
 fdr_dir = 'FDR/'
+fdr_pdf_dir = 'FDR_PDF/'
 
 grand_average = True
 #remove trend from GA

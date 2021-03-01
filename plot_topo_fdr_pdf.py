@@ -20,11 +20,6 @@ def add_str_html(filename, text):
 def add_pic_html(filename, pic):
     add_str_html(filename, '<IMG SRC="%s" style="width:%spx;height:%spx;"/>'%(pic,2800,390))
     
-path = os.getcwd()
-list_files = os.listdir(path)
-
-output = 'output_topo/'
-
 
 topomaps = ["Positive",
             "Negative",
@@ -43,25 +38,11 @@ options = {
     'no-outline':None,
     'quiet':''
 }
-os.makedirs(os.path.join(output, "Positive_vs_Negative"), exist_ok=True)        
 
-legend = ["Positive", "Negative"]
-kind = ['positive', 'negative']
-
-html_name = os.path.join(output, legend[0] + "_vs_" + legend[1] + ".html")
-clear_html(html_name)
-add_str_html(html_name, '<!DOCTYPE html>')
-add_str_html(html_name, '<html>')
-add_str_html(html_name, '<body>')
-add_str_html(html_name, '<p style="font-size:40px;"><b> %s, average Theta 4-8 Hz after feedback presentation in 28 participants after training </b></p>' % (legend[0] + "_vs_" + legend[1]))
-add_str_html(html_name, '<p style="font-size:40px;"><b> P_val < 0.05 marked (or saved from cutting) </b></p>' )
-add_str_html(html_name, '<table>')
-for topo in topomaps:
-    add_str_html(html_name, "<tr>")
-    add_pic_html(html_name, os.path.join(legend[0] + "_vs_" + legend[1],topo+".png"))
-add_str_html(html_name, "</tr>")
-add_str_html(html_name, '</body>')
-add_str_html(html_name, '</html>')
-pdf_file = html_name.replace("html", "pdf")
-pdfkit.from_file(html_name, pdf_file, configuration = config, options=options)
+html_name = prefix_out + fdr_dir + f'{legend[0]}_vs_{legend[1]}.html'
+pdf_file = html_name.split("/")[-1].split('.')[0]
+print('pdf_file', pdf_file)
+print('%s' % html_name)
+pdfkit.from_file('%s' % html_name, prefix_out + fdr_pdf_dir + '%s.pdf' % pdf_file, configuration = config, options=options)
+print('\tAll printed')
 print('Done')
