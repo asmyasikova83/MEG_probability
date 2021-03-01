@@ -7,10 +7,10 @@ from config import *
 run_events_extraction = False
 run_mio_correction = False
 run_grand_average = False
-run_tfce = False
-convert_pdf = False
-run_fdr = True
-convert_fdr_pdf = True
+run_tfce = True
+convert_pdf = True
+run_fdr = False
+convert_fdr_pdf = False
 
 if not convert_fdr_pdf:
     run_fdr = False

@@ -1,8 +1,3 @@
-import os, io
-import mne
-from scipy import stats, io
-import matplotlib.pyplot as plt
-import os
 import pdfkit
 from config import *
 
