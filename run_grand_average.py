@@ -15,9 +15,6 @@ convert_fdr_pdf = True
 if not convert_fdr_pdf:
     run_fdr = False
 
-if not run_fdr:
-    convert_pdf = False
-
 if not convert_pdf:
     run_tfce = False
 
