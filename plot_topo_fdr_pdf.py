@@ -1,33 +1,5 @@
-import mne
-import numpy as np
-from scipy import stats
-import os
-import copy
-import matplotlib.pyplot as plt
-import statsmodels.stats.multitest as mul
 import pdfkit
 from config import *
-import pathlib
-
-def clear_html(filename):
-    with open(filename, 'w') as f:
-        f.write('')
-
-def add_str_html(filename, text):
-    with open(filename, 'a') as f:
-        f.write(text + '\n')
-
-def add_pic_html(filename, pic):
-    add_str_html(filename, '<IMG SRC="%s" style="width:%spx;height:%spx;"/>'%(pic,2800,390))
-    
-
-topomaps = ["Positive",
-            "Negative",
-            
-            "difference",
-            "difference_with_fdr",
-
-            ]
 
 config = pdfkit.configuration(wkhtmltopdf='/usr/bin/wkhtmltopdf')
 
