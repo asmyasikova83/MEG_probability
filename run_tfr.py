@@ -7,43 +7,24 @@ from config import *
 run_events_extraction = True
 run_mio_correction = True
 run_tfr = False
-run_container = True
-run_tfce = True
-convert_pdf = True
+run_container = False
+run_tfce = False
+convert_pdf = False
 run_fdr = False
 convert_fdr_pdf = False
 
-if not run_container:
-    run_tfr = False
-
-if not convert_fdr_pdf:
-    run_fdr = False
-
-if not convert_pdf:
-    run_tfce = False
-
-if not run_tfce:
-    run_tfr = False
-
-if not run_tfr:
-    run_mio_correction = False
-
-if not run_mio_correction:
-    run_events_extraction = False
-
 if run_events_extraction:
     path_events = prefix_out + events_dir
-    print(path_events)
     if os.path.exists(path_events) and os.path.isdir(path_events):
         shutil.rmtree(path_events)
     os.makedirs(path_events, exist_ok = True)
-    print('Doing run_events_extraction')
     subprocess.call("python risk_norisk_events_extraction.py", shell=True)
 
 if run_mio_correction:
     path_mio = prefix_out + mio_dir
     if os.path.exists(path_mio) and os.path.isdir(path_mio):
         shutil.rmtree(path_mio)
+    os.makedirs(path_mio, exist_ok = True)
     subprocess.call("python mio_correction.py", shell=True)
 
 if run_tfr:
