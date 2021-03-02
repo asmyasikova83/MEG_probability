@@ -6,26 +6,13 @@ from config import *
 
 run_events_extraction = False
 run_mio_correction = False
-run_grand_average = True
-run_tfce = True
-convert_pdf = True
+run_grand_average = False
+
+run_tfce = False
+convert_pdf = False
+
 run_fdr = True
 convert_fdr_pdf = True
-
-if not convert_fdr_pdf:
-    run_fdr = False
-
-if not convert_pdf:
-    run_tfce = False
-
-if not run_tfce:
-    run_grand_average = False
-
-if not run_grand_average:
-    run_mio_correction = False
-
-if not run_mio_correction:
-    run_events_extraction = False
 
 if run_events_extraction:
     path_events = prefix_out + events_dir
@@ -47,6 +34,7 @@ if run_grand_average:
     os.makedirs(path_GA, exist_ok = True)
     subprocess.call("python grand_average.py", shell=True)
 
+
 if run_tfce:
     path_tfce = prefix_out + tfce_dir + GA_dir
     if os.path.exists(path_tfce) and os.path.isdir(path_tfce):
@@ -61,6 +49,7 @@ if convert_pdf:
     os.makedirs(path_pdf, exist_ok = True)
     subprocess.call("python make_pdf_from_pic_and_html_time_course.py", shell=True)
 
+
 if run_fdr:
     path_fdr = prefix_out + fdr_dir + GA_dir
     if os.path.exists(path_fdr) and os.path.isdir(path_fdr):
@@ -74,3 +63,4 @@ if convert_fdr_pdf:
          shutil.rmtree(path_fdr_pdf)
     os.makedirs(path_fdr_pdf, exist_ok = True)
     subprocess.call("python plot_topo_fdr_pdf.py", shell=True)
+

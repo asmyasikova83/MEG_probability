@@ -15,16 +15,16 @@ prefix_in = '/net/server/data/Archive/prob_learn/asmyasnikova83/'
 path_home = '/net/server/data/Archive/prob_learn/asmyasnikova83/'
 work_dir = 'WORK/'
 prefix_out = path_home + work_dir
-events_dir = f'events_{legend[0]}_vs_{legend[1]}/'
+events_dir = 'events/'
 out_path = prefix_out
-mio_dir = f'MIO_{legend[0]}_vs_{legend[1]}/'
-GA_dir = f'GA_{legend[0]}_vs_{legend[1]}/'
-tfr_dir = f'TFR_{legend[0]}_vs_{legend[1]}/'
-container_dir = f'evoked_{legend[0]}_vs_{legend[1]}/'
-tfce_dir = f'TFCE_{legend[0]}_vs_{legend[1]}/'
-pdf_dir = f'PDF_{legend[0]}_vs_{legend[1]}/'
-fdr_dir = f'FDR_{legend[0]}_vs_{legend[1]}/'
-fdr_pdf_dir = f'FDR_PDF_{legend[0]}_vs_{legend[1]}/'
+mio_dir = 'MIO/'
+GA_dir = 'GA/'
+tfr_dir = 'TFR/'
+container_dir = 'evoked/'
+tfce_dir = 'TFCE/'
+pdf_dir = 'TFCE_PDF/'
+fdr_dir = 'FDR/'
+fdr_pdf_dir = 'FDR_PDF/'
 
 grand_average = True
 #remove trend from GA
