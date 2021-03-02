@@ -29,7 +29,7 @@ from compute_p_val import compute_p_val
 
 # perfom statistical check by means of Threshold Free Cluster Enhancement 
 options = {
-    'page-size':'A3',
+        'page-size':'A3',
     'orientation':'Landscape',
     'zoom':0.57,
     'no-outline':None,
@@ -38,8 +38,8 @@ options = {
 planars = ['planar1', 'planar2', 'combine_planar']
 
 if grand_average == True:
-    os.chdir(prefix_out + tfce_dir + 'GA') #папка где будут сохраняться картинки
-    cur_dir = prefix_out + tfce_dir + 'GA'
+    os.chdir(prefix_out + tfce_dir + GA_dir) #папка где будут сохраняться картинки
+    cur_dir = prefix_out + tfce_dir + GA_dir
 else:
     os.chdir(prefix_out + tfce_dir + tfr_dir)
     cur_dir = prefix_out + tfce_dir + tfr_dir
@@ -78,7 +78,7 @@ print('\tPictures generated')
 for ind, planar in enumerate(planars):
     #place the channel time courses in html file
     if grand_average == True:
-        html_name = prefix_out + tfce_dir +  'output_tfce/pic_compose_%s_%s_vs_%s_%s.html' % (planar, f'{legend[0]}', f'{legend[1]}', 'all')
+        html_name = prefix_out + tfce_dir + GA_dir + 'output_tfce/pic_compose_%s_%s_vs_%s_%s.html' % (planar, f'{legend[0]}', f'{legend[1]}', 'all')
     else:
         html_name = prefix_out + tfce_dir + tfr_dir +  'output_tfce/pic_compose_%s_%s_vs_%s_%s.html' % (planar, f'{legend[0]}', f'{legend[1]}', 'all')
     clear_html(html_name)

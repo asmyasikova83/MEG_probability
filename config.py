@@ -8,24 +8,25 @@ f_step = 1
 
 freqs = np.arange(L_freq, H_freq+1, f_step)
 frequency = 'theta'
-
+legend = ['norisk', 'risk']
 mode = 'server'
 #prefix = '/home/asmyasnikova83/DATA/'
 prefix_in = '/net/server/data/Archive/prob_learn/asmyasnikova83/'
 path_home = '/net/server/data/Archive/prob_learn/asmyasnikova83/'
 work_dir = 'WORK/'
 prefix_out = path_home + work_dir
-events_dir = 'events/'
+events_dir = f'events_{legend[0]}_vs_{legend[1]}/'
 out_path = prefix_out
-mio_dir = 'MIO/'
-tfr_dir = 'TFR/'
-container_dir = 'evoked/'
-tfce_dir = 'TFCE/'
-pdf_dir = 'PDF/'
-fdr_dir = 'FDR/'
-fdr_pdf_dir = 'FDR_PDF/'
+mio_dir = f'MIO_{legend[0]}_vs_{legend[1]}/'
+GA_dir = f'GA_{legend[0]}_vs_{legend[1]}/'
+tfr_dir = f'TFR_{legend[0]}_vs_{legend[1]}/'
+container_dir = f'evoked_{legend[0]}_vs_{legend[1]}/'
+tfce_dir = f'TFCE_{legend[0]}_vs_{legend[1]}/'
+pdf_dir = f'PDF_{legend[0]}_vs_{legend[1]}/'
+fdr_dir = f'FDR_{legend[0]}_vs_{legend[1]}/'
+fdr_pdf_dir = f'FDR_PDF_{legend[0]}_vs_{legend[1]}/'
 
-grand_average = False
+grand_average = True
 #remove trend from GA
 GA_correction = False
 if grand_average:
@@ -69,7 +70,6 @@ spec = ''
 
 #type of analysis
 kind = ['norisk', 'risk'] #'positive', 'negative', 'prerisk', 'risk', 'postrisk', 'norisk_fb_positive','norisk_fb_negative', 'fb_negative_norisk'
-legend = ['norisk', 'risk']
 #if trained set train = '', in nontrained, set train = '_no_train'
 train = ''
 #if stimulus data. set 'stimulus_', if response, set ''. If stimulus, don't forget to set stim at True!!
