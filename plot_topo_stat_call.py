@@ -18,7 +18,12 @@ from tfce import *
 from scipy import stats, io
 from compute_p_val_stat_over_runs import compute_p_val_over_runs
 
-os.chdir(prefix_out + fdr_dir)
+if grand_average == True:
+    os.chdir(prefix_out + fdr_dir)
+    cur_dir = prefix_out + fdr_dir
+else:
+    os.chdir(prefix_out + fdr_dir + tfr_dir)
+    cur_dir = prefix_out + fdr_dir + tfr_dir
 
 topomaps = [f'{legend[0]}',
             f'{legend[1]}',
@@ -31,7 +36,10 @@ options = {
     'no-outline':None,
     'quiet':''
 }
-os.makedirs(os.path.join(prefix_out + fdr_dir, f'{legend[0]}_vs_{legend[1]}'), exist_ok=True)
+if grand_average == True:
+    os.makedirs(os.path.join(prefix_out + fdr_dir, f'{legend[0]}_vs_{legend[1]}'), exist_ok=True)
+else:
+    os.makedirs(os.path.join(prefix_out + fdr_dir + tfr_dir, f'{legend[0]}_vs_{legend[1]}'), exist_ok=True)
 
 #donor data file
 temp = mne.Evoked(f'{path_home}donor-ave.fif')
@@ -75,8 +83,10 @@ fig = temp.plot_topomap(times = times_to_plot, average = 0.1, units = "dB",
                             extrapolate="local", mask = np.bool_(binary),
                             mask_params = dict(marker='o', markerfacecolor='w', markeredgecolor='k',
                                               linewidth=0, markersize=7, markeredgewidth=2))
-
-fig.savefig(os.path.join(prefix_out + fdr_dir, legend[0] + '_vs_' + legend[1], legend[0] + '.png'), dpi = 300)
+if grand_average == True:
+    fig.savefig(os.path.join(prefix_out + fdr_dir, legend[0] + '_vs_' + legend[1], legend[0] + '.png'), dpi = 300)
+else:
+    fig.savefig(os.path.join(prefix_out + fdr_dir + tfr_dir, legend[0] + '_vs_' + legend[1], legend[0] + '.png'), dpi = 300)
 plt.close()
 
     ##### CONDITION2 and Stat ######
@@ -97,8 +107,10 @@ fig = temp.plot_topomap(times = times_to_plot, average = 0.1, units = 'dB',
                             extrapolate="local", mask = np.bool_(binary),
                             mask_params = dict(marker='o', markerfacecolor='w', markeredgecolor='k',
                                                linewidth=0, markersize=7, markeredgewidth=2))
-
-fig.savefig(os.path.join(prefix_out + fdr_dir, legend[0] + '_vs_' + legend[1], legend[1] + '.png'), dpi = 300)
+if grand_average == True:
+    fig.savefig(os.path.join(prefix_out + fdr_dir, legend[0] + '_vs_' + legend[1], legend[1] + '.png'), dpi = 300)
+else:
+    fig.savefig(os.path.join(prefix_out + fdr_dir + tfr_dir, legend[0] + '_vs_' + legend[1], legend[1] + '.png'), dpi = 300)
 plt.close()
     
     ##### CONDITION2 - CONDITION1 with marks no time  (space FDR) ######
@@ -112,7 +124,10 @@ fig = temp.plot_topomap(times = times_to_plot, average = 0.1, units = 'dB',
                             vmax=p_mul_topo_contrast, vmin=-p_mul_topo_contrast, extrapolate="local", mask = np.bool_(binary_fdr[204:,:]),
                             mask_params = dict(marker='o', markerfacecolor='w', markeredgecolor='k',
                                                linewidth=0, markersize=7, markeredgewidth=2))
-fig.savefig(os.path.join(prefix_out + fdr_dir, legend[0] + '_vs_' + legend[1],'difference_fdr.png'), dpi = 300)
+                            if grand_average == True:
+    fig.savefig(os.path.join(prefix_out + fdr_dir, legend[0] + '_vs_' + legend[1],'difference_fdr.png'), dpi = 300)
+else:
+    fig.savefig(os.path.join(prefix_out + fdr_dir + tfr_dir, legend[0] + '_vs_' + legend[1],'difference_fdr.png'), dpi = 300)
 plt.close()
  
     #### CONDITION2 - CONDITION1 with marks (WITH FDR) deep FDR with time ####
@@ -132,12 +147,15 @@ fig = temp.plot_topomap(times = times_to_plot, average = 0.1, units = 'dB',
                             vmax=p_mul_topo_fdr_contrast, vmin=-p_mul_topo_fdr_contrast, extrapolate="local", mask = np.bool_(binary_deep_fdr),
                             mask_params = dict(marker='o', markerfacecolor='w', markeredgecolor='k',
                                                linewidth=0, markersize=7, markeredgewidth=2))
-fig.savefig(os.path.join(prefix_out + fdr_dir, legend[0] + '_vs_' + legend[1],'difference_deep_fdr.png'), dpi = 300)
+if grand_average == True:
+    fig.savefig(os.path.join(prefix_out + fdr_dir, legend[0] + '_vs_' + legend[1],'difference_deep_fdr.png'), dpi = 300)
+else:
+    fig.savefig(os.path.join(prefix_out + fdr_dir + tfr_dir, legend[0] + '_vs_' + legend[1],'difference_deep_fdr.png'), dpi = 300)
 plt.close()
-    
-   
-
-html_name = os.path.join(prefix_out + fdr_dir, legend[0] + '_vs_' + legend[1] + '.html')
+    if grand_average == True:
+    html_name = os.path.join(prefix_out + fdr_dir, legend[0] + '_vs_' + legend[1] + '.html')
+else:
+    html_name = os.path.join(prefix_out + fdr_dir + tfr_dir, legend[0] + '_vs_' + legend[1] + '.html')
 clear_html(html_name)
 add_str_html(html_name, '<!DOCTYPE html>')
 add_str_html(html_name, '<html>')

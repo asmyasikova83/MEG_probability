@@ -20,14 +20,14 @@ def compute_p_val(subjects, kind, train, frequency, check_num_sens):
     subjects1 = []
     for ind, subj in enumerate(subjects):
         if grand_average == False:
-            rf1 = out_path + "{0}_{1}{2}{3}_{4}{5}-ave.fif".format(subj, spec, stimulus, kind[0], frequency, train)
+            rf1 = out_path + container_dir + "{0}_{1}{2}{3}_{4}{5}-ave.fif".format(subj, spec, stimulus, kind[0], frequency, train)
         else:
             assert(grand_average == True)
             rf1 = out_path + folder + "{0}_{1}{2}{3}_{4}{5}-grand_ave.fif".format(subj, spec, stimulus, kind[0], frequency, train)
         print(rf1)
         file1 = pathlib.Path(rf1)
         if grand_average == False:
-            rf2 = out_path + "{0}_{1}{2}{3}_{4}{5}-ave.fif".format(subj, spec, stimulus, kind[1], frequency, train)
+            rf2 = out_path + container_dir + "{0}_{1}{2}{3}_{4}{5}-ave.fif".format(subj, spec, stimulus, kind[1], frequency, train)
         else:
             assert(grand_average == True)
             rf2 = out_path + folder + "{0}_{1}{2}{3}_{4}{5}-grand_ave.fif".format(subj, spec, stimulus, kind[1], frequency, train)
@@ -56,7 +56,7 @@ def compute_p_val(subjects, kind, train, frequency, check_num_sens):
         #print('rsubjects1', rsubjects1)
     for ind, subj in enumerate(subjects1):
         if grand_average == False:
-            rf = out_path + "{0}_{1}{2}{3}_{4}{5}-ave.fif".format(subj, spec, stimulus, kind[0], frequency, train)
+            rf = out_path + container_dir + "{0}_{1}{2}{3}_{4}{5}-ave.fif".format(subj, spec, stimulus, kind[0], frequency, train)
         else:
             assert(grand_average == True)
             rf = out_path + folder + "{0}_{1}{2}{3}_{4}{5}-grand_ave.fif".format(subj, spec, stimulus, kind[0], frequency, train)
@@ -68,7 +68,7 @@ def compute_p_val(subjects, kind, train, frequency, check_num_sens):
             #first 'condition'
             print('kind[0]', kind[0])
             if grand_average == False:
-                temp1 = mne.Evoked(out_path + "{0}_{1}{2}{3}_{4}{5}-ave.fif".format(subj, spec, stimulus, kind[0], frequency, train))
+                temp1 = mne.Evoked(out_path + container_dir + "{0}_{1}{2}{3}_{4}{5}-ave.fif".format(subj, spec, stimulus, kind[0], frequency, train))
                 temp1 = temp1.pick_types("grad")
                 print('data shape', temp1.data.shape)
             else:
@@ -102,7 +102,7 @@ def compute_p_val(subjects, kind, train, frequency, check_num_sens):
             #second 'condition'
             print('kind[1]', kind[1])
             if grand_average == False:
-                    temp2 = mne.Evoked( out_path + "{0}_{1}{2}{3}_{4}{5}-ave.fif".format(subj, spec, stimulus, kind[1], frequency, train))
+                    temp2 = mne.Evoked( out_path + container_dir + "{0}_{1}{2}{3}_{4}{5}-ave.fif".format(subj, spec, stimulus, kind[1], frequency, train))
                     temp2 = temp2.pick_types("grad")
                     print('data 2 shape', temp2.data.shape)
             else:

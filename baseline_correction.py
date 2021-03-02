@@ -766,10 +766,10 @@ def correct_baseline_power(epochs_of_interest, b_line, kind, b_line_manually, su
     else:
         freq_show.apply_baseline(baseline=(-0.5,-0.1), mode="logratio")
     #avrage the trials
-    tfr_path = data_path
-    os.makedirs(tfr_path_dir.format(prefix, kind), exist_ok = True)
-    freq_show.save(tfr_path.format(prefix, kind, subject, run, spec, frequency, stimulus, kind, train), overwrite=True)
-    print(tfr_path.format(prefix, kind, subject, run, spec, frequency, stimulus, kind, train))
+    #tfr_path = data_path
+    freq_show.save(prefix_out + tfr_dir + data_path.format(subject, run, spec, frequency, stimulus, kind, train), overwrite=True)
+    print(prefix_out + tfr_dir)
+    print(data_path.format(subject, run, spec, frequency, stimulus, kind, train))
     return freq_show
 
 def topomap_one(freq_show, reduced_info, events_of_interest, raw):

@@ -18,12 +18,14 @@ prefix_out = path_home + work_dir
 events_dir = 'events/'
 out_path = prefix_out
 mio_dir = 'MIO/'
+tfr_dir = 'TFR/'
+container_dir = 'evoked/'
 tfce_dir = 'TFCE/'
 pdf_dir = 'PDF/'
 fdr_dir = 'FDR/'
 fdr_pdf_dir = 'FDR_PDF/'
 
-grand_average = True
+grand_average = False
 #remove trend from GA
 GA_correction = False
 if grand_average:
@@ -49,8 +51,7 @@ baseline_interval_start_sub = -350
 baseline_interval_end_sub = -50
 baseline =  'fixation_cross_norisks'#'fixation_cross_general'# 'fixation_cross_norisks'# 'fixation_cross_general'
 if baseline == 'fixation_cross_norisks':
-    data_path = '{0}TFR_new_base/{1}/{2}_run{3}{4}_{5}_{6}{7}{8}_int_50ms-tfr.h5'
-    tfr_path_dir = '{0}TFR_new_base/{1}/'
+    data_path = '{0}_run{1}{2}_{3}_{4}{5}{6}_int_50ms-tfr.h5'
 if baseline == 'fixation_cross_general':
     data_path = '{0}TFR_av/{2}_run{3}{4}_{5}_{6}{7}{8}_int_50ms-tfr.h5'
     tfr_path_dir = '{0}TFR_av/{1}/'

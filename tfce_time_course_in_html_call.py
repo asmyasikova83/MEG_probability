@@ -37,8 +37,12 @@ options = {
 }
 planars = ['planar1', 'planar2', 'combine_planar']
 
-os.chdir(prefix_out + tfce_dir) #папка где будут сохраняться картинки
-
+if grand_average == True:
+    os.chdir(prefix_out + tfce_dir + 'GA') #папка где будут сохраняться картинки
+    cur_dir = prefix_out + tfce_dir + 'GA'
+else:
+    os.chdir(prefix_out + tfce_dir + tfr_dir)
+    cur_dir = prefix_out + tfce_dir + tfr_dir
 comp1_mean, comp2_mean, contr, temp1, temp2, p_val, binary, subjects1 = compute_p_val(subjects, kind, train, frequency, check_num_sens)
 df1 = contr[:, 0, 204:, :]
 df2 = contr[:, 1, 204:, :]
@@ -73,7 +77,10 @@ print('\tPictures generated')
 
 for ind, planar in enumerate(planars):
     #place the channel time courses in html file
-    html_name = prefix_out + tfce_dir +  'output_tfce/pic_compose_%s_%s_vs_%s_%s.html' % (planar, f'{legend[0]}', f'{legend[1]}', 'all')
+    if grand_average == True:
+        html_name = prefix_out + tfce_dir +  'output_tfce/pic_compose_%s_%s_vs_%s_%s.html' % (planar, f'{legend[0]}', f'{legend[1]}', 'all')
+    else:
+        html_name = prefix_out + tfce_dir + tfr_dir +  'output_tfce/pic_compose_%s_%s_vs_%s_%s.html' % (planar, f'{legend[0]}', f'{legend[1]}', 'all')
     clear_html(html_name)
     add_str_html(html_name, '<!DOCTYPE html>')
     add_str_html(html_name, '<html>')
@@ -100,7 +107,8 @@ for ind, planar in enumerate(planars):
     add_str_html(html_name, '</body>')
     add_str_html(html_name, '</html>')
     pdf_file = html_name.split("/")[1].split('.')[0]
-    print('/%s' % html_name)
-    path = os.getcwd() + f'/output_tfce/{legend[0]}_vs_{legend[1]}/all_pdf/'
+    #print('/%s' % html_name)
+    path = f'{cur_dir}/output_tfce/{legend[0]}_vs_{legend[1]}/all_pdf/'
+    print(path)
     os.makedirs(path, exist_ok = True)
 print('\tAll printed')
