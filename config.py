@@ -3,10 +3,9 @@ import numpy as np
 import mne
 
 class conf():
-    def __init__(self, mode, kind, frequency):
+    def __init__(self, mode, kind, frequency = None):
         #kind = ['norisk', 'risk'] #'positive', 'negative', 'prerisk', 'risk', 'postrisk', 'norisk_fb_positive','norisk_fb_negative', 'fb_negative_norisk'
         self.kind = kind
-        self.frequency = frequency
 
         if mode == 'grand_average':
             self.grand_average = True
@@ -19,6 +18,7 @@ class conf():
             self.p_mul_topo_contrast = 0.0000000000005
             self.p_mul_topo_fdr_contrast = 0.0000000000005
         elif mode == 'tfr':
+            self.frequency = frequency
             self.grand_average = False
             self.period_start = -1.750
             self.period_end = 2.350

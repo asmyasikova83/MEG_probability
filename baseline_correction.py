@@ -8,7 +8,7 @@ from mne.time_frequency import tfr_morlet, psd_multitaper
 with open("config.py", "r") as f_in:
     settings = f_in.readlines()
 
-def retrieve_events_for_baseline(raw_data, fpath_events, kind, subject, run, picks):
+def retrieve_events_for_baseline(conf, raw_data, fpath_events, kind, subject, run, picks):
     events_with_cross = []
     events_of_interest = []
     #takes events with fixation cross followed by the events of interest (positive and negative feedback)
@@ -17,6 +17,10 @@ def retrieve_events_for_baseline(raw_data, fpath_events, kind, subject, run, pic
                                  mask=None, uint_cast=False, mask_type='and', initial_event=False, verbose=None)
     print('fpath_events', fpath_events)
     events_cleaned = np.loadtxt(fpath_events, dtype=int)
+    print(kind)
+    print('events cl')
+    print(events_cleaned)
+    print(events_raw)
     if kind == 'negative' or kind ==  'positive':
         p = 3
     if kind == 'prerisk' or kind == 'risk' or kind == 'postrisk' or kind == 'norisk' or kind == 'fb_negative_norisk' or kind == 'fb_positive_norisk' or kind == 'fb_negative_risk' or kind == 'fb_positive_risk' or  kind == 'risk_fb_negative' or kind == 'risk_fb_positive':
@@ -66,11 +70,13 @@ def retrieve_events_for_baseline(raw_data, fpath_events, kind, subject, run, pic
                         print('extracting event of interest', events_cleaned[j])
                     else:
                         continue
-
     if baseline == 'fixation_cross_norisks':
         fpath_events = f'{prefix_out}/{mio_dir}/mio_out_norisk/{subject}_run{run}_mio_corrected_norisk.txt'
         print('fpath events norisk', fpath_events)
         events_cleaned = np.loadtxt(fpath_events, dtype=int)
+        print('baseline fix cross norisks')
+        print(events_cleaned)
+        print(events_raw)
         p = 2
         for i in range(len(events_raw)):
             for j in range(len(events_cleaned)):
@@ -87,9 +93,15 @@ def retrieve_events_for_baseline(raw_data, fpath_events, kind, subject, run, pic
                         if factor == 'm' and events_cleaned.shape != (3,) and events_cleaned[j][0] == events_raw[i + p][0]:
                             assert(events_cleaned[j][2] == events_raw[i + p][2])
                             events_with_cross.append(events_raw[i])
+                            print('ev with cross found')
+                            print('1')
+                            print(events_with_cross)
                         elif factor == 'm' and events_cleaned.shape == (3,) and events_cleaned[j] == events_raw[i + p][0]:
                             assert(events_cleaned[2] == events_raw[i + p][2])
                             events_with_cross.append(events_raw[i])
+                            print('ev with cross found')
+                            print('2')
+                            print(events_with_cross) 
                         else:
                             continue
                 if events_raw[i][2] == 1:
@@ -108,12 +120,16 @@ def retrieve_events_for_baseline(raw_data, fpath_events, kind, subject, run, pic
                             events_with_cross.append(events_raw[i])
                         else:
                             continue
+    print('ev of interest2')
+    print(events_of_interest)
     print('events_with_cross', events_with_cross)
     print('events_of interest', events_of_interest)
     print('\nevents_for_baseline retrieved\n')
     return events_with_cross, events_of_interest
 
-def reshape_epochs(raw_data, events, picks):
+def reshape_epochs(conf, raw_data, events, picks):
+    period_start = conf.period_start
+    period_end = conf.period_end
     #  retrieve epochs associated with the events of interest
     print('events', events)
     epochs = mne.Epochs(raw_data, events, event_id = None, tmin = period_start,
@@ -126,9 +142,11 @@ def reshape_epochs(raw_data, events, picks):
     N_chans, N_times, N_events = epochs_ar.shape
     return N_chans, N_times, N_events, epochs_ar
 
-def create_mne_epochs_evoked(kind, subject, run, CORRECTED_DATA, events_of_interest, plot, raw, picks):
+def create_mne_epochs_evoked(conf, kind, subject, run, CORRECTED_DATA, events_of_interest, plot, raw, picks):
     #create an Epoch object from data array using info from raw_file, downsample it, creates and returns evoked
     #data in shape (n_epochs, n_channels, n_times)
+    period_start = conf.period_start
+    period_end = conf.period_end
     epochs_data = CORRECTED_DATA
     # create info for the Epoch object
     info = raw.info
@@ -677,12 +695,14 @@ def plot_epochs_with_without_BASELINE(events_of_interest, epochs_of_interest_w_B
     plt.show()
     exit()
 
-def compute_baseline_substraction_and_power(raw_data, events_with_cross, events_of_interest, picks):
+def compute_baseline_substraction_and_power(conf, raw_data, events_with_cross, events_of_interest, picks):
     # average each epoch with fixation cross followed by the events of interest
     # substract this average from the relevant epoch of interest
     # prepare data for numerical calculations for events_with_cross
-    N_chans, N_times, N_events, epochs_ar = reshape_epochs(raw_data, events_with_cross, picks)
-    N_chan_interests, N_times_interest, N_events_interest, epochs_ar_interest = reshape_epochs(raw_data, events_of_interest, picks)
+    period_start = conf.period_start
+    period_end = conf.period_end
+    N_chans, N_times, N_events, epochs_ar = reshape_epochs(conf, raw_data, events_with_cross, picks)
+    N_chan_interests, N_times_interest, N_events_interest, epochs_ar_interest = reshape_epochs(conf, raw_data, events_of_interest, picks)
     assert(N_events == len(events_with_cross))
     BASELINE = np.zeros((N_events, N_chans))
     for i in range(N_events):
@@ -711,9 +731,9 @@ def compute_baseline_substraction_and_power(raw_data, events_with_cross, events_
     #return array of (N_chan, N_events) with averaged value over the baseline time interval
     return BASELINE, b_line
 
-def correct_baseline_substraction(BASELINE, events_of_interest, raw_data, picks):
+def correct_baseline_substraction(conf, BASELINE, events_of_interest, raw_data, picks):
     # prepare data for numerical calculations for events_of_interest
-    N_chans, N_times, N_events, epochs_ar = reshape_epochs(raw_data, events_of_interest, picks)
+    N_chans, N_times, N_events, epochs_ar = reshape_epochs(conf, raw_data, events_of_interest, picks)
     assert(N_events == len(events_of_interest))
     #any data in shape (n_epochs, n_channels, n_times) can be used
     CD = (N_events,  N_chans, N_times)

@@ -4,12 +4,13 @@ import subprocess
 
 from config import *
 from mio_correction import mio_correction
+from grand_average import grand_average_process
 
-conf = conf(mode = 'grand_average', kind = ['norisk', 'risk'], frequency = 'theta')
+conf = conf(mode = 'grand_average', kind = ['norisk', 'risk'])
 
 run_events_extraction = False
-run_mio_correction = True
-run_grand_average = False
+run_mio_correction = False
+run_grand_average = True
 
 run_tfce = False
 convert_pdf = False
@@ -28,7 +29,6 @@ if run_mio_correction:
     path_mio = prefix_out + mio_dir
     if os.path.exists(path_mio) and os.path.isdir(path_mio):
         shutil.rmtree(path_mio)
-    #subprocess.call("python mio_correction.py", shell=True)
     mio_correction(conf)
 
 if run_grand_average:
@@ -36,7 +36,8 @@ if run_grand_average:
     if os.path.exists(path_GA) and os.path.isdir(path_GA):
         shutil.rmtree(path_GA)
     os.makedirs(path_GA, exist_ok = True)
-    subprocess.call("python grand_average.py", shell=True)
+    #subprocess.call("python grand_average.py", shell=True)
+    grand_average_process(conf)
 
 
 if run_tfce:

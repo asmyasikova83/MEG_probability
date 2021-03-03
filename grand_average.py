@@ -11,107 +11,113 @@ from config import *
 import pathlib
 from mne import read_evokeds
 
-evoked_ave = []
+def grand_average_process(conf):
+    kind = conf.kind
+    evoked_ave = []
+    fpath_raw = '/net/server/data/Archive/prob_learn/vtretyakova/ICA_cleaned/{}/run{}_{}_raw_ica.fif'
+    fpath_events = prefix_out + mio_dir + '/mio_out_{0}/{1}_run{2}_mio_corrected_{3}{4}{5}.txt'
+    temp1 = mne.Evoked(f'{path_home}donor-ave.fif')
+    folder = 'GA'
+    run_counter = 0
 
-fpath_raw = '/net/server/data/Archive/prob_learn/vtretyakova/ICA_cleaned/{}/run{}_{}_raw_ica.fif'
-fpath_events = prefix_out + mio_dir + '/mio_out_{0}/{1}_run{2}_mio_corrected_{3}{4}{5}.txt'
-temp1 = mne.Evoked(f'{path_home}donor-ave.fif')
-folder = 'GA'
-run_counter = 0
-
-
-for i in range(len(kind)):
-    for subject in subjects:
-        for run in runs:
-            if run == runs[-1]:
-                print('Dis is da last run!')
-                rf = fpath_events.format(kind[i], subject, run, stimulus, kind[i], train)
-                print('rf', rf)
-                file = pathlib.Path(rf)
-                if file.exists():
-                    if mode  == 'server':
-                        raw_file = fpath_raw.format(subject, run, subject)
-                    else:
-                        raw_file = fpath_raw.format(subject, run)
-                    raw_data = mne.io.Raw(raw_file, preload=True)
-                    raw_data = raw_data.filter(None, 50, fir_design='firwin') # for low frequencies, below the peaks of power-line noise low pass filter the data
-                    raw_data = raw_data.filter(1., None, fir_design='firwin') #remove slow drifts
-                    picks = mne.pick_types(raw_data.info, meg = 'grad')
-                    KIND = kind[i]
-                    print('XXX')
-                    print(rf)
-                    events_with_cross, events_of_interest = retrieve_events_for_baseline(raw_data, rf, KIND, subject, run, picks)
-                    print('Done with the events!')
-                    BASELINE, b_line = compute_baseline_substraction_and_power(raw_data, events_with_cross, events_of_interest, picks)
-                    if BASELINE.all== 0:
-                        print('Yes, BASELINE is dummy')
-                        continue
-                    print('\n\nDone with the BASELINE I!')
-                    CORRECTED_DATA = correct_baseline_substraction(BASELINE, events_of_interest, raw_data, picks)
-                    print('\n\nDone with the CORRECTED!')
-                    plot_created_epochs_evoked = False
-                    epochs_of_interest, evoked = create_mne_epochs_evoked(KIND, subject, run, CORRECTED_DATA, events_of_interest, plot_created_epochs_evoked, raw_data, picks)
-                    evoked_ave.append(evoked.data)
-                    run_counter = run_counter + 1
-                if run_counter > 0:
-                    new_evoked = temp1.copy()
-                    new_evoked.info = evoked.info
-                    new_evoked.nave = 98  #all
-                    new_evoked.kind = "average"
-                    new_evoked.times = evoked.times
-                    new_evoked.first = 0
-                    new_evoked.last = evoked.times.shape[0] - 1
-                    ev_data = np.asarray(evoked_ave)
-                    ev_data = ev_data[:, np.newaxis]
-                    print('ev_data shape', ev_data.shape)
-                    #mean across runs
-                    ev_data = ev_data.mean(axis=0).mean(axis=0)
-                    #v_data = ev_data.mean(axis = 0)
-                    print('shape', ev_data.shape)
-                    new_evoked.data = ev_data
-                    out_file = prefix_out + folder + "/{0}_{1}{2}{3}_{4}{5}-grand_ave.fif".format(subject, spec, stimulus,  kind[i], frequency, train)
-                    print('XXX')
-                    print(out_file)
-                    mne.write_evokeds(out_file, new_evoked)
-                    run_counter = 0
-                    evoked_ave = []
-                else:
-                    print('For this subj all runs are empty')
-                    run_counter = 0
-                    evoked_ave = []
-                    continue
-            else:
+    for i in range(len(kind)):
+        for subject in subjects:
+            for run in runs:
+                print('subject', subject)
                 print('run', run)
-                rf = fpath_events.format(kind[i], subject, run, stimulus, kind[i], train)
-                file = pathlib.Path(rf)
-                if file.exists():
-                    print('This file is being processed: ', rf)
-                    if mode  == 'server':
-                        raw_file = fpath_raw.format(subject, run, subject)
+                if run == runs[-1]:
+                    print('Dis is da last run!')
+                    rf = fpath_events.format(kind[i], subject, run, stimulus, kind[i], train)
+                    print('rf', rf)
+                    file = pathlib.Path(rf)
+                    if file.exists():
+                        if mode  == 'server':
+                            raw_file = fpath_raw.format(subject, run, subject)
+                            print('raw file path')
+                            print(raw_file)
+                        else:
+                            raw_file = fpath_raw.format(subject, run)
+                            print('raw file path')
+                            print(raw_file)
+                        raw_data = mne.io.Raw(raw_file, preload=True)
+                        raw_data = raw_data.filter(None, 50, fir_design='firwin') # for low frequencies, below the peaks of power-line noise low pass filter the data
+                        raw_data = raw_data.filter(1., None, fir_design='firwin') #remove slow drifts
+                        picks = mne.pick_types(raw_data.info, meg = 'grad')
+                        KIND = kind[i]
+                        print(rf)
+                        events_with_cross, events_of_interest = retrieve_events_for_baseline(conf, raw_data, rf, KIND, subject, run, picks)
+                        print('Done with the events!')
+                        print(events_with_cross)
+                        print(events_of_interest)
+                        BASELINE, b_line = compute_baseline_substraction_and_power(conf, raw_data, events_with_cross, events_of_interest, picks)
+                        if BASELINE.all== 0:
+                            print('Yes, BASELINE is dummy')
+                            continue
+                        print('\n\nDone with the BASELINE I!')
+                        CORRECTED_DATA = correct_baseline_substraction(conf, BASELINE, events_of_interest, raw_data, picks)
+                        print('\n\nDone with the CORRECTED!')
+                        plot_created_epochs_evoked = False
+                        epochs_of_interest, evoked = create_mne_epochs_evoked(conf, KIND, subject, run, CORRECTED_DATA, events_of_interest, plot_created_epochs_evoked, raw_data, picks)
+                        evoked_ave.append(evoked.data)
+                        run_counter = run_counter + 1
+                    if run_counter > 0:
+                        new_evoked = temp1.copy()
+                        new_evoked.info = evoked.info
+                        new_evoked.nave = 98  #all
+                        new_evoked.kind = "average"
+                        new_evoked.times = evoked.times
+                        new_evoked.first = 0
+                        new_evoked.last = evoked.times.shape[0] - 1
+                        ev_data = np.asarray(evoked_ave)
+                        ev_data = ev_data[:, np.newaxis]
+                        print('ev_data shape', ev_data.shape)
+                        #mean across runs
+                        ev_data = ev_data.mean(axis=0).mean(axis=0)
+                        #v_data = ev_data.mean(axis = 0)
+                        print('shape', ev_data.shape)
+                        new_evoked.data = ev_data
+                        out_file = prefix_out + folder + "/{0}_{1}{2}{3}_{4}_grand_ave.fif".format(subject, spec, stimulus,  kind[i], train)
+                        print(out_file)
+                        mne.write_evokeds(out_file, new_evoked)
+                        run_counter = 0
+                        evoked_ave = []
                     else:
-                        raw_file = fpath_raw.format(subject, run)
-                    raw_data = mne.io.Raw(raw_file, preload=True)
-                    raw_data = raw_data.filter(None, 50, fir_design='firwin') # for low frequencies, below the peaks of power-line noise low pass filter the data
-                    raw_data = raw_data.filter(1., None, fir_design='firwin') #remove slow drifts
-                    picks = mne.pick_types(raw_data.info, meg = 'grad')
-                    KIND = kind[i]
-                    print('YYY')
-                    print(rf)
-                    events_with_cross, events_of_interest = retrieve_events_for_baseline(raw_data, rf, KIND, subject, run, picks)
-                    print('Done with the events!')
-                    BASELINE, b_line = compute_baseline_substraction_and_power(raw_data, events_with_cross, events_of_interest, picks)
-                    if BASELINE.all== 0:
-                        print('Yes, BASELINE is dummy')
+                        print('For this subj all runs are empty')
+                        run_counter = 0
+                        evoked_ave = []
                         continue
-                    print('\n\nDone with the BASELINE I!')
-                    CORRECTED_DATA = correct_baseline_substraction(BASELINE, events_of_interest, raw_data, picks)
-                    print('\n\nDone with the CORRECTED!')
-                    plot_created_epochs_evoked = False
-                    epochs_of_interest, evoked = create_mne_epochs_evoked(KIND, subject, run, CORRECTED_DATA, events_of_interest, plot_created_epochs_evoked, raw_data, picks)
-                    evoked_ave.append(evoked.data)
-                    run_counter = run_counter + 1
-                    print(run_counter)
+                else:
+                    print('run', run)
+                    rf = fpath_events.format(kind[i], subject, run, stimulus, kind[i], train)
+                    file = pathlib.Path(rf)
+                    if file.exists():
+                        print('This file is being processed: ', rf)
+                        if mode  == 'server':
+                            raw_file = fpath_raw.format(subject, run, subject)
+                        else:
+                            raw_file = fpath_raw.format(subject, run)
+                        raw_data = mne.io.Raw(raw_file, preload=True)
+                        raw_data = raw_data.filter(None, 50, fir_design='firwin') # for low frequencies, below the peaks of power-line noise low pass filter the data
+                        raw_data = raw_data.filter(1., None, fir_design='firwin') #remove slow drifts
+                        picks = mne.pick_types(raw_data.info, meg = 'grad')
+                        KIND = kind[i]
+                        print(rf)
+                        events_with_cross, events_of_interest = retrieve_events_for_baseline(conf, raw_data, rf, KIND, subject, run, picks)
+                        print('Done with the events!')
+                        print(events_of_interest)
+                        BASELINE, b_line = compute_baseline_substraction_and_power(conf, raw_data, events_with_cross, events_of_interest, picks)
+                        if BASELINE.all== 0:
+                            print('Yes, BASELINE is dummy')
+                            continue
+                        print('\n\nDone with the BASELINE I!')
+                        CORRECTED_DATA = correct_baseline_substraction(conf, BASELINE, events_of_interest, raw_data, picks)
+                        print('\n\nDone with the CORRECTED!')
+                        plot_created_epochs_evoked = False
+                        epochs_of_interest, evoked = create_mne_epochs_evoked(conf, KIND, subject, run, CORRECTED_DATA, events_of_interest, plot_created_epochs_evoked, raw_data, picks)
 
+                        evoked_ave.append(evoked.data)
+                        run_counter = run_counter + 1
+'''
 exit()
 for subject in subjects:
     sdata = []
@@ -139,4 +145,4 @@ if mode == 'server':
     GA.savefig('output.png')
 else:
     plt.show()
-
+'''
