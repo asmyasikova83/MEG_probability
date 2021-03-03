@@ -26,9 +26,10 @@ def no_mio_events(epochs_ar, thres):
 
 fpath_raw = '/net/server/data/Archive/prob_learn/vtretyakova/ICA_cleaned/{}/run{}_{}_raw_ica.fif'
 
-def calculate_beta(subj, run, stimulus, kind, train, fpath_raw, fpath_events, fpath_mio_out):
-   # freqs = np.arange(L_freq, H_freq, f_step)
-        
+def calculate_beta(conf, subj, run, stimulus, kind, train, fpath_raw, fpath_events, fpath_mio_out):
+    period_start = conf.period_start
+    period_end = conf.period_end
+
     raw_data = mne.io.Raw(fpath_raw.format(subj, run, subj), preload=True)
     raw_data = raw_data.filter(l_freq=70, h_freq=None)
     picks = mne.pick_types(raw_data.info, meg = True)
@@ -62,23 +63,25 @@ def calculate_beta(subj, run, stimulus, kind, train, fpath_raw, fpath_events, fp
 
     del events_raw
 
-for i in range(len(kind)):
-    fpath_events = prefix_out + events_dir + '{0}_run{1}_events_{2}{3}{4}.txt'
-    fpath_mio_out = prefix_out + mio_dir + 'mio_out_{0}/{1}_run{2}_mio_corrected_{3}{4}{5}.txt'
-    fpath_mio_dir = prefix_out + mio_dir + 'mio_out_{}/'
-    os.makedirs(fpath_mio_dir.format(kind[i]), exist_ok = True)
+def mio_correction(conf):
+    kind = conf.kind
+    for i in range(len(kind)):
+        fpath_events = prefix_out + events_dir + '{0}_run{1}_events_{2}{3}{4}.txt'
+        fpath_mio_out = prefix_out + mio_dir + 'mio_out_{0}/{1}_run{2}_mio_corrected_{3}{4}{5}.txt'
+        fpath_mio_dir = prefix_out + mio_dir + 'mio_out_{}/'
+        os.makedirs(fpath_mio_dir.format(kind[i]), exist_ok = True)
 
-    for run in runs:
-        for subject in subjects:
+        for run in runs:
+            for subject in subjects:
 
-            rf = fpath_events.format(subject, run, stimulus, kind[i], train)
-            print(rf)
-            file = pathlib.Path(rf)
-            print('file', file)
-            if file.exists() and os.stat(rf).st_size != 0:
-                print('This file is being processed: ', rf)
-                calculate_beta(subject, run, stimulus, kind[i], train, fpath_raw, fpath_events, fpath_mio_out)
-            else:
-                print('This file: ', rf, 'does not exit')
-                continue
+                rf = fpath_events.format(subject, run, stimulus, kind[i], train)
+                print(rf)
+                file = pathlib.Path(rf)
+                print('file', file)
+                if file.exists() and os.stat(rf).st_size != 0:
+                    print('This file is being processed: ', rf)
+                    calculate_beta(conf, subject, run, stimulus, kind[i], train, fpath_raw, fpath_events, fpath_mio_out)
+                else:
+                    print('This file: ', rf, 'does not exit')
+                    continue
 

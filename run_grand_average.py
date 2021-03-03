@@ -3,16 +3,19 @@ import shutil
 import subprocess
 
 from config import *
+from mio_correction import mio_correction
+
+conf = conf(mode = 'grand_average', kind = ['norisk', 'risk'], frequency = 'theta')
 
 run_events_extraction = False
-run_mio_correction = False
+run_mio_correction = True
 run_grand_average = False
 
 run_tfce = False
 convert_pdf = False
 
-run_fdr = True
-convert_fdr_pdf = True
+run_fdr = False
+convert_fdr_pdf = False
 
 if run_events_extraction:
     path_events = prefix_out + events_dir
@@ -25,7 +28,8 @@ if run_mio_correction:
     path_mio = prefix_out + mio_dir
     if os.path.exists(path_mio) and os.path.isdir(path_mio):
         shutil.rmtree(path_mio)
-    subprocess.call("python mio_correction.py", shell=True)
+    #subprocess.call("python mio_correction.py", shell=True)
+    mio_correction(conf)
 
 if run_grand_average:
     path_GA = prefix_out + GA_dir
