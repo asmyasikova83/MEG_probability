@@ -9,6 +9,7 @@ from make_evoked_freq_data_container import container_process
 from tfce_time_course_in_html_call import tfce_process
 from make_pdf_from_pic_and_html_time_course import make_pdf
 from plot_topo_stat_call import topo_stat
+from plot_topo_fdr_pdf import make_fdr_pdf
 
 run_events_extraction = False
 run_mio_correction = False
@@ -16,8 +17,8 @@ run_tfr = False
 run_container = False
 run_tfce = False
 convert_pdf = False
-run_fdr = True
-convert_fdr_pdf = False
+run_fdr = False
+convert_fdr_pdf = True
 
 conf = conf(mode = 'tfr', kind = ['norisk', 'risk'], frequency = 'theta')
 
@@ -68,7 +69,6 @@ if run_fdr:
     if os.path.exists(path_fdr) and os.path.isdir(path_fdr):
          shutil.rmtree(path_fdr)
     os.makedirs(path_fdr, exist_ok = True)
-    #subprocess.call("python plot_topo_stat_call.py", shell=True)
     topo_stat(conf)
 
 if convert_fdr_pdf:
@@ -76,4 +76,4 @@ if convert_fdr_pdf:
     if os.path.exists(path_fdr_pdf) and os.path.isdir(path_fdr_pdf):
          shutil.rmtree(path_fdr_pdf)
     os.makedirs(path_fdr_pdf, exist_ok = True)
-    subprocess.call("python plot_topo_fdr_pdf.py", shell=True)
+    make_fdr_pdf(conf)
