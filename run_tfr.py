@@ -5,11 +5,12 @@ import subprocess
 from config import *
 from mio_correction import mio_correction
 from tfr import tfr_process
+from make_evoked_freq_data_container import container_process
 
 run_events_extraction = False
 run_mio_correction = False
-run_tfr = True
-run_container = False
+run_tfr = False
+run_container = True
 run_tfce = False
 convert_pdf = False
 run_fdr = False
@@ -45,7 +46,8 @@ if run_container:
     if os.path.exists(path_container) and os.path.isdir(path_container):
         shutil.rmtree(path_container)
     os.makedirs(path_container, exist_ok = True)
-    subprocess.call("python make_evoked_freq_data_container.py", shell=True)
+    #subprocess.call("python make_evoked_freq_data_container.py", shell=True)
+    container_process(conf)
 
 if run_tfce:
     path_tfce = prefix_out + tfce_dir + tfr_dir
