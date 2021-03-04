@@ -7,13 +7,14 @@ from mio_correction import mio_correction
 from tfr import tfr_process
 from make_evoked_freq_data_container import container_process
 from tfce_time_course_in_html_call import tfce_process
+from make_pdf_from_pic_and_html_time_course import make_pdf
 
 run_events_extraction = False
 run_mio_correction = False
 run_tfr = False
 run_container = False
-run_tfce = True
-convert_pdf = False
+run_tfce = False
+convert_pdf = True
 run_fdr = False
 convert_fdr_pdf = False
 
@@ -59,7 +60,8 @@ if convert_pdf:
     if os.path.exists(path_pdf) and os.path.isdir(path_pdf):
         shutil.rmtree(path_pdf)
     os.makedirs(path_pdf, exist_ok = True)
-    subprocess.call("python make_pdf_from_pic_and_html_time_course.py", shell=True)
+    #subprocess.call("python make_pdf_from_pic_and_html_time_course.py", shell=True)
+    make_pdf(conf)
 
 if run_fdr:
     path_fdr = prefix_out + fdr_dir + tfr_dir
