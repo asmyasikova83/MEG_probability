@@ -3,15 +3,19 @@ import shutil
 import subprocess
 
 from config import *
+from mio_correction import mio_correction
+from tfr import tfr_process
 
-run_events_extraction = True
-run_mio_correction = True
-run_tfr = False
+run_events_extraction = False
+run_mio_correction = False
+run_tfr = True
 run_container = False
 run_tfce = False
 convert_pdf = False
 run_fdr = False
 convert_fdr_pdf = False
+
+conf = conf(mode = 'tfr', kind = ['norisk', 'risk'], frequency = 'theta')
 
 if run_events_extraction:
     path_events = prefix_out + events_dir
@@ -25,14 +29,16 @@ if run_mio_correction:
     if os.path.exists(path_mio) and os.path.isdir(path_mio):
         shutil.rmtree(path_mio)
     os.makedirs(path_mio, exist_ok = True)
-    subprocess.call("python mio_correction.py", shell=True)
+    #subprocess.call("python mio_correction.py", shell=True)
+    mio_correction(conf)
 
 if run_tfr:
     path_TFR = prefix_out + tfr_dir
     if os.path.exists(path_TFR) and os.path.isdir(path_TFR):
         shutil.rmtree(path_TFR)
     os.makedirs(path_TFR, exist_ok = True)
-    subprocess.call("python tfr.py", shell=True)
+    #subprocess.call("python tfr.py", shell=True)
+    tfr_process(conf)
 
 if run_container:
     path_container = prefix_out + container_dir

@@ -749,12 +749,17 @@ def correct_baseline_substraction(conf, BASELINE, events_of_interest, raw_data, 
         CORRECTED_DATA[i, :, :] = CORRECTED_DATA_CUR
     return CORRECTED_DATA
 
-def correct_baseline_power(epochs_of_interest, b_line, kind, b_line_manually, subject, run, plot_spectrogram):
+def correct_baseline_power(conf, epochs_of_interest, b_line, kind, b_line_manually, subject, run, plot_spectrogram):
     # baseline power correction of TFR data after baseline I substraction from the signal
     #for theta n_cycles = 2
     #average over epochs to eliminate inconsistency in the number of epochs over conditions (i.e., risk_vs_norisk)
     #epochs_of_interest = epochs_of_interest.average(method='mean')
     #print('averaging epochs of interest', epochs_of_interest)
+
+    period_start = conf.period_start
+    period_end = conf.period_end
+    frequency = conf.frequency
+
     freq_show = mne.time_frequency.tfr_multitaper(epochs_of_interest, freqs = freqs, n_cycles =  freqs//2, use_fft = False, return_itc = False)
     #remove artifacts
     freq_show = freq_show.crop(tmin=period_start+0.350, tmax=period_end-0.350, include_tmax=True)
