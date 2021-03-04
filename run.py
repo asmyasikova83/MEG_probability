@@ -96,6 +96,17 @@ elif stage == 'make_fdr_pdf':
     convert_fdr_pdf = True
 
 
+path_events = conf.prefix_out + events_dir
+if run_events_extraction:
+    env(path_events)
+    #subprocess.call("python risk_norisk_events_extraction.py", shell=True)
+    risk_norisk_events(conf)
+
+path_mio = conf.prefix_out + mio_dir
+if run_mio_correction:
+    env(path_mio, path_events)
+    mio_correction(conf)
+
 prefix_out = conf.prefix_out
 if mode == 'ga':
     GA_dir = conf.GA_dir
@@ -109,19 +120,6 @@ else:
     path_pdf = prefix_out + pdf_dir + fdr_dir
     path_fdr = prefix_out + fdr_dir + tfr_dir
     path_fdr_pdf = prefix_out + fdr_pdf_dir + tfr_dir
-
-
-path_events = prefix_out + events_dir
-if run_events_extraction:
-    env(path_events)
-    #subprocess.call("python risk_norisk_events_extraction.py", shell=True)
-    risk_norisk_events(conf)
-
-path_mio = prefix_out + mio_dir
-if run_mio_correction:
-    env(path_mio, path_events)
-    mio_correction(conf)
-
 
 if run_grand_average:
     env(path_GA, path_mio)
