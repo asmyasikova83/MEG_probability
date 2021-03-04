@@ -25,6 +25,7 @@ class conf():
             self.p_mul_topo_fdr_contrast = 0.0000000000005
         elif mode == 'tfr':
             self.tfr_dir = 'TFR/'
+            self.container_dir = 'evoked/'
             self.path_tfce = self.prefix_out + self.tfce_dir + self.tfr_dir
             self.frequency = frequency
             self.grand_average = False
@@ -84,7 +85,6 @@ legend = ['norisk', 'risk']
 mode = 'server'
 events_dir = 'events/'
 mio_dir = 'MIO/'
-container_dir = 'evoked/'
 pdf_dir = 'TFCE_PDF/'
 fdr_dir = 'FDR/'
 fdr_pdf_dir = 'FDR_PDF/'

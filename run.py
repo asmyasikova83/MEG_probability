@@ -123,14 +123,13 @@ else:
     if run_tfr:
         env(path_TFR, path_mio)
         tfr_process(conf)
+    path_container = prefix_out + conf.container_dir
+    if run_container:
+        env(path_container, path_TFR)
+        container_process(conf)
     path_pdf = prefix_out + pdf_dir + fdr_dir
     path_fdr = prefix_out + fdr_dir + tfr_dir
     path_fdr_pdf = prefix_out + fdr_pdf_dir + tfr_dir
-
-path_container = prefix_out + container_dir
-if run_container:
-    env(path_container, path_TFR)
-    container_process(conf)
 
 
 if run_tfce:

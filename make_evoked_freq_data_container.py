@@ -3,6 +3,10 @@ from config import *
 import pathlib
 
 def container_process(conf):
+    prefix_out = conf.prefix_out
+    path_home = conf.path_home
+    tfr_dir = conf.tfr_dir
+    container_dir = conf.container_dir
     kind = conf.kind
     frequency = conf.frequency
 
