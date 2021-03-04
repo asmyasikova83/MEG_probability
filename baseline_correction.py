@@ -9,6 +9,7 @@ with open("config.py", "r") as f_in:
     settings = f_in.readlines()
 
 def retrieve_events_for_baseline(conf, raw_data, fpath_events, kind, subject, run, picks):
+    prefix_out = conf.prefix_out
     events_with_cross = []
     events_of_interest = []
     #takes events with fixation cross followed by the events of interest (positive and negative feedback)
