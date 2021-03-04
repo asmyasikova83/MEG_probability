@@ -6,12 +6,13 @@ from config import *
 from mio_correction import mio_correction
 from tfr import tfr_process
 from make_evoked_freq_data_container import container_process
+from tfce_time_course_in_html_call import tfce_process
 
 run_events_extraction = False
 run_mio_correction = False
 run_tfr = False
-run_container = True
-run_tfce = False
+run_container = False
+run_tfce = True
 convert_pdf = False
 run_fdr = False
 convert_fdr_pdf = False
@@ -30,7 +31,6 @@ if run_mio_correction:
     if os.path.exists(path_mio) and os.path.isdir(path_mio):
         shutil.rmtree(path_mio)
     os.makedirs(path_mio, exist_ok = True)
-    #subprocess.call("python mio_correction.py", shell=True)
     mio_correction(conf)
 
 if run_tfr:
@@ -38,7 +38,6 @@ if run_tfr:
     if os.path.exists(path_TFR) and os.path.isdir(path_TFR):
         shutil.rmtree(path_TFR)
     os.makedirs(path_TFR, exist_ok = True)
-    #subprocess.call("python tfr.py", shell=True)
     tfr_process(conf)
 
 if run_container:
@@ -46,7 +45,6 @@ if run_container:
     if os.path.exists(path_container) and os.path.isdir(path_container):
         shutil.rmtree(path_container)
     os.makedirs(path_container, exist_ok = True)
-    #subprocess.call("python make_evoked_freq_data_container.py", shell=True)
     container_process(conf)
 
 if run_tfce:
@@ -54,7 +52,7 @@ if run_tfce:
     if os.path.exists(path_tfce) and os.path.isdir(path_tfce):
         shutil.rmtree(path_tfce)
     os.makedirs(path_tfce, exist_ok = True)
-    subprocess.call("python tfce_time_course_in_html_call.py", shell=True)
+    tfce_process(conf)
 
 if convert_pdf:
     path_pdf = prefix_out + pdf_dir + tfr_dir
