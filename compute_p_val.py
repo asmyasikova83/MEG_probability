@@ -11,8 +11,9 @@ import random
 from numpy import random
 from baseline_GA import baseline_GA
 
-def compute_p_val(subjects, kind, train, frequency, check_num_sens):
+def compute_p_val(conf, subjects, kind, train, frequency, check_num_sens):
     #coordinates and channel names from matlab files - the files are here https://github.com/niherus/MNE_TFR_ToolBox/tree/master/VISUALISATION
+    grand_average = conf.grand_average
     tfr_path = data_path
     subject_counter = 0 
     folder = 'GA/'
@@ -23,14 +24,14 @@ def compute_p_val(subjects, kind, train, frequency, check_num_sens):
             rf1 = out_path + container_dir + "{0}_{1}{2}{3}_{4}{5}-ave.fif".format(subj, spec, stimulus, kind[0], frequency, train)
         else:
             assert(grand_average == True)
-            rf1 = out_path + folder + "{0}_{1}{2}{3}_{4}{5}-grand_ave.fif".format(subj, spec, stimulus, kind[0], frequency, train)
+            rf1 = out_path + folder + "{0}_{1}{2}{3}_{4}_grand_ave.fif".format(subj, spec, stimulus, kind[0], train)
         print(rf1)
         file1 = pathlib.Path(rf1)
         if grand_average == False:
             rf2 = out_path + container_dir + "{0}_{1}{2}{3}_{4}{5}-ave.fif".format(subj, spec, stimulus, kind[1], frequency, train)
         else:
             assert(grand_average == True)
-            rf2 = out_path + folder + "{0}_{1}{2}{3}_{4}{5}-grand_ave.fif".format(subj, spec, stimulus, kind[1], frequency, train)
+            rf2 = out_path + folder + "{0}_{1}{2}{3}_{4}_grand_ave.fif".format(subj, spec, stimulus, kind[1], train)
         file2 = pathlib.Path(rf2)
         if file1.exists() and file2.exists():
             print('This subject is being processed: ', subj, ' (', i, ') ( ', ind, ' ) ')
@@ -39,6 +40,7 @@ def compute_p_val(subjects, kind, train, frequency, check_num_sens):
     print('i: ', i)
     subject_counter = i
     #a container for tapers in neg and pos reinforcement
+    time = conf.time
     contr = np.zeros((i, 2, 306, int(time.shape[0])))
     print('time.shape[0]', time.shape[0])
     if random_comp:
@@ -59,7 +61,7 @@ def compute_p_val(subjects, kind, train, frequency, check_num_sens):
             rf = out_path + container_dir + "{0}_{1}{2}{3}_{4}{5}-ave.fif".format(subj, spec, stimulus, kind[0], frequency, train)
         else:
             assert(grand_average == True)
-            rf = out_path + folder + "{0}_{1}{2}{3}_{4}{5}-grand_ave.fif".format(subj, spec, stimulus, kind[0], frequency, train)
+            rf = out_path + folder + "{0}_{1}{2}{3}_{4}_grand_ave.fif".format(subj, spec, stimulus, kind[0], train)
         print(rf)
         file = pathlib.Path(rf)
         if file.exists():
@@ -73,7 +75,8 @@ def compute_p_val(subjects, kind, train, frequency, check_num_sens):
                 print('data shape', temp1.data.shape)
             else:
                 assert(grand_average == True)
-                temp1 = mne.Evoked(out_path + folder + "{0}_{1}{2}{3}_{4}{5}-grand_ave.fif".format(subj, spec, stimulus, kind[0], frequency, train))
+                temp1 = mne.Evoked(out_path + folder + "{0}_{1}{2}{3}_{4}_grand_ave.fif".format(subj, spec, stimulus, kind[0], train))
+
             #planars
             if random_comp:
                 #check that tje classes based on the 'conditions' are real
@@ -107,7 +110,7 @@ def compute_p_val(subjects, kind, train, frequency, check_num_sens):
                     print('data 2 shape', temp2.data.shape)
             else:
                 assert(grand_average == True)
-                temp2 = mne.Evoked( out_path + folder + "{0}_{1}{2}{3}_{4}{5}-grand_ave.fif".format(subj, spec, stimulus, kind[1], frequency, train))
+                temp2 = mne.Evoked( out_path + folder + "{0}_{1}{2}{3}_{4}_grand_ave.fif".format(subj, spec, stimulus, kind[1], train))
             if random_comp:
                 #not for ERP todo for stat_over_runs
                 contr[i, int(random_class_two[i]), :204, :] = temp2.data

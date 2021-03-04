@@ -5,14 +5,15 @@ import subprocess
 from config import *
 from mio_correction import mio_correction
 from grand_average import grand_average_process
+from tfce_time_course_in_html_call import tfce_process
 
 conf = conf(mode = 'grand_average', kind = ['norisk', 'risk'])
 
 run_events_extraction = False
 run_mio_correction = False
-run_grand_average = True
+run_grand_average = False
 
-run_tfce = False
+run_tfce = True
 convert_pdf = False
 
 run_fdr = False
@@ -45,7 +46,8 @@ if run_tfce:
     if os.path.exists(path_tfce) and os.path.isdir(path_tfce):
         shutil.rmtree(path_tfce)
     os.makedirs(path_tfce, exist_ok = True)
-    subprocess.call("python tfce_time_course_in_html_call.py", shell=True)
+    #subprocess.call("python tfce_time_course_in_html_call.py", shell=True)
+    tfce_process(conf)
 
 if convert_pdf:
     path_pdf = prefix_out + pdf_dir + GA_dir

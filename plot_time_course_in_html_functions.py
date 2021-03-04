@@ -60,9 +60,9 @@ def space_fdr(p_val_n):
 
 
 
-def plot_stat_comparison_tfce(comp1, comp2, comp1_stderr, comp2_stderr, p_val, res_tfce, time, title='demo_title', folder='comparison',
+def plot_stat_comparison_tfce(conf, comp1, comp2, comp1_stderr, comp2_stderr, p_val, res_tfce, time, title='demo_title', folder='comparison',
                          comp1_label='comp1', comp2_label='comp2', comp1_color = 'k', comp2_color = 'k'):
-
+    p_mul = conf.p_mul
     assert(len(comp1) == len(comp2) == len(time))
     res = False
     plt.figure()
