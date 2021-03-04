@@ -5,9 +5,14 @@ import argparse
 
 from config import *
 from mio_correction import mio_correction
+
 from grand_average import grand_average_process
+from tfr import tfr_process
+from make_evoked_freq_data_container import container_process
+
 from tfce_time_course_in_html_call import tfce_process
 from make_pdf_from_pic_and_html_time_course import make_pdf
+
 from plot_topo_stat_call import topo_stat
 from plot_topo_fdr_pdf import make_fdr_pdf
 
@@ -20,7 +25,10 @@ def env(path, prev_path=None):
 
 run_events_extraction = False
 run_mio_correction = False
+
 run_grand_average = False
+run_tfr = False
+run_container = False
 
 run_tfce = False
 convert_pdf = False
@@ -31,18 +39,30 @@ convert_fdr_pdf = False
 parser = argparse.ArgumentParser()
 parser.add_argument('mode', choices=['ga', 'tfr'], help='available modes: ga(aka grand_average), tfr')
 parser.add_argument('-s', '--stage', \
-        choices=['events', 'mio', 'ERF', 'time_course_stat', 'make_tfce_pdf', 'topo_stat', 'make_fdr_pdf'], \
+        choices=['events', 'mio', 'ERF', 'tfr', 'container_tfr', 'time_course_stat', 'make_tfce_pdf', 'topo_stat', 'make_fdr_pdf'], \
         help='stage of processing')
 args = parser.parse_args()
 mode = args.mode
 stage = args.stage
+
+print(mode)
+if mode == 'ga':
+    conf = conf(mode = 'grand_average', kind = ['norisk', 'risk'])
+elif mode == 'tfr':
+    conf = conf(mode = 'tfr', kind = ['norisk', 'risk'], frequency = 'theta')
+
 print(stage)
 
 if not stage:
     print('All stages!')
     run_events_extraction = True
     run_mio_correction = True
-    run_grand_average = True
+
+    if mode == 'ga':
+        run_grand_average = True
+    elif mode == 'tfr':
+        run_tfr = True
+        run_container = True
 
     run_tfce = True
     convert_pdf = True
@@ -54,8 +74,16 @@ elif stage == 'events':
     run_events_extraction = True
 elif stage == 'mio':
     run_mio_correction = True
+
 elif stage == 'ERF':
+    assert mode == 'ga'
     run_grand_average = True
+elif stage == 'tfr':
+    assert mode == 'tfr'
+    run_tfr = True
+elif stage == 'container_tfr':
+    assert mode == 'tfr'
+    run_container = True
 
 elif stage == 'time_course_stat':
     run_tfce = True
@@ -67,7 +95,6 @@ elif stage == 'topo_stat':
 elif stage == 'make_fdr_pdf':
     convert_fdr_pdf = True
 
-conf = conf(mode = 'grand_average', kind = ['norisk', 'risk'])
 
 path_events = prefix_out + events_dir
 if run_events_extraction:
@@ -79,10 +106,21 @@ if run_mio_correction:
     env(path_mio, path_events)
     mio_correction(conf)
 
+
 path_GA = prefix_out + GA_dir
 if run_grand_average:
     env(path_GA, path_mio)
     grand_average_process(conf)
+
+path_TFR = prefix_out + tfr_dir
+if run_tfr:
+    env(path_TFR, path_mio)
+    tfr_process(conf)
+
+path_container = prefix_out + container_dir
+if run_container:
+    env(path_container, path_TFR)
+    container_process(conf)
 
 
 path_tfce = prefix_out + tfce_dir + GA_dir
