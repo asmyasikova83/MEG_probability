@@ -28,6 +28,11 @@ from plot_time_course_in_html_functions import plot_stat_comparison_tfce
 from compute_p_val import compute_p_val
 
 def tfce_process(conf):
+    prefix_out = conf.prefix_out
+    tfce_dir = conf.tfce_dir
+    tfr_dir = conf.tfr_dir
+    path_home = conf.path_home
+
     grand_average = conf.grand_average
     kind = conf.kind
     # perfom statistical check by means of Threshold Free Cluster Enhancement 
@@ -73,7 +78,7 @@ def tfce_process(conf):
         df1_stderr[:, i] = scipy.stats.sem(df1[:, :, i], axis=1)
         df2_stderr[:, i] = scipy.stats.sem(df2[:, :, i], axis=1)
         t_stat[:, i], p_val[:, i] = stats.ttest_rel(df1[:, :, i], df2[:, :, i], axis=1)
-        res_tfce[:, i] = np.array(tfce(df1[:, :, i],df2[:, :, i], title = chan_labels[i+204]))
+        res_tfce[:, i] = np.array(tfce(conf, df1[:, :, i],df2[:, :, i], title = chan_labels[i+204]))
         res = plot_stat_comparison_tfce(conf, df1_mean[:,i], df2_mean[:, i], df1_stderr[:, i], df2_stderr[:, i], p_val[:, i], res_tfce[:, i], conf.time, title = chan_labels[i+204],
                                  folder = f'{legend[0]}_vs_{legend[1]}', 
                                  comp1_label = kind[0], comp2_label = kind[1], 

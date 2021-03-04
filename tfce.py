@@ -5,7 +5,9 @@ import os
 
 from config import *
 
-def tfce (df1,df2, title): #модифицированный пример из гитхаба Платона
+def tfce(conf, df1,df2, title): #модифицированный пример из гитхаба Платона
+    path_home = conf.path_home
+
     # create random data arrays
     A = df1
     A = A.transpose()
