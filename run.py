@@ -1,9 +1,9 @@
 import os
 import shutil
-import subprocess
 import argparse
 
 from config import *
+from risk_norisk_events_extraction import risk_norisk_events
 from mio_correction import mio_correction
 
 from grand_average import grand_average_process
@@ -96,10 +96,26 @@ elif stage == 'make_fdr_pdf':
     convert_fdr_pdf = True
 
 
+prefix_out = conf.prefix_out
+if mode == 'ga':
+    GA_dir = conf.GA_dir
+    path_GA = prefix_out + GA_dir
+    path_pdf = prefix_out + pdf_dir + GA_dir
+    path_fdr = prefix_out + fdr_dir + GA_dir
+    path_fdr_pdf = prefix_out + fdr_pdf_dir + GA_dir
+else:
+    tfr_dir = conf.tfr_dir
+    path_TFR = prefix_out + tfr_dir
+    path_pdf = prefix_out + pdf_dir + fdr_dir
+    path_fdr = prefix_out + fdr_dir + tfr_dir
+    path_fdr_pdf = prefix_out + fdr_pdf_dir + tfr_dir
+
+
 path_events = prefix_out + events_dir
 if run_events_extraction:
     env(path_events)
-    subprocess.call("python risk_norisk_events_extraction.py", shell=True)
+    #subprocess.call("python risk_norisk_events_extraction.py", shell=True)
+    risk_norisk_events(conf)
 
 path_mio = prefix_out + mio_dir
 if run_mio_correction:
@@ -107,12 +123,10 @@ if run_mio_correction:
     mio_correction(conf)
 
 
-path_GA = prefix_out + GA_dir
 if run_grand_average:
     env(path_GA, path_mio)
     grand_average_process(conf)
 
-path_TFR = prefix_out + tfr_dir
 if run_tfr:
     env(path_TFR, path_mio)
     tfr_process(conf)
@@ -123,23 +137,19 @@ if run_container:
     container_process(conf)
 
 
-path_tfce = prefix_out + tfce_dir + GA_dir
 if run_tfce:
-    env(path_tfce, path_GA)
+    env(conf.path_tfce, path_GA if mode == 'ga' else path_container)
     tfce_process(conf)
 
-path_pdf = prefix_out + pdf_dir + GA_dir
 if convert_pdf:
     env(path_pdf, path_tfce)
     make_pdf(conf)
 
 
-path_fdr = prefix_out + fdr_dir + GA_dir
 if run_fdr:
     env(path_fdr, path_GA)
     topo_stat(conf)
 
-path_fdr_pdf = prefix_out + fdr_pdf_dir + GA_dir
 if convert_fdr_pdf:
     env(path_fdr_pdf, path_fdr)
     make_fdr_pdf(conf)

@@ -6,8 +6,14 @@ class conf():
     def __init__(self, mode, kind, frequency = None):
         #kind = ['norisk', 'risk'] #'positive', 'negative', 'prerisk', 'risk', 'postrisk', 'norisk_fb_positive','norisk_fb_negative', 'fb_negative_norisk'
         self.kind = kind
+        self.path_home = '/net/server/data/Archive/prob_learn/asmyasnikova83/'
+        self.work_dir = 'WORK/'
+        self.prefix_out = self.path_home + self.work_dir
+        self.tfce_dir = 'TFCE/'
 
         if mode == 'grand_average':
+            self.GA_dir = 'GA/'
+            self.path_tfce = self.prefix_out + self.tfce_dir + self.GA_dir
             self.grand_average = True
             self.period_start = -1.400 #epoch start. for GA period_start = -1.400, for tfr period_start = -1.750
             self.period_end = 2.000 #epoch end for GA period_end = 2.000, for tfr period_end = 2.350
@@ -18,6 +24,8 @@ class conf():
             self.p_mul_topo_contrast = 0.0000000000005
             self.p_mul_topo_fdr_contrast = 0.0000000000005
         elif mode == 'tfr':
+            self.tfr_dir = 'TFR/'
+            self.path_tfce = self.prefix_out + self.tfce_dir + self.tfr_dir
             self.frequency = frequency
             self.grand_average = False
             self.period_start = -1.750
@@ -82,10 +90,7 @@ prefix_out = path_home + work_dir
 events_dir = 'events/'
 out_path = prefix_out
 mio_dir = 'MIO/'
-GA_dir = 'GA/'
-tfr_dir = 'TFR/'
 container_dir = 'evoked/'
-tfce_dir = 'TFCE/'
 pdf_dir = 'TFCE_PDF/'
 fdr_dir = 'FDR/'
 fdr_pdf_dir = 'FDR_PDF/'
