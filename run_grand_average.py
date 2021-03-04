@@ -7,6 +7,7 @@ from mio_correction import mio_correction
 from grand_average import grand_average_process
 from tfce_time_course_in_html_call import tfce_process
 from make_pdf_from_pic_and_html_time_course import make_pdf
+from plot_topo_stat_call import topo_stat
 
 conf = conf(mode = 'grand_average', kind = ['norisk', 'risk'])
 
@@ -15,9 +16,9 @@ run_mio_correction = False
 run_grand_average = False
 
 run_tfce = False
-convert_pdf = True
+convert_pdf = False
 
-run_fdr = False
+run_fdr = True
 convert_fdr_pdf = False
 
 if run_events_extraction:
@@ -38,7 +39,6 @@ if run_grand_average:
     if os.path.exists(path_GA) and os.path.isdir(path_GA):
         shutil.rmtree(path_GA)
     os.makedirs(path_GA, exist_ok = True)
-    #subprocess.call("python grand_average.py", shell=True)
     grand_average_process(conf)
 
 
@@ -47,7 +47,6 @@ if run_tfce:
     if os.path.exists(path_tfce) and os.path.isdir(path_tfce):
         shutil.rmtree(path_tfce)
     os.makedirs(path_tfce, exist_ok = True)
-    #subprocess.call("python tfce_time_course_in_html_call.py", shell=True)
     tfce_process(conf)
 
 if convert_pdf:
@@ -55,7 +54,6 @@ if convert_pdf:
     if os.path.exists(path_pdf) and os.path.isdir(path_pdf):
         shutil.rmtree(path_pdf)
     os.makedirs(path_pdf, exist_ok = True)
-    #subprocess.call("python make_pdf_from_pic_and_html_time_course.py", shell=True)
     make_pdf(conf)
 
 if run_fdr:
@@ -63,7 +61,8 @@ if run_fdr:
     if os.path.exists(path_fdr) and os.path.isdir(path_fdr):
          shutil.rmtree(path_fdr)
     os.makedirs(path_fdr, exist_ok = True)
-    subprocess.call("python plot_topo_stat_call.py", shell=True)
+    #subprocess.call("python plot_topo_stat_call.py", shell=True)
+    topo_stat(conf)
 
 if convert_fdr_pdf:
     path_fdr_pdf = prefix_out + fdr_pdf_dir + GA_dir
