@@ -111,23 +111,21 @@ prefix_out = conf.prefix_out
 if mode == 'ga':
     GA_dir = conf.GA_dir
     path_GA = prefix_out + GA_dir
+    if run_grand_average:
+        env(path_GA, path_mio)
+        grand_average_process(conf)
     path_pdf = prefix_out + pdf_dir + GA_dir
     path_fdr = prefix_out + fdr_dir + GA_dir
     path_fdr_pdf = prefix_out + fdr_pdf_dir + GA_dir
 else:
     tfr_dir = conf.tfr_dir
     path_TFR = prefix_out + tfr_dir
+    if run_tfr:
+        env(path_TFR, path_mio)
+        tfr_process(conf)
     path_pdf = prefix_out + pdf_dir + fdr_dir
     path_fdr = prefix_out + fdr_dir + tfr_dir
     path_fdr_pdf = prefix_out + fdr_pdf_dir + tfr_dir
-
-if run_grand_average:
-    env(path_GA, path_mio)
-    grand_average_process(conf)
-
-if run_tfr:
-    env(path_TFR, path_mio)
-    tfr_process(conf)
 
 path_container = prefix_out + container_dir
 if run_container:

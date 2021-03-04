@@ -751,6 +751,8 @@ def correct_baseline_substraction(conf, BASELINE, events_of_interest, raw_data, 
     return CORRECTED_DATA
 
 def correct_baseline_power(conf, epochs_of_interest, b_line, kind, b_line_manually, subject, run, plot_spectrogram):
+    prefix_out = conf.prefix_out
+    tfr_dir = conf.tfr_dir
     # baseline power correction of TFR data after baseline I substraction from the signal
     #for theta n_cycles = 2
     #average over epochs to eliminate inconsistency in the number of epochs over conditions (i.e., risk_vs_norisk)
