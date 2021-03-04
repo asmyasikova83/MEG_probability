@@ -1,6 +1,7 @@
 import os
 import shutil
 import subprocess
+import argparse
 
 from config import *
 from mio_correction import mio_correction
@@ -10,8 +11,6 @@ from make_pdf_from_pic_and_html_time_course import make_pdf
 from plot_topo_stat_call import topo_stat
 from plot_topo_fdr_pdf import make_fdr_pdf
 
-conf = conf(mode = 'grand_average', kind = ['norisk', 'risk'])
-
 run_events_extraction = False
 run_mio_correction = False
 run_grand_average = False
@@ -19,8 +18,49 @@ run_grand_average = False
 run_tfce = False
 convert_pdf = False
 
-run_fdr = True
-convert_fdr_pdf = True
+run_fdr = False
+convert_fdr_pdf = False
+
+parser = argparse.ArgumentParser()
+parser.add_argument('mode', choices=['ga', 'tfr'], help='available modes: ga(aka grand_average), tfr')
+parser.add_argument('-s', '--stage', \
+        choices=['events', 'mio', 'ERF', 'time_course_stat', 'make_tfce_pdf', 'topo_stat', 'make_fdr_pdf'], \
+        help='stage of processing')
+args = parser.parse_args()
+mode = args.mode
+stage = args.stage
+print(stage)
+
+if not stage:
+    print('All stages!')
+    run_events_extraction = True
+    run_mio_correction = True
+    run_grand_average = True
+
+    run_tfce = True
+    convert_pdf = True
+
+    run_fdr = True
+    convert_fdr_pdf = True
+
+elif stage == 'events':
+    run_events_extraction = True
+elif stage == 'mio':
+    run_mio_correction = True
+elif stage == 'ERF':
+    run_grand_average = True
+
+elif stage == 'time_course_stat':
+    run_tfce = True
+elif stage == 'make_tfce_pdf':
+    convert_pdf = True
+
+elif stage == 'topo_stat':
+    run_fdr = True
+elif stage == 'make_fdr_pdf':
+    convert_fdr_pdf = True
+
+conf = conf(mode = 'grand_average', kind = ['norisk', 'risk'])
 
 if run_events_extraction:
     path_events = prefix_out + events_dir
