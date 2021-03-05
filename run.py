@@ -104,22 +104,16 @@ if run_mio_correction:
     env(conf.path_mio, conf.path_events)
     mio_correction(conf)
 
-prefix_out = conf.prefix_out
 if mode == 'ga':
-    GA_dir = conf.GA_dir
-    path_GA = prefix_out + GA_dir
     if run_grand_average:
-        env(path_GA, path_mio)
+        env(conf.path_GA, conf.path_mio)
         grand_average_process(conf)
 else:
-    tfr_dir = conf.tfr_dir
-    path_TFR = prefix_out + tfr_dir
     if run_tfr:
-        env(path_TFR, path_mio)
+        env(conf.path_tfr, conf.path_mio)
         tfr_process(conf)
-    path_container = prefix_out + conf.container_dir
     if run_container:
-        env(path_container, path_TFR)
+        env(conf.path_container, conf.path_tfr)
         container_process(conf)
 
 

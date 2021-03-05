@@ -72,7 +72,7 @@ def retrieve_events_for_baseline(conf, raw_data, fpath_events, kind, subject, ru
                     else:
                         continue
     if baseline == 'fixation_cross_norisks':
-        fpath_events = f'{prefix_out}/{mio_dir}/mio_out_norisk/{subject}_run{run}_mio_corrected_norisk.txt'
+        fpath_events = f'{conf.path_mio}/mio_out_norisk/{subject}_run{run}_mio_corrected_norisk.txt'
         print('fpath events norisk', fpath_events)
         events_cleaned = np.loadtxt(fpath_events, dtype=int)
         print('baseline fix cross norisks')
@@ -752,7 +752,6 @@ def correct_baseline_substraction(conf, BASELINE, events_of_interest, raw_data, 
 
 def correct_baseline_power(conf, epochs_of_interest, b_line, kind, b_line_manually, subject, run, plot_spectrogram):
     prefix_out = conf.prefix_out
-    tfr_dir = conf.tfr_dir
     # baseline power correction of TFR data after baseline I substraction from the signal
     #for theta n_cycles = 2
     #average over epochs to eliminate inconsistency in the number of epochs over conditions (i.e., risk_vs_norisk)
@@ -795,8 +794,7 @@ def correct_baseline_power(conf, epochs_of_interest, b_line, kind, b_line_manual
         freq_show.apply_baseline(baseline=(-0.5,-0.1), mode="logratio")
     #avrage the trials
     #tfr_path = data_path
-    freq_show.save(prefix_out + tfr_dir + data_path.format(subject, run, spec, frequency, stimulus, kind, train), overwrite=True)
-    print(prefix_out + tfr_dir)
+    freq_show.save(conf.path_tfr + data_path.format(subject, run, spec, frequency, stimulus, kind, train), overwrite=True)
     print(data_path.format(subject, run, spec, frequency, stimulus, kind, train))
     return freq_show
 

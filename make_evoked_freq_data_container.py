@@ -5,13 +5,11 @@ import pathlib
 def container_process(conf):
     prefix_out = conf.prefix_out
     path_home = conf.path_home
-    tfr_dir = conf.tfr_dir
-    container_dir = conf.container_dir
     kind = conf.kind
     frequency = conf.frequency
 
     temp1 = mne.Evoked(f'{path_home}donor-ave.fif')
-    fpath_events = prefix_out + mio_dir + '/mio_out_{0}/{1}_run{2}_mio_corrected_{3}{4}{5}.txt'
+    fpath_events = conf.path_mio + '/mio_out_{0}/{1}_run{2}_mio_corrected_{3}{4}{5}.txt'
 
     #get rid of runs, leave frequency data for pos and neg feedback for time course plotting 
     for i in range(len(kind)):
@@ -26,7 +24,7 @@ def container_process(conf):
                     file = pathlib.Path(rf)
                     if file.exists():
                         print('This file is being processed: ', rf)
-                        freq_file = prefix_out + tfr_dir + data_path.format(subject, run, spec, frequency, stimulus, kind[i], train)
+                        freq_file = conf.path_tfr + data_path.format(subject, run, spec, frequency, stimulus, kind[i], train)
                         freq_data = mne.time_frequency.read_tfrs(freq_file)[0]
                         data.append(freq_data.data)
                         run_counter = run_counter + 1
@@ -45,7 +43,7 @@ def container_process(conf):
                         fq_data = fq_data.mean(axis=0).mean(axis=1)
                         print('shape', fq_data.shape)
                         new_evoked.data = fq_data
-                        out_file = prefix_out + container_dir + "{0}_{1}{2}{3}_{4}{5}-ave.fif".format(subject, spec, stimulus,  kind[i], frequency, train)
+                        out_file = conf.path_container + "{0}_{1}{2}{3}_{4}{5}-ave.fif".format(subject, spec, stimulus,  kind[i], frequency, train)
                         print(out_file)
                         new_evoked.save(out_file)
                         run_counter = 0
@@ -61,7 +59,7 @@ def container_process(conf):
                     file = pathlib.Path(rf)
                     if file.exists():
                         print('This file is being processed: ', rf)
-                        freq_file = prefix_out + tfr_dir + data_path.format(subject, run, spec, frequency, stimulus, kind[i], train)
+                        freq_file = conf.path_tfr + data_path.format(subject, run, spec, frequency, stimulus, kind[i], train)
                         freq_data = mne.time_frequency.read_tfrs(freq_file)[0]
                         data.append(freq_data.data)
                         run_counter = run_counter + 1
