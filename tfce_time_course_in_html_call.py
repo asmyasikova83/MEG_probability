@@ -30,7 +30,10 @@ from compute_p_val import compute_p_val
 def tfce_process(conf):
     prefix_out = conf.prefix_out
     tfce_dir = conf.tfce_dir
-    tfr_dir = conf.tfr_dir
+    if conf.grand_average:
+        GA_dir = conf.GA_dir
+    else:
+        tfr_dir = conf.tfr_dir
     path_home = conf.path_home
 
     grand_average = conf.grand_average

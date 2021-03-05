@@ -16,7 +16,8 @@ def compute_p_val(conf, subjects, kind, train, frequency, check_num_sens):
     grand_average = conf.grand_average
     tfr_path = data_path
     prefix_out = conf.prefix_out
-    container_dir = conf.container_dir
+    if not grand_average:
+        container_dir = conf.container_dir
     subject_counter = 0 
     folder = 'GA/'
     i = 0
