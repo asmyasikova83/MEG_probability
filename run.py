@@ -114,7 +114,6 @@ if mode == 'ga':
     if run_grand_average:
         env(path_GA, path_mio)
         grand_average_process(conf)
-    path_fdr_pdf = prefix_out + fdr_pdf_dir + GA_dir
 else:
     tfr_dir = conf.tfr_dir
     path_TFR = prefix_out + tfr_dir
@@ -125,7 +124,6 @@ else:
     if run_container:
         env(path_container, path_TFR)
         container_process(conf)
-    path_fdr_pdf = prefix_out + fdr_pdf_dir + tfr_dir
 
 
 if run_tfce:
@@ -142,6 +140,6 @@ if run_fdr:
     topo_stat(conf)
 
 if convert_fdr_pdf:
-    env(path_fdr_pdf, path_fdr)
+    env(conf.path_fdr_pdf, conf.path_fdr)
     make_fdr_pdf(conf)
 
