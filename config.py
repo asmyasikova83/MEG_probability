@@ -11,11 +11,13 @@ class conf():
         self.prefix_out = self.path_home + self.work_dir
         self.tfce_dir = 'TFCE/'
         self.pdf_dir = 'TFCE_PDF/'
+        self.fdr_dir = 'FDR/'
 
         if mode == 'grand_average':
             self.GA_dir = 'GA/'
             self.path_tfce = self.prefix_out + self.tfce_dir + self.GA_dir
             self.path_pdf = self.prefix_out + self.pdf_dir + self.GA_dir
+            self.path_fdr = self.prefix_out + self.fdr_dir + self.GA_dir
             self.grand_average = True
             self.period_start = -1.400 #epoch start. for GA period_start = -1.400, for tfr period_start = -1.750
             self.period_end = 2.000 #epoch end for GA period_end = 2.000, for tfr period_end = 2.350
@@ -30,6 +32,7 @@ class conf():
             self.container_dir = 'evoked/'
             self.path_tfce = self.prefix_out + self.tfce_dir + self.tfr_dir
             self.path_pdf = self.prefix_out + self.pdf_dir + self.tfr_dir
+            self.path_fdr = self.prefix_out + self.fdr_dir + self.tfr_dir
             self.frequency = frequency
             self.grand_average = False
             self.period_start = -1.750
@@ -88,7 +91,6 @@ legend = ['norisk', 'risk']
 mode = 'server'
 events_dir = 'events/'
 mio_dir = 'MIO/'
-fdr_dir = 'FDR/'
 fdr_pdf_dir = 'FDR_PDF/'
 
 #remove trend from GA

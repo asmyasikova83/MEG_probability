@@ -27,12 +27,8 @@ def topo_stat(conf):
     p_mul_topo_contrast = conf.p_mul_topo_contrast
     p_mul_topo_fdr_contrast = conf.p_mul_topo_fdr_contrast
 
-    if grand_average == True:
-        os.chdir(prefix_out + fdr_dir)
-        cur_dir = prefix_out + fdr_dir
-    else:
-        os.chdir(prefix_out + fdr_dir + tfr_dir)
-        cur_dir = prefix_out + fdr_dir + tfr_dir
+    cur_dir = conf.path_fdr
+    os.chdir(cur_dir)
 
     topomaps = [f'{legend[0]}',
                 f'{legend[1]}',
@@ -45,15 +41,15 @@ def topo_stat(conf):
         'no-outline':None,
         'quiet':''
     }
+    
+    os.makedirs(os.path.join(conf.path_fdr, f'{legend[0]}_vs_{legend[1]}'), exist_ok=True)
     if grand_average == True:
-        os.makedirs(os.path.join(prefix_out + fdr_dir + GA_dir, f'{legend[0]}_vs_{legend[1]}'), exist_ok=True)
         frequency = None
     else:
-        os.makedirs(os.path.join(prefix_out + fdr_dir + tfr_dir, f'{legend[0]}_vs_{legend[1]}'), exist_ok=True)
         frequency = conf.frequency
 
     #donor data file
-    temp = mne.Evoked(f'{path_home}donor-ave.fif')
+    temp = mne.Evoked(f'{conf.path_home}donor-ave.fif')
     temp.times = conf.time
 
     comp1_mean, comp2_mean, contr, temp1, temp2, p_val, binary, subjects1  = compute_p_val(conf, subjects, conf.kind, train, frequency, check_num_sens)
@@ -64,8 +60,8 @@ def topo_stat(conf):
     print('df2 shape', df2.shape)
 
     #res_tfce = np.zeros((876, 102))
-    pos = io.loadmat(f'{path_home}pos_store.mat')['pos']
-    chan_labels = to_str_ar(io.loadmat(f'{path_home}channel_labels.mat')['chanlabels'])
+    pos = io.loadmat(f'{conf.path_home}pos_store.mat')['pos']
+    chan_labels = to_str_ar(io.loadmat(f'{conf.path_home}channel_labels.mat')['chanlabels'])
     dict_col = { 'risk': 'salmon', 'norisk': 'olivedrab', 'prerisk': 'mediumpurple' , 'postrisk':'darkturquoise'  }
     p_val_fdr = space_fdr(p_val)
 
@@ -94,10 +90,7 @@ def topo_stat(conf):
                                 extrapolate="local", mask = np.bool_(binary),
                                 mask_params = dict(marker='o', markerfacecolor='w', markeredgecolor='k',
                                                   linewidth=0, markersize=7, markeredgewidth=2))
-    if grand_average == True:
-        fig.savefig(os.path.join(prefix_out + fdr_dir + GA_dir, legend[0] + '_vs_' + legend[1], legend[0] + '.png'), dpi = 300)
-    else:
-        fig.savefig(os.path.join(prefix_out + fdr_dir + tfr_dir, legend[0] + '_vs_' + legend[1], legend[0] + '.png'), dpi = 300)
+    fig.savefig(os.path.join(conf.path_fdr, legend[0] + '_vs_' + legend[1], legend[0] + '.png'), dpi = 300)
     plt.close()
 
     ##### CONDITION2 and Stat ######
@@ -118,10 +111,7 @@ def topo_stat(conf):
                                 extrapolate="local", mask = np.bool_(binary),
                                 mask_params = dict(marker='o', markerfacecolor='w', markeredgecolor='k',
                                                    linewidth=0, markersize=7, markeredgewidth=2))
-    if grand_average == True:
-        fig.savefig(os.path.join(prefix_out + fdr_dir + GA_dir, legend[0] + '_vs_' + legend[1], legend[1] + '.png'), dpi = 300)
-    else:
-        fig.savefig(os.path.join(prefix_out + fdr_dir + tfr_dir, legend[0] + '_vs_' + legend[1], legend[1] + '.png'), dpi = 300)
+    fig.savefig(os.path.join(conf.path_fdr, legend[0] + '_vs_' + legend[1], legend[1] + '.png'), dpi = 300)
     plt.close()
     
     ##### CONDITION2 - CONDITION1 with marks no time  (space FDR) ######
@@ -135,10 +125,7 @@ def topo_stat(conf):
                                 vmax=p_mul_topo_contrast, vmin=-p_mul_topo_contrast, extrapolate="local", mask = np.bool_(binary_fdr[204:,:]),
                                 mask_params = dict(marker='o', markerfacecolor='w', markeredgecolor='k',
                                                     linewidth=0, markersize=7, markeredgewidth=2))
-    if grand_average == True:
-        fig.savefig(os.path.join(prefix_out + fdr_dir + GA_dir, legend[0] + '_vs_' + legend[1],'difference_fdr.png'), dpi = 300)
-    else:
-        fig.savefig(os.path.join(prefix_out + fdr_dir + tfr_dir, legend[0] + '_vs_' + legend[1],'difference_fdr.png'), dpi = 300)
+    fig.savefig(os.path.join(conf.path_fdr, legend[0] + '_vs_' + legend[1],'difference_fdr.png'), dpi = 300)
     plt.close()
  
     #### CONDITION2 - CONDITION1 with marks (WITH FDR) deep FDR with time ####
@@ -158,15 +145,9 @@ def topo_stat(conf):
                                 vmax=p_mul_topo_fdr_contrast, vmin=-p_mul_topo_fdr_contrast, extrapolate="local", mask = np.bool_(binary_deep_fdr),
                                 mask_params = dict(marker='o', markerfacecolor='w', markeredgecolor='k',
                                                    linewidth=0, markersize=7, markeredgewidth=2))
-    if grand_average == True:
-        fig.savefig(os.path.join(prefix_out + fdr_dir + GA_dir, legend[0] + '_vs_' + legend[1],'difference_deep_fdr.png'), dpi = 300)
-    else:
-        fig.savefig(os.path.join(prefix_out + fdr_dir + tfr_dir, legend[0] + '_vs_' + legend[1],'difference_deep_fdr.png'), dpi = 300)
+    fig.savefig(os.path.join(conf.path_fdr, legend[0] + '_vs_' + legend[1],'difference_deep_fdr.png'), dpi = 300)
     plt.close()
-    if grand_average == True:
-        html_name = os.path.join(prefix_out + fdr_dir + GA_dir, legend[0] + '_vs_' + legend[1] + '.html')
-    else:
-        html_name = os.path.join(prefix_out + fdr_dir + tfr_dir, legend[0] + '_vs_' + legend[1] + '.html')
+    html_name = os.path.join(conf.path_fdr, legend[0] + '_vs_' + legend[1] + '.html')
     clear_html(html_name)
     add_str_html(html_name, '<!DOCTYPE html>')
     add_str_html(html_name, '<html>')
