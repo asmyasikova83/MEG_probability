@@ -2,9 +2,6 @@ import pdfkit
 from config import *
 
 def make_pdf(conf):
-    grand_average = conf.grand_average
-    prefix_out = conf.prefix_out
-
     config = pdfkit.configuration(wkhtmltopdf='/usr/bin/wkhtmltopdf')
 
     options = {

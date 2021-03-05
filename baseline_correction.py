@@ -9,7 +9,6 @@ with open("config.py", "r") as f_in:
     settings = f_in.readlines()
 
 def retrieve_events_for_baseline(conf, raw_data, fpath_events, kind, subject, run, picks):
-    prefix_out = conf.prefix_out
     events_with_cross = []
     events_of_interest = []
     #takes events with fixation cross followed by the events of interest (positive and negative feedback)
@@ -751,7 +750,6 @@ def correct_baseline_substraction(conf, BASELINE, events_of_interest, raw_data, 
     return CORRECTED_DATA
 
 def correct_baseline_power(conf, epochs_of_interest, b_line, kind, b_line_manually, subject, run, plot_spectrogram):
-    prefix_out = conf.prefix_out
     # baseline power correction of TFR data after baseline I substraction from the signal
     #for theta n_cycles = 2
     #average over epochs to eliminate inconsistency in the number of epochs over conditions (i.e., risk_vs_norisk)

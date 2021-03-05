@@ -28,7 +28,6 @@ from plot_time_course_in_html_functions import plot_stat_comparison_tfce
 from compute_p_val import compute_p_val
 
 def tfce_process(conf):
-    prefix_out = conf.prefix_out
     path_home = conf.path_home
 
     grand_average = conf.grand_average

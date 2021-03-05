@@ -13,13 +13,11 @@ from mne import read_evokeds
 
 def grand_average_process(conf):
     kind = conf.kind
-    prefix_out = conf.prefix_out
     path_home = conf.path_home
     evoked_ave = []
     fpath_raw = '/net/server/data/Archive/prob_learn/vtretyakova/ICA_cleaned/{}/run{}_{}_raw_ica.fif'
     fpath_events = conf.path_mio + '/mio_out_{0}/{1}_run{2}_mio_corrected_{3}{4}{5}.txt'
     temp1 = mne.Evoked(f'{path_home}donor-ave.fif')
-    folder = 'GA'
     run_counter = 0
 
     for i in range(len(kind)):
@@ -78,7 +76,7 @@ def grand_average_process(conf):
                         #v_data = ev_data.mean(axis = 0)
                         print('shape', ev_data.shape)
                         new_evoked.data = ev_data
-                        out_file = prefix_out + folder + "/{0}_{1}{2}{3}_{4}_grand_ave.fif".format(subject, spec, stimulus,  kind[i], train)
+                        out_file = conf.path_GA + "/{0}_{1}{2}{3}_{4}_grand_ave.fif".format(subject, spec, stimulus,  kind[i], train)
                         print(out_file)
                         mne.write_evokeds(out_file, new_evoked)
                         run_counter = 0

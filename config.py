@@ -6,26 +6,31 @@ class conf():
     def __init__(self, mode, kind, frequency = None):
         #kind = ['norisk', 'risk'] #'positive', 'negative', 'prerisk', 'risk', 'postrisk', 'norisk_fb_positive','norisk_fb_negative', 'fb_negative_norisk'
         self.kind = kind
+
         self.path_home = '/net/server/data/Archive/prob_learn/asmyasnikova83/'
-        self.work_dir = 'WORK/'
-        self.prefix_out = self.path_home + self.work_dir
+
+        work_dir = 'WORK/'
+        prefix_out = self.path_home + work_dir
         events_dir = 'events/'
         mio_dir = 'MIO/'
         tfce_dir = 'TFCE/'
         pdf_dir = 'TFCE_PDF/'
         fdr_dir = 'FDR/'
         fdr_pdf_dir = 'FDR_PDF/'
-        self.path_events = self.prefix_out + events_dir
-        self.path_mio = self.prefix_out + mio_dir
+
+        self.path_events = prefix_out + events_dir
+        self.path_mio = prefix_out + mio_dir
 
         if mode == 'grand_average':
             GA_dir = 'GA/'
-            self.path_GA = self.prefix_out + GA_dir
-            self.path_tfce = self.prefix_out + tfce_dir + GA_dir
-            self.path_pdf = self.prefix_out + pdf_dir + GA_dir
-            self.path_fdr = self.prefix_out + fdr_dir + GA_dir
-            self.path_fdr_pdf = self.prefix_out + fdr_pdf_dir + GA_dir
+            self.path_GA = prefix_out + GA_dir
+            self.path_tfce = prefix_out + tfce_dir + GA_dir
+            self.path_pdf = prefix_out + pdf_dir + GA_dir
+            self.path_fdr = prefix_out + fdr_dir + GA_dir
+            self.path_fdr_pdf = prefix_out + fdr_pdf_dir + GA_dir
+
             self.grand_average = True
+
             self.period_start = -1.400 #epoch start. for GA period_start = -1.400, for tfr period_start = -1.750
             self.period_end = 2.000 #epoch end for GA period_end = 2.000, for tfr period_end = 2.350
             self.time = np.arange(-1.400, 2.000, 0.004)
@@ -36,15 +41,17 @@ class conf():
             self.p_mul_topo_fdr_contrast = 0.0000000000005
         elif mode == 'tfr':
             tfr_dir = 'TFR/'
-            self.path_tfr = self.prefix_out + tfr_dir
+            self.path_tfr = prefix_out + tfr_dir
             container_dir = 'evoked/'
-            self.path_container = self.prefix_out + container_dir
-            self.path_tfce = self.prefix_out + tfce_dir + tfr_dir
-            self.path_pdf = self.prefix_out + pdf_dir + tfr_dir
-            self.path_fdr = self.prefix_out + fdr_dir + tfr_dir
-            self.path_fdr_pdf = self.prefix_out + fdr_pdf_dir + tfr_dir
+            self.path_container = prefix_out + container_dir
+            self.path_tfce = prefix_out + tfce_dir + tfr_dir
+            self.path_pdf = prefix_out + pdf_dir + tfr_dir
+            self.path_fdr = prefix_out + fdr_dir + tfr_dir
+            self.path_fdr_pdf = prefix_out + fdr_pdf_dir + tfr_dir
+
             self.frequency = frequency
             self.grand_average = False
+
             self.period_start = -1.750
             self.period_end = 2.350
             self.time = np.arange(-1.400, 2.002, 0.004)

@@ -64,7 +64,6 @@ def calculate_beta(conf, subj, run, stimulus, kind, train, fpath_raw, fpath_even
     del events_raw
 
 def mio_correction(conf):
-    prefix_out = conf.prefix_out
     kind = conf.kind
     for i in range(len(kind)):
         fpath_events = conf.path_events + '{0}_run{1}_events_{2}{3}{4}.txt'

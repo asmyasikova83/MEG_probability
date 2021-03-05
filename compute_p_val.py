@@ -15,7 +15,6 @@ def compute_p_val(conf, subjects, kind, train, frequency, check_num_sens):
     #coordinates and channel names from matlab files - the files are here https://github.com/niherus/MNE_TFR_ToolBox/tree/master/VISUALISATION
     grand_average = conf.grand_average
     tfr_path = data_path
-    prefix_out = conf.prefix_out
     subject_counter = 0 
     i = 0
     subjects1 = []
