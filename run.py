@@ -1,6 +1,7 @@
 import os
 import shutil
 import argparse
+from datetime import datetime
 
 import config
 from risk_norisk_events_extraction import risk_norisk_events
@@ -23,7 +24,12 @@ def env(path, prev_path=None):
         shutil.rmtree(path)
     os.makedirs(path, exist_ok = True)
 
-def run(mode, stage=None):
+def run(mode, stage=None, work_dir='WORK/', test_prefix='run__'):
+    now = datetime.now()
+    dt_string = now.strftime("%Y_%m_%d__%H_%M_%S")
+    subdir_name = test_prefix + dt_string + '/'
+    work_dir += subdir_name
+
     run_events_extraction = False
     run_mio_correction = False
 
@@ -39,9 +45,9 @@ def run(mode, stage=None):
 
     print(mode)
     if mode == 'ga':
-        conf = config.conf(mode = 'grand_average', kind = ['norisk', 'risk'])
+        conf = config.conf(mode = 'grand_average', kind = ['norisk', 'risk'], work_dir = work_dir)
     elif mode == 'tfr':
-        conf = config.conf(mode = 'tfr', kind = ['norisk', 'risk'], frequency = 'theta')
+        conf = config.conf(mode = 'tfr', kind = ['norisk', 'risk'], frequency = 'theta', work_dir = work_dir)
 
     print(stage)
     if not stage:

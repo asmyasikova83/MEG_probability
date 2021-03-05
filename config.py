@@ -3,14 +3,15 @@ import numpy as np
 import mne
 
 class conf():
-    def __init__(self, mode, kind, frequency = None):
+    def __init__(self, mode, kind, frequency = None, work_dir='WORK/'):
         #kind = ['norisk', 'risk'] #'positive', 'negative', 'prerisk', 'risk', 'postrisk', 'norisk_fb_positive','norisk_fb_negative', 'fb_negative_norisk'
         self.kind = kind
 
         self.path_home = '/net/server/data/Archive/prob_learn/asmyasnikova83/'
-
-        work_dir = 'WORK/'
         prefix_out = self.path_home + work_dir
+        if not os.path.exists(prefix_out) or not os.path.isdir(prefix_out):
+            os.makedirs(prefix_out)
+
         events_dir = 'events/'
         mio_dir = 'MIO/'
         tfce_dir = 'TFCE/'
