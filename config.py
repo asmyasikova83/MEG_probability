@@ -11,20 +11,20 @@ class conf():
         self.prefix_out = self.path_home + self.work_dir
         events_dir = 'events/'
         mio_dir = 'MIO/'
-        self.tfce_dir = 'TFCE/'
-        self.pdf_dir = 'TFCE_PDF/'
-        self.fdr_dir = 'FDR/'
-        self.fdr_pdf_dir = 'FDR_PDF/'
+        tfce_dir = 'TFCE/'
+        pdf_dir = 'TFCE_PDF/'
+        fdr_dir = 'FDR/'
+        fdr_pdf_dir = 'FDR_PDF/'
         self.path_events = self.prefix_out + events_dir
         self.path_mio = self.prefix_out + mio_dir
 
         if mode == 'grand_average':
             GA_dir = 'GA/'
             self.path_GA = self.prefix_out + GA_dir
-            self.path_tfce = self.prefix_out + self.tfce_dir + GA_dir
-            self.path_pdf = self.prefix_out + self.pdf_dir + GA_dir
-            self.path_fdr = self.prefix_out + self.fdr_dir + GA_dir
-            self.path_fdr_pdf = self.prefix_out + self.fdr_pdf_dir + GA_dir
+            self.path_tfce = self.prefix_out + tfce_dir + GA_dir
+            self.path_pdf = self.prefix_out + pdf_dir + GA_dir
+            self.path_fdr = self.prefix_out + fdr_dir + GA_dir
+            self.path_fdr_pdf = self.prefix_out + fdr_pdf_dir + GA_dir
             self.grand_average = True
             self.period_start = -1.400 #epoch start. for GA period_start = -1.400, for tfr period_start = -1.750
             self.period_end = 2.000 #epoch end for GA period_end = 2.000, for tfr period_end = 2.350
@@ -39,10 +39,10 @@ class conf():
             self.path_tfr = self.prefix_out + tfr_dir
             container_dir = 'evoked/'
             self.path_container = self.prefix_out + container_dir
-            self.path_tfce = self.prefix_out + self.tfce_dir + tfr_dir
-            self.path_pdf = self.prefix_out + self.pdf_dir + tfr_dir
-            self.path_fdr = self.prefix_out + self.fdr_dir + tfr_dir
-            self.path_fdr_pdf = self.prefix_out + self.fdr_pdf_dir + tfr_dir
+            self.path_tfce = self.prefix_out + tfce_dir + tfr_dir
+            self.path_pdf = self.prefix_out + pdf_dir + tfr_dir
+            self.path_fdr = self.prefix_out + fdr_dir + tfr_dir
+            self.path_fdr_pdf = self.prefix_out + fdr_pdf_dir + tfr_dir
             self.frequency = frequency
             self.grand_average = False
             self.period_start = -1.750

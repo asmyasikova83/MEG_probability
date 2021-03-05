@@ -29,11 +29,6 @@ from compute_p_val import compute_p_val
 
 def tfce_process(conf):
     prefix_out = conf.prefix_out
-    tfce_dir = conf.tfce_dir
-    if conf.grand_average:
-        GA_dir = conf.GA_dir
-    else:
-        tfr_dir = conf.tfr_dir
     path_home = conf.path_home
 
     grand_average = conf.grand_average
@@ -48,13 +43,11 @@ def tfce_process(conf):
     }
     planars = ['planar1', 'planar2', 'combine_planar']
 
+    cur_dir = conf.path_tfce
+    os.chdir(cur_dir) #папка где будут сохраняться картинки
     if conf.grand_average == True:
-        os.chdir(prefix_out + tfce_dir + GA_dir) #папка где будут сохраняться картинки
-        cur_dir = prefix_out + tfce_dir + GA_dir
         frequency = None
     else:
-        os.chdir(prefix_out + tfce_dir + tfr_dir)
-        cur_dir = prefix_out + tfce_dir + tfr_dir
         frequency = conf.frequency
     comp1_mean, comp2_mean, contr, temp1, temp2, p_val, binary, subjects1 = compute_p_val(conf, subjects, kind, train, frequency, check_num_sens)
     df1 = contr[:, 0, 204:, :]
@@ -90,10 +83,7 @@ def tfce_process(conf):
 
     for ind, planar in enumerate(planars):
         #place the channel time courses in html file
-        if conf.grand_average == True:
-            html_name = prefix_out + tfce_dir + GA_dir + 'output_tfce/pic_compose_%s_%s_vs_%s_%s.html' % (planar, f'{legend[0]}', f'{legend[1]}', 'all')
-        else:
-            html_name = prefix_out + tfce_dir + tfr_dir +  'output_tfce/pic_compose_%s_%s_vs_%s_%s.html' % (planar, f'{legend[0]}', f'{legend[1]}', 'all')
+        html_name = conf.path_tfce + 'output_tfce/pic_compose_%s_%s_vs_%s_%s.html' % (planar, f'{legend[0]}', f'{legend[1]}', 'all')
         clear_html(html_name)
         add_str_html(html_name, '<!DOCTYPE html>')
         add_str_html(html_name, '<html>')

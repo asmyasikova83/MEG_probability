@@ -39,7 +39,7 @@ convert_fdr_pdf = False
 parser = argparse.ArgumentParser()
 parser.add_argument('mode', choices=['ga', 'tfr'], help='available modes: ga(aka grand_average), tfr')
 parser.add_argument('-s', '--stage', \
-        choices=['events', 'mio', 'ERF', 'tfr', 'container_tfr', 'time_course_stat', 'make_tfce_pdf', 'topo_stat', 'make_fdr_pdf'], \
+        choices=['events', 'mio', 'ERF', 'tfr', 'container_tfr', 'tfce', 'tfce_pdf', 'fdr', 'fdr_pdf'], \
         help='stage of processing')
 args = parser.parse_args()
 mode = args.mode
@@ -85,14 +85,14 @@ elif stage == 'container_tfr':
     assert mode == 'tfr'
     run_container = True
 
-elif stage == 'time_course_stat':
+elif stage == 'tfce':
     run_tfce = True
-elif stage == 'make_tfce_pdf':
+elif stage == 'tfce_pdf':
     convert_pdf = True
 
-elif stage == 'topo_stat':
+elif stage == 'fdr':
     run_fdr = True
-elif stage == 'make_fdr_pdf':
+elif stage == 'fdr_pdf':
     convert_fdr_pdf = True
 
 if run_events_extraction:
@@ -118,7 +118,7 @@ else:
 
 
 if run_tfce:
-    env(conf.path_tfce, path_GA if mode == 'ga' else path_container)
+    env(conf.path_tfce, conf.path_GA if mode == 'ga' else conf.path_container)
     tfce_process(conf)
 
 if convert_pdf:
@@ -127,7 +127,7 @@ if convert_pdf:
 
 
 if run_fdr:
-    env(conf.path_fdr, path_GA if mode == 'ga' else path_container)
+    env(conf.path_fdr, conf.path_GA if mode == 'ga' else conf.path_container)
     topo_stat(conf)
 
 if convert_fdr_pdf:
