@@ -100,9 +100,8 @@ if run_events_extraction:
     #subprocess.call("python risk_norisk_events_extraction.py", shell=True)
     risk_norisk_events(conf)
 
-path_mio = conf.prefix_out + mio_dir
 if run_mio_correction:
-    env(path_mio, path_events)
+    env(conf.path_mio, conf.path_events)
     mio_correction(conf)
 
 prefix_out = conf.prefix_out

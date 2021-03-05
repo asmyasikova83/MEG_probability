@@ -10,11 +10,13 @@ class conf():
         self.work_dir = 'WORK/'
         self.prefix_out = self.path_home + self.work_dir
         events_dir = 'events/'
+        mio_dir = 'MIO/'
         self.tfce_dir = 'TFCE/'
         self.pdf_dir = 'TFCE_PDF/'
         self.fdr_dir = 'FDR/'
         self.fdr_pdf_dir = 'FDR_PDF/'
         self.path_events = self.prefix_out + events_dir
+        self.path_mio = self.prefix_out + mio_dir
 
         if mode == 'grand_average':
             self.GA_dir = 'GA/'
@@ -94,7 +96,6 @@ f_step = 1
 freqs = np.arange(L_freq, H_freq+1, f_step)
 legend = ['norisk', 'risk']
 mode = 'server'
-mio_dir = 'MIO/'
 
 #remove trend from GA
 GA_correction = False
