@@ -95,10 +95,8 @@ elif stage == 'topo_stat':
 elif stage == 'make_fdr_pdf':
     convert_fdr_pdf = True
 
-
-path_events = conf.prefix_out + events_dir
 if run_events_extraction:
-    env(path_events)
+    env(conf.path_events)
     #subprocess.call("python risk_norisk_events_extraction.py", shell=True)
     risk_norisk_events(conf)
 

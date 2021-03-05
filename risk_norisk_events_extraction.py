@@ -4,13 +4,13 @@ from config import *
        
 
 def risk_norisk_events(conf):
-    prefix_out = conf.prefix_out
+    path_events = conf.path_events
     fpath = '/net/server/data/Archive/prob_learn/vtretyakova/ICA_cleaned/{}/run{}_{}_raw_ica.fif'
-    fpath_events_risk = prefix_out + events_dir + '{}_run{}_events_risk.txt'
-    fpath_events_norisk = prefix_out + events_dir + '{}_run{}_events_norisk.txt'
-    fpath_events_prerisk = prefix_out + events_dir + '{}_run{}_events_prerisk.txt'
-    fpath_events_postrisk = prefix_out + events_dir + '{}_run{}_events_postrisk.txt'
-    fpath_log = prefix_out + events_dir + '{}_run{}_log_risk_norisk.txt'
+    fpath_events_risk = path_events + '{}_run{}_events_risk.txt'
+    fpath_events_norisk = path_events + '{}_run{}_events_norisk.txt'
+    fpath_events_prerisk = path_events + '{}_run{}_events_prerisk.txt'
+    fpath_events_postrisk = path_events + '{}_run{}_events_postrisk.txt'
+    fpath_log = path_events + '{}_run{}_log_risk_norisk.txt'
 
     for run in runs:
         for subject in subjects:
