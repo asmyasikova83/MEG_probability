@@ -4,34 +4,22 @@ import os
 
 from run import run
 
-def check_ref(work_dir, test_name):
-    #print('work_dir', work_dir)
-    #print('test_name', test_name)
+def check_dir(out_dir, ref_dir):
     res = True
-    
-    work_names = []
-    for _root,_d_names,cur_names in os.walk(work_dir):
-        work_names += cur_names
-    #print(work_names)
-
-    ref_names = []
-    path_ref = 'ref/' + test_name
-    for _root,_d_names,cur_names in os.walk(path_ref):
-        ref_names += cur_names
-    #print(ref_names)
-
-    for ref_name in ref_names:
+    out_files = os.listdir(out_dir)
+    ref_files = os.listdir(ref_dir)
+    for ref_file in ref_files:
         found = False
-        for work_name in work_names:
-            if ref_name == work_name:
+        for out_file in out_files:
+            if ref_file == out_file:
                 found = True
-                with open(path_ref+'/'+ref_name, 'r') as ref:
-                    with open(work_dir+work_name, 'r') as work:
+                with open(out_dir+'/'+out_file, 'r') as out:
+                    with open(ref_dir+'/'+ref_file, 'r') as ref:
                         diff = difflib.unified_diff(
+                                out.readlines(),
                                 ref.readlines(),
-                                work.readlines(),
-                                fromfile=test_name+'/'+ref_name,
-                                tofile=work_dir+work_name
+                                fromfile=out_file,
+                                tofile=ref_file
                                 )
                         for line in diff:
                              print(line)
@@ -41,10 +29,25 @@ def check_ref(work_dir, test_name):
             return False
     return res
 
+def check_ref(out_dir_root, test_name):
+    ref_dir_root = 'ref/' + test_name
+    res = True
+    out_dirs = os.listdir(out_dir_root)
+    ref_dirs = os.listdir(ref_dir_root)
+    for ref_dir in ref_dirs:
+        found = False
+        if ref_dir in out_dirs:
+            found = True
+            res = res and check_dir(out_dir_root+'/'+ref_dir, ref_dir_root+'/'+ref_dir)
+        if not found:
+            print('Cannot find', ref_dir)
+            return False
+    return res
+
 test_name = 'test1_events'
 print('Run test:', test_name)
 work_dir = run('ga', 'events', work_dir='TEST/', test_prefix=test_name)
-check_result = check_ref(work_dir+'events/', test_name)
+check_result = check_ref(work_dir, test_name)
 if check_result:
     print('Test passed')
 else:
