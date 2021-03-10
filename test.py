@@ -6,8 +6,12 @@ from run import run
 
 def check_dir(out_dir, ref_dir):
     res = True
-    out_files = os.listdir(out_dir)
-    ref_files = os.listdir(ref_dir)
+    out_files = []
+    for _root,_d,f in os.walk(out_dir):
+        out_files += f
+    ref_files = [] 
+    for _root,_d,f in os.walk(ref_dir):
+        ref_files += f
     for ref_file in ref_files:
         found = False
         for out_file in out_files:
@@ -49,7 +53,18 @@ print('Run test:', test_name)
 work_dir = run('ga', 'events', work_dir='TEST/', test_prefix=test_name, add_date=True)
 check_result = check_ref(work_dir, test_name)
 if check_result:
-    print('Test passed')
+    print('Test %s passed' % test_name)
 else:
-    print('Test failed')
+    print('Test %s failed' % test_name)
     assert 0
+
+test_name = 'test2_tstat'
+print('Run test:', test_name)
+work_dir = run('ga', None, work_dir='TEST/', test_prefix=test_name, add_date=True)
+check_result = check_ref(work_dir, test_name)
+if check_result:
+    print('Test %s passed' % test_name)
+else:
+    print('Test %s failed' % test_name)
+    assert 0
+ 
