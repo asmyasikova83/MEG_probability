@@ -135,11 +135,11 @@ def compute_p_val(conf, subjects, kind, train, frequency, check_num_sens):
 
     #check the number of stat significant sensors in a predefined time interval
     t_stat, p_val = stats.ttest_rel(comp1, comp2, axis=0)
-    #save_t_stat = True
+    save_t_stat = True
     if save_t_stat:
         t_stat_str = np.array2string(t_stat)
         print(type(t_stat_str))
-        t_stat_file = f'{prefix}t_stat_{kind[0]}_vs_{kind[1]}.txt'
+        t_stat_file = f'{conf.path_tfce}t_stat_{kind[0]}_vs_{kind[1]}.txt'
         t_stat_file_name = open(t_stat_file, "w")
         t_stat_file_name.write(t_stat_str)
         t_stat_file_name.close()
