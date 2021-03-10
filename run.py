@@ -31,7 +31,7 @@ def run(mode, stage=None, work_dir='WORK/', test_prefix='run', add_date=False):
         subdir_name = test_prefix + '__' + dt_string + '/'
         work_dir += subdir_name
     else:
-        work_dir = test_prefix
+        work_dir += test_prefix + '/'
 
     run_events_extraction = False
     run_mio_correction = False

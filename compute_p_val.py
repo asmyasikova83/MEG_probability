@@ -1,5 +1,6 @@
 import mne
 import numpy as np
+import sys
 from scipy import stats, io, signal
 import matplotlib.pyplot as plt
 import os
@@ -137,6 +138,7 @@ def compute_p_val(conf, subjects, kind, train, frequency, check_num_sens):
     t_stat, p_val = stats.ttest_rel(comp1, comp2, axis=0)
     save_t_stat = True
     if save_t_stat:
+        np.set_printoptions(threshold=sys.maxsize)
         t_stat_str = np.array2string(t_stat)
         print(type(t_stat_str))
         t_stat_file = f'{conf.path_tfce}t_stat_{kind[0]}_vs_{kind[1]}.txt'
