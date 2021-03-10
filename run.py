@@ -24,10 +24,10 @@ def env(path, prev_path=None):
         shutil.rmtree(path)
     os.makedirs(path, exist_ok = True)
 
-def run(mode, stage=None, work_dir='WORK/', test_prefix='run__'):
+def run(mode, stage=None, work_dir='WORK/', test_prefix='run'):
     now = datetime.now()
     dt_string = now.strftime("%Y_%m_%d__%H_%M_%S")
-    subdir_name = test_prefix + dt_string + '/'
+    subdir_name = test_prefix + '__' + dt_string + '/'
     work_dir += subdir_name
 
     run_events_extraction = False
@@ -129,6 +129,9 @@ def run(mode, stage=None, work_dir='WORK/', test_prefix='run__'):
     if convert_fdr_pdf:
         env(conf.path_fdr_pdf, conf.path_fdr)
         make_fdr_pdf(conf)
+
+    # return dir to check
+    return work_dir
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
