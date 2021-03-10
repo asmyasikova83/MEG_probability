@@ -131,7 +131,7 @@ def run(mode, stage=None, work_dir='WORK/', test_prefix='run'):
         make_fdr_pdf(conf)
 
     # return dir to check
-    return work_dir
+    return conf.prefix_out
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()

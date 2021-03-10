@@ -11,6 +11,7 @@ class conf():
         prefix_out = self.path_home + work_dir
         if not os.path.exists(prefix_out) or not os.path.isdir(prefix_out):
             os.makedirs(prefix_out)
+        self.prefix_out = prefix_out
 
         events_dir = 'events/'
         mio_dir = 'MIO/'
