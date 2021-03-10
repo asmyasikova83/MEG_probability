@@ -24,11 +24,14 @@ def env(path, prev_path=None):
         shutil.rmtree(path)
     os.makedirs(path, exist_ok = True)
 
-def run(mode, stage=None, work_dir='WORK/', test_prefix='run'):
-    now = datetime.now()
-    dt_string = now.strftime("%Y_%m_%d__%H_%M_%S")
-    subdir_name = test_prefix + '__' + dt_string + '/'
-    work_dir += subdir_name
+def run(mode, stage=None, work_dir='WORK/', test_prefix='run', add_date=False):
+    if add_date:
+        now = datetime.now()
+        dt_string = now.strftime("%Y_%m_%d__%H_%M_%S")
+        subdir_name = test_prefix + '__' + dt_string + '/'
+        work_dir += subdir_name
+    else:
+        work_dir = test_prefix
 
     run_events_extraction = False
     run_mio_correction = False

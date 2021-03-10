@@ -46,7 +46,7 @@ def check_ref(out_dir_root, test_name):
 
 test_name = 'test1_events'
 print('Run test:', test_name)
-work_dir = run('ga', 'events', work_dir='TEST/', test_prefix=test_name)
+work_dir = run('ga', 'events', work_dir='TEST/', test_prefix=test_name, add_date=True)
 check_result = check_ref(work_dir, test_name)
 if check_result:
     print('Test passed')
