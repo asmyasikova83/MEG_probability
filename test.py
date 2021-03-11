@@ -4,67 +4,56 @@ import os
 
 from run import run
 
-def check_dir(out_dir, ref_dir):
+def check(out_file, ref_file):
     res = True
-    out_files = []
-    for _root,_d,f in os.walk(out_dir):
-        out_files += f
-    ref_files = [] 
-    for _root,_d,f in os.walk(ref_dir):
-        ref_files += f
-    for ref_file in ref_files:
+    with open(out_file, 'r') as out:
+        with open(ref_file, 'r') as ref:
+            diff = difflib.unified_diff(
+                    out.readlines(),
+                    ref.readlines(),
+                    fromfile=out_file,
+                    tofile=ref_file
+                    )
+    for line in diff:
+        print(line)
+        res = False
+    return res
+
+def check_ga_tstat(out_path, ref_path):
+    f = 'TFCE/GA/t_stat_norisk_vs_risk.txt'
+    out_file = out_path + f
+    ref_file = ref_path + f
+    return check(out_file, ref_file)
+
+def check_events(out_path, ref_path):
+    res = True
+    events = 'events'
+    out_events = out_path + events
+    ref_events = ref_path + events
+    out_names = os.listdir(out_events)
+    ref_names = os.listdir(ref_events)
+    for ref_name in ref_names:
         found = False
-        for out_file in out_files:
-            if ref_file == out_file:
-                found = True
-                with open(out_dir+'/'+out_file, 'r') as out:
-                    with open(ref_dir+'/'+ref_file, 'r') as ref:
-                        diff = difflib.unified_diff(
-                                out.readlines(),
-                                ref.readlines(),
-                                fromfile=out_file,
-                                tofile=ref_file
-                                )
-                        for line in diff:
-                             print(line)
-                             res = False
+        if ref_name in out_names:
+            found = True
+            res = res and check(out_events + '/' + ref_name, ref_events + '/' + ref_name)
         if not found:
             print('Cannot find', ref_name)
             return False
     return res
 
-def check_ref(out_dir_root, test_name):
-    ref_dir_root = 'ref/' + test_name
-    res = True
-    out_dirs = os.listdir(out_dir_root)
-    ref_dirs = os.listdir(ref_dir_root)
-    for ref_dir in ref_dirs:
-        found = False
-        if ref_dir in out_dirs:
-            found = True
-            res = res and check_dir(out_dir_root+'/'+ref_dir, ref_dir_root+'/'+ref_dir)
-        if not found:
-            print('Cannot find', ref_dir)
-            return False
-    return res
+def test(test_name, mode, stage, check_func):
+    print('Run test:', test_name)
+    cur_dir = os.getcwd()
+    out_path = run(mode, stage, work_dir='TEST/', test_prefix=test_name, add_date=True)
+    os.chdir(cur_dir)
+    check_result = check_func(out_path, 'ref/' + test_name + '/')
+    if check_result:
+        print('Test %s passed' % test_name)
+    else:
+        print('Test %s failed' % test_name)
+        assert 0
 
-test_name = 'test1_events'
-print('Run test:', test_name)
-work_dir = run('ga', 'events', work_dir='TEST/', test_prefix=test_name, add_date=True)
-check_result = check_ref(work_dir, test_name)
-if check_result:
-    print('Test %s passed' % test_name)
-else:
-    print('Test %s failed' % test_name)
-    assert 0
-
-test_name = 'test2_tstat'
-print('Run test:', test_name)
-work_dir = run('ga', None, work_dir='TEST/', test_prefix=test_name, add_date=True)
-check_result = check_ref(work_dir, test_name)
-if check_result:
-    print('Test %s passed' % test_name)
-else:
-    print('Test %s failed' % test_name)
-    assert 0
+test('test1_events', 'ga', 'events', check_events)
+test('test2_tstat', 'ga', None, check_ga_tstat)
  
