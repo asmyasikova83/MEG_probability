@@ -11,13 +11,16 @@ def risk_norisk_events(conf):
     fpath_events_prerisk = path_events + '{}_run{}_events_prerisk.txt'
     fpath_events_postrisk = path_events + '{}_run{}_events_postrisk.txt'
     fpath_log = path_events + '{}_run{}_log_risk_norisk.txt'
+    verbose = conf.verbose
 
     for run in runs:
         for subject in subjects:
-            print(fpath.format(subject, run, subject))
-            raw = mne.io.read_raw_fif(fpath.format(subject, run, subject), allow_maxshield=False, preload=True, verbose=None)
+            if verbose:
+                print(fpath.format(subject, run, subject))
 
-            events = mne.find_events(raw, stim_channel='STI101', output='onset', consecutive='increasing', min_duration=0, shortest_event=1, mask=None, uint_cast=False, mask_type='and',  initial_event=False, verbose=None)
+            raw = mne.io.read_raw_fif(fpath.format(subject, run, subject), allow_maxshield=False, preload=True, verbose='ERROR')
+
+            events = mne.find_events(raw, stim_channel='STI101', output='onset', consecutive='increasing', min_duration=0, shortest_event=1, mask=None, uint_cast=False, mask_type='and',  initial_event=False, verbose='ERROR')
 
             res = []
             log = []
@@ -63,10 +66,12 @@ def risk_norisk_events(conf):
                         continue
                     else:
                         if events[i + 3][2] == 42 or events[i + 3][2] == 43  or events[i + 3][2] == 43 or events[i + 3][2] == 44 or events[i + 3][2] == 45:
-                            print('risk:2d step')
+                            if verbose:
+                                print('risk:2d step')
                             if events[i + 7][2] == 40 or events[i + 7][2] == 41  or events[i + 7][2] == 46 or events[i + 7][2] == 47:
                                 risk.append(events[i + 3])
-                                print('risk: 3d step')
+                                if verbose:
+                                    print('risk: 3d step')
                                 log_risk_norisk.append('risk') 
               
                 if trained and events[i - 1][2] == 40 or trained and events[i - 1][2] == 41 or trained and events[i - 1][2] == 46 or trained and events[i - 1][2] == 47:
@@ -80,9 +85,11 @@ def risk_norisk_events(conf):
                         continue
                     else:
                         if events[i + 3][2] == 40 or events[i + 3][2] == 41 or events[i + 3][2] == 46 or events[i + 3][2] == 47:
-                            print('norisk: 2d step')
+                            if verbose:
+                                print('norisk: 2d step')
                             if events[i + 7][2] == 40 or events[i + 7][2] == 41 or events[i + 1][2] == 46 or events[i + 7][2] == 47:
-                                print('norisk: 3d step')
+                                if verbose:
+                                    print('norisk: 3d step')
                                 norisk.append(events[i + 3])
                                 log_risk_norisk.append('norisk')
   
@@ -97,15 +104,16 @@ def risk_norisk_events(conf):
                         continue
                     else:
                         if events[i + 3][2] == 40 or events[i + 3][2] == 41 or events[i + 3][2] == 46 or events[i + 3][2] == 47:
-                            print('prerisk: 2d step')
+                            if verbose:
+                                print('prerisk: 2d step')
                             if events[i + 7][2] == 42 or events[i + 7][2] == 43 or events[i + 7][2] == 44 or events[i + 7][2] == 45:
-                                print('prerisk: 3d step')
+                                if verbose:
+                                    print('prerisk: 3d step')
                                 prerisk.append(events[i + 3])
                                 log_risk_norisk.append('prerisk')
 
                 if trained and events[i - 1][2] == 42 or trained and events[i - 1][2] == 43 or trained and events[i - 1][2] == 44 or trained and events[i - 1][2] == 45:
                     if i + 7 >= len(events):
-                        print('Ready to continue')
                         continue
                     str_digit1 = str(events[i + 3][2])
                     str_digit2 = str(events[i + 4][2])
@@ -115,25 +123,29 @@ def risk_norisk_events(conf):
                         continue
                     else:
                         if events[i + 3][2] == 40 or events[i + 3][2] == 41 or events[i + 3][2] == 46 or events[i + 3][2] == 47:
-                            print('postrisk: 2d step')
+                            if verbose:
+                                print('postrisk: 2d step')
                             if events[i + 7][2] == 40 or events[i + 7][2] == 41 or events[i + 7][2] == 46 or events[i+7][2] == 47:
-                                print('postrisk: 3d step')
+                                if verbose:
+                                    print('postrisk: 3d step')
                                 postrisk.append(events[i + 3])
                                 log_risk_norisk.append('postrisk')
  
             if len(res) != 0:
                 answer_count = correct_counter/len(res)
-                print(answer_count)
+                if verbose:
+                    print(answer_count)
                 if answer_count > 0.66:
                     events_norisk  = open(fpath_events_norisk.format(subject, run), "w")
                     events_risk = open(fpath_events_risk.format(subject, run), "w")
                     events_prerisk = open(fpath_events_prerisk.format(subject, run), "w")
                     events_postrisk = open(fpath_events_postrisk.format(subject, run), "w")
                     log_file = open(fpath_log.format(subject, run), "w")
-                    print('events norisk', norisk)
-                    print('events risk', risk)
-                    print('events prerisk', prerisk)
-                    print('events postrisk', postrisk)
+                    if verbose:
+                        print('events norisk', norisk)
+                        print('events risk', risk)
+                        print('events prerisk', prerisk)
+                        print('events postrisk', postrisk)
                     np.savetxt(events_risk, risk, fmt = "%d")
                     np.savetxt(events_norisk, norisk, fmt = "%d")
                     np.savetxt(events_prerisk, prerisk, fmt = "%d")
@@ -146,7 +158,9 @@ def risk_norisk_events(conf):
                     events_risk.close()
                     events_prerisk.close()
                     events_postrisk.close()
-                    print('Saved!')
+                    if verbose:
+                        print('Saved!')
             else:
-                print('Did not find trained!')
+                if verbose:
+                    print('Did not find trained!')
          

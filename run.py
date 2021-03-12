@@ -24,7 +24,7 @@ def env(path, prev_path=None):
         shutil.rmtree(path)
     os.makedirs(path, exist_ok = True)
 
-def run(mode, stage=None, work_dir='WORK/', test_prefix='run', add_date=False):
+def run(mode, stage=None, work_dir='WORK/', test_prefix='run', add_date=False, verbose=False):
     if add_date:
         now = datetime.now()
         dt_string = now.strftime("%Y_%m_%d__%H_%M_%S")
@@ -48,9 +48,9 @@ def run(mode, stage=None, work_dir='WORK/', test_prefix='run', add_date=False):
 
     print(mode)
     if mode == 'ga':
-        conf = config.conf(mode = 'grand_average', kind = ['norisk', 'risk'], work_dir = work_dir)
+        conf = config.conf(mode = 'grand_average', kind = ['norisk', 'risk'], work_dir = work_dir, verbose = verbose)
     elif mode == 'tfr':
-        conf = config.conf(mode = 'tfr', kind = ['norisk', 'risk'], frequency = 'theta', work_dir = work_dir)
+        conf = config.conf(mode = 'tfr', kind = ['norisk', 'risk'], frequency = 'theta', work_dir = work_dir, verbose = verbose)
 
     print(stage)
     if not stage:
