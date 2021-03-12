@@ -13,7 +13,9 @@ from config import *
 import pathlib
 
 def tfr_process(conf):
+    print('\trun tfr...')
     kind = conf.kind
+    verbose = conf.verbose
     fpath_raw = '/net/server/data/Archive/prob_learn/vtretyakova/ICA_cleaned/{}/run{}_{}_raw_ica.fif'
     fpath_events = f'{conf.path_mio}/' + 'mio_out_{0}/{1}_run{2}_mio_corrected_{3}{4}{5}.txt'
     freq_path = data_path
@@ -25,12 +27,13 @@ def tfr_process(conf):
                 rf = fpath_events.format(kind[i],subject, run, stimulus, kind[i], train)
                 file = pathlib.Path(rf)
                 if file.exists() and os.stat(rf).st_size != 0:
-                    print('This file is being processed: ', rf)
+                    if verbose:
+                        print('This file is being processed: ', rf)
                     if mode == 'server':
                         raw_file = fpath_raw.format(subject, run, subject)
                     else:
                         raw_file = fpath_raw.format(run, subject)
-                    raw_data = mne.io.Raw(raw_file, preload=True)
+                    raw_data = mne.io.Raw(raw_file, preload=True, verbose = 'ERROR')
                     #filter 1-50 Hz
                     raw_data = raw_data.filter(None, 50, fir_design='firwin') # for low frequencies, below the peaks of power-line noise low pass filter the data
                     raw_data = raw_data.filter(1., None, fir_design='firwin') #remove slow drifts
@@ -38,19 +41,25 @@ def tfr_process(conf):
                     #raw_data.info['bads'] = ['MEG 2443']
                     KIND = kind[i]
                     events_with_cross, events_of_interest = retrieve_events_for_baseline(conf, raw_data, rf, KIND, subject, run, picks)
-                    print('\n\nDone with the events!')
+                    if verbose:
+                        print('\n\nDone with the events!')
                     BASELINE, b_line = compute_baseline_substraction_and_power(conf, raw_data, events_with_cross, events_of_interest, picks)
-                    print('\n\nDone with the BASELINE I!')
+                    if verbose:
+                        print('\n\nDone with the BASELINE I!')
                     if BASELINE.all== 0:
-                        print('Yes, BASELINE is dummy')
+                        if verbose:
+                            print('Yes, BASELINE is dummy')
                         continue
                     CORRECTED_DATA = correct_baseline_substraction(conf, BASELINE, events_of_interest, raw_data, picks)
-                    print('\n\nDone with the CORRECTED!')
+                    if verbose:
+                        print('\n\nDone with the CORRECTED!')
                     plot_created_epochs_evoked = False
-                    epochs_of_interest, evoked = create_mne_epochs_evoked(conf, KIND, subject, run, CORRECTED_DATA, events_of_interest, plot_created_epochs_evoked, raw_data, picks)
+                    epochs_of_interest, evoked = create_mne_epochs_evoked(conf, KIND, subject, run, CORRECTED_DATA,
+                            events_of_interest, plot_created_epochs_evoked, raw_data, picks)
                     # for time frequency analysis we need baseline II (power correction)
                     freq_show = correct_baseline_power(conf, epochs_of_interest, b_line, KIND, b_line_manually, subject, run, plot_spectrogram)
-                    print('\n\nDone with the BASELINE II!')
+                    if verbose:
+                        print('\n\nDone with the BASELINE II!')
                     #plot an example of topomap
                     show_one = False
                     if mode == 'server'and show_one:
@@ -62,9 +71,10 @@ def tfr_process(conf):
                         freq_show.freqs  = freqs
                         data.append(freq_show)
                 else:
-                    print('This file: ', rf, 'does not exit')
+                    if verbose:
+                        print('This file: ', rf, 'does not exit')
                     continue
-
+    print('\ttfr completed')
     exit()
 '''
 print('\n\nGrand_average:')
