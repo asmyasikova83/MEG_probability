@@ -12,6 +12,7 @@ import pathlib
 from mne import read_evokeds
 
 def grand_average_process(conf):
+    print('\trun ERF...')
     kind = conf.kind
     path_home = conf.path_home
     verbose = conf.verbose
@@ -134,6 +135,7 @@ def grand_average_process(conf):
 
                         evoked_ave.append(evoked.data)
                         run_counter = run_counter + 1
+    print('\tERF completed...')
 '''
 exit()
 for subject in subjects:

@@ -69,6 +69,7 @@ def calculate_beta(conf, subj, run, stimulus, kind, train, fpath_raw, fpath_even
     del events_raw
 
 def mio_correction(conf):
+    print('\trun mio_extraction...')
     kind = conf.kind
     verbose = conf.verbose
     for i in range(len(kind)):
@@ -93,3 +94,4 @@ def mio_correction(conf):
                         print('This file: ', rf, 'does not exit')
                     continue
 
+    print('\tmio_extraction completed')

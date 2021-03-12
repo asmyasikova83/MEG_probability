@@ -49,9 +49,9 @@ def test(test_name, mode, stage, check_func):
     os.chdir(cur_dir)
     check_result = check_func(out_path, 'ref/' + test_name + '/')
     if check_result:
-        print('Test %s passed' % test_name)
+        print('Test %s passed\n' % test_name)
     else:
-        print('Test %s failed' % test_name)
+        print('Test %s failed\n' % test_name)
         assert 0
 
 test('test1_events', 'ga', 'events', check_events)

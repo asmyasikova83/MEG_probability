@@ -46,13 +46,11 @@ def run(mode, stage=None, work_dir='WORK/', test_prefix='run', add_date=False, v
     run_fdr = False
     convert_fdr_pdf = False
 
-    print(mode)
     if mode == 'ga':
         conf = config.conf(mode = 'grand_average', kind = ['norisk', 'risk'], work_dir = work_dir, verbose = verbose)
     elif mode == 'tfr':
         conf = config.conf(mode = 'tfr', kind = ['norisk', 'risk'], frequency = 'theta', work_dir = work_dir, verbose = verbose)
 
-    print(stage)
     if not stage:
         print('All stages!')
         run_events_extraction = True

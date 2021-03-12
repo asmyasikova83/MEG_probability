@@ -4,6 +4,7 @@ from config import *
        
 
 def risk_norisk_events(conf):
+    print('\trun risk_norisk_events...')
     path_events = conf.path_events
     fpath = '/net/server/data/Archive/prob_learn/vtretyakova/ICA_cleaned/{}/run{}_{}_raw_ica.fif'
     fpath_events_risk = path_events + '{}_run{}_events_risk.txt'
@@ -163,4 +164,5 @@ def risk_norisk_events(conf):
             else:
                 if verbose:
                     print('Did not find trained!')
-         
+    print('\trisk_norisk_events completed')
+
