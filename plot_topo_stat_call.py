@@ -20,6 +20,7 @@ from compute_p_val_stat_over_runs import compute_p_val_over_runs
 
 
 def topo_stat(conf):
+    print('\trun fdr for topomaps...')
     grand_average = conf.grand_average
     time = conf.time
     times_to_plot = conf.times_to_plot
@@ -28,6 +29,8 @@ def topo_stat(conf):
     p_mul_topo_fdr_contrast = conf.p_mul_topo_fdr_contrast
 
     cur_dir = conf.path_fdr
+    verbose = conf.verbose
+
     os.chdir(cur_dir)
 
     topomaps = [f'{legend[0]}',
@@ -49,15 +52,15 @@ def topo_stat(conf):
         frequency = conf.frequency
 
     #donor data file
-    temp = mne.Evoked(f'{conf.path_home}donor-ave.fif')
+    temp = mne.Evoked(f'{conf.path_home}donor-ave.fif', verbose = 'ERROR')
     temp.times = conf.time
-
     comp1_mean, comp2_mean, contr, temp1, temp2, p_val, binary, subjects1  = compute_p_val(conf, subjects, conf.kind, train, frequency, check_num_sens)
     #comp1_mean, comp2_mean, contr, temp1, temp2, p_val, binary, subjects1  = compute_p_val_over_runs(subjects, kind, train, frequency, check_num_sens)
     df1 = contr[:, 0, 204:, :] #per channel
     df2 = contr[:, 1, 204:, :]
-    print('df1 shape', df1.shape)
-    print('df2 shape', df2.shape)
+    if verbose:
+        print('df1 shape', df1.shape)
+        print('df2 shape', df2.shape)
 
     #res_tfce = np.zeros((876, 102))
     pos = io.loadmat(f'{conf.path_home}pos_store.mat')['pos']
@@ -67,14 +70,14 @@ def topo_stat(conf):
 
     ##### CONDITION1 and Stat  ######
     # average = 0.1 means averaging of the power data over 100 ms
-
-    print('comp1_mean', comp1_mean.shape)
-
-    print('df1', df1.shape)
-    print('time', len(time))
-    print('times to plot', len(times_to_plot))
+    if verbose:
+        print('comp1_mean', comp1_mean.shape)
+        print('df1', df1.shape)
+        print('time', len(time))
+        print('times to plot', len(times_to_plot))
     t_stat_con1, p_val_con1 = stats.ttest_1samp(df1, 0, axis=0)
-    print('p val con1 shape', p_val_con1.shape)
+    if verbose:
+        print('p val con1 shape', p_val_con1.shape)
     width, height = p_val_con1.shape
     p_val_con1 = p_val_con1.reshape(width * height)
     _, p_val_con1 = mul.fdrcorrection(p_val_con1)
@@ -166,4 +169,6 @@ def topo_stat(conf):
     add_str_html(html_name, '</body>')
     add_str_html(html_name, '</html>')
     pdf_file = html_name.replace("html", "pdf")
-    print('All done!')
+    if verbose:
+        print('All done!')
+    print('\tfdr for topomaps completed')
