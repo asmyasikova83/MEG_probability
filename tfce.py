@@ -7,6 +7,7 @@ from config import *
 
 def tfce(conf, df1,df2, title): #модифицированный пример из гитхаба Платона
     path_home = conf.path_home
+    verbose = conf.verbose
 
     # create random data arrays
     A = df1
@@ -29,8 +30,9 @@ def tfce(conf, df1,df2, title): #модифицированный пример �
         array("I", [data_length]).tofile(data_file)
         array("d", B[s]).tofile(data_file)
     data_file.close()
-    print(f'Channel {title} is being processed')
-    print(f'df1 shape is {df1.shape}')
+    if verbose:
+        print(f'Channel {title} is being processed')
+        print(f'df1 shape is {df1.shape}')
     # call libtfce binary
     subprocess.call([
         path_home + 'libtfce',
@@ -40,7 +42,8 @@ def tfce(conf, df1,df2, title): #модифицированный пример �
         "--input-file", "data.bin",
         "--output-file", f"{title}.bin",
         "--permutation-count", "1000",
-        "--type", "1d"])
+        "--type", "1d"],
+        stderr=subprocess.DEVNULL)
 
     # read result back
 

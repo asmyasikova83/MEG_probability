@@ -28,10 +28,13 @@ from plot_time_course_in_html_functions import plot_stat_comparison_tfce
 from compute_p_val import compute_p_val
 
 def tfce_process(conf):
+    print('\trun tfce')
     path_home = conf.path_home
 
     grand_average = conf.grand_average
     kind = conf.kind
+    verbose = conf.verbose
+
     # perfom statistical check by means of Threshold Free Cluster Enhancement 
     options = {
         'page-size':'A3',
@@ -51,8 +54,9 @@ def tfce_process(conf):
     comp1_mean, comp2_mean, contr, temp1, temp2, p_val, binary, subjects1 = compute_p_val(conf, subjects, kind, train, frequency, check_num_sens)
     df1 = contr[:, 0, 204:, :]
     df2 = contr[:, 1, 204:, :]
-    print('df1 shape', df1.shape)
-    print('df2 shape', df2.shape)
+    if verbose:
+        print('df1 shape', df1.shape)
+        print('df2 shape', df2.shape)
     df1 = df1.transpose(2, 0, 1)
     df2 = df2.transpose(2, 0, 1)
     df1_mean = df1.mean(axis = 1)
@@ -62,7 +66,8 @@ def tfce_process(conf):
     t_stat = np.zeros((df1.shape[0], df1.shape[2]))
     p_val =  np.zeros((df1.shape[0], df1.shape[2]))
     res_tfce = np.zeros((df1.shape[0], df1.shape[2]))
-    print(res_tfce.shape)
+    if verbose:
+        print(res_tfce.shape)
 
     pos = io.loadmat(f'{path_home}pos_store.mat')['pos']
     chan_labels = to_str_ar(io.loadmat(f'{path_home}channel_labels.mat')['chanlabels'])
@@ -78,7 +83,8 @@ def tfce_process(conf):
                                  folder = f'{legend[0]}_vs_{legend[1]}', 
                                  comp1_label = kind[0], comp2_label = kind[1], 
                                  comp1_color=dict_col[f'{kind[0]}'], comp2_color = dict_col[f'{kind[1]}'])
-    print('\tPictures generated')    
+        if verbose:
+            print('\tPictures generated')
 
     for ind, planar in enumerate(planars):
         #place the channel time courses in html file
@@ -111,6 +117,9 @@ def tfce_process(conf):
         pdf_file = html_name.split("/")[1].split('.')[0]
         #print('/%s' % html_name)
         path = f'{cur_dir}/output_tfce/{legend[0]}_vs_{legend[1]}/all_pdf/'
-        print(path)
+        if verbose:
+            print(path)
         os.makedirs(path, exist_ok = True)
-    print('\tAll printed')
+    if verbose:
+        print('\tAll printed')
+    print('\ttfce completed')
