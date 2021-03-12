@@ -11,16 +11,19 @@ with open("config.py", "r") as f_in:
 def retrieve_events_for_baseline(conf, raw_data, fpath_events, kind, subject, run, picks):
     events_with_cross = []
     events_of_interest = []
+    verbose = conf.verbose
     #takes events with fixation cross followed by the events of interest (positive and negative feedback)
     events_raw = mne.find_events(raw_data, stim_channel='STI101', output='onset',
                                  consecutive='increasing', min_duration=0, shortest_event=1,
-                                 mask=None, uint_cast=False, mask_type='and', initial_event=False, verbose=None)
-    print('fpath_events', fpath_events)
+                                 mask=None, uint_cast=False, mask_type='and', initial_event=False, verbose='ERROR')
+    if verbose:
+        print('fpath_events', fpath_events)
     events_cleaned = np.loadtxt(fpath_events, dtype=int)
-    print(kind)
-    print('events cl')
-    print(events_cleaned)
-    print(events_raw)
+    if verbose:
+        print(kind)
+        print('events cl')
+        print(events_cleaned)
+        print(events_raw)
     if kind == 'negative' or kind ==  'positive':
         p = 3
     if kind == 'prerisk' or kind == 'risk' or kind == 'postrisk' or kind == 'norisk' or kind == 'fb_negative_norisk' or kind == 'fb_positive_norisk' or kind == 'fb_negative_risk' or kind == 'fb_positive_risk' or  kind == 'risk_fb_negative' or kind == 'risk_fb_positive':
@@ -45,13 +48,15 @@ def retrieve_events_for_baseline(conf, raw_data, fpath_events, kind, subject, ru
                         if baseline == 'fixation_cross_general':
                             events_with_cross.append(events_raw[i])
                         events_of_interest.append(events_cleaned[j])
-                        print('extracting event of interest', events_cleaned[j])
+                        if verbose:
+                            print('extracting event of interest', events_cleaned[j])
                     elif factor == 'k' and events_cleaned.shape == (3,) and events_cleaned[j] == events_raw[i + p][0]:
                         assert(events_cleaned[2] == events_raw[i + p][2])
                         if baseline == 'fixation_cross_general':
                             events_with_cross.append(events_raw[i])
                         events_of_interest.append(events_cleaned)
-                        print('extracting event of interest', events_cleaned[j])
+                        if verbose:
+                            print('extracting event of interest', events_cleaned[j])
                     else:
                         continue
                 if d2[0] == 4:
@@ -61,22 +66,26 @@ def retrieve_events_for_baseline(conf, raw_data, fpath_events, kind, subject, ru
                         if baseline == 'fixation_cross_general':
                             events_with_cross.append(events_raw[i])
                         events_of_interest.append(events_cleaned[j])
-                        print('extracting event of interest', events_cleaned[j])
+                        if verbose:
+                            print('extracting event of interest', events_cleaned[j])
                     elif factor == 'l' and events_cleaned.shape == (3,) and events_cleaned[j] == events_raw[i + p + 1][0]:
                         assert(events_cleaned[2] == events_raw[i + p + 1][2])
                         if baseline == 'fixation_cross_general':
                             events_with_cross.append(events_raw[i])
                         events_of_interest.append(events_cleaned)
-                        print('extracting event of interest', events_cleaned[j])
+                        if verbose:
+                            print('extracting event of interest', events_cleaned[j])
                     else:
                         continue
     if baseline == 'fixation_cross_norisks':
         fpath_events = f'{conf.path_mio}/mio_out_norisk/{subject}_run{run}_mio_corrected_norisk.txt'
-        print('fpath events norisk', fpath_events)
+        if verbose:
+            print('fpath events norisk', fpath_events)
         events_cleaned = np.loadtxt(fpath_events, dtype=int)
-        print('baseline fix cross norisks')
-        print(events_cleaned)
-        print(events_raw)
+        if verbose:
+            print('baseline fix cross norisks')
+            print(events_cleaned)
+            print(events_raw)
         p = 2
         for i in range(len(events_raw)):
             for j in range(len(events_cleaned)):
@@ -93,15 +102,9 @@ def retrieve_events_for_baseline(conf, raw_data, fpath_events, kind, subject, ru
                         if factor == 'm' and events_cleaned.shape != (3,) and events_cleaned[j][0] == events_raw[i + p][0]:
                             assert(events_cleaned[j][2] == events_raw[i + p][2])
                             events_with_cross.append(events_raw[i])
-                            print('ev with cross found')
-                            print('1')
-                            print(events_with_cross)
                         elif factor == 'm' and events_cleaned.shape == (3,) and events_cleaned[j] == events_raw[i + p][0]:
                             assert(events_cleaned[2] == events_raw[i + p][2])
                             events_with_cross.append(events_raw[i])
-                            print('ev with cross found')
-                            print('2')
-                            print(events_with_cross) 
                         else:
                             continue
                 if events_raw[i][2] == 1:
@@ -111,7 +114,6 @@ def retrieve_events_for_baseline(conf, raw_data, fpath_events, kind, subject, ru
                     d2 = [int(d) for d in str_digit2]
                     if d2[0] == 4 and d2[1] == 0 or d2[0] == 4 and d2[1] == 1 or d2[0] == 4 and d2[1] == 6 or d2[0] == 4 and d2[1] == 7:
                         factor = 'n'
-                        #events_with_cross, events_of_interest = pick_events(i, j, factor, events_raw, events_cleaned, kind)
                         if factor == 'n' and events_cleaned.shape != (3,) and events_cleaned[j][0] == events_raw[i + p + 1][0]:
                             assert(events_cleaned[2] == events_raw[i + p + 1][2])
                             events_with_cross.append(events_raw[i])
@@ -120,21 +122,19 @@ def retrieve_events_for_baseline(conf, raw_data, fpath_events, kind, subject, ru
                             events_with_cross.append(events_raw[i])
                         else:
                             continue
-    print('ev of interest2')
-    print(events_of_interest)
-    print('events_with_cross', events_with_cross)
-    print('events_of interest', events_of_interest)
-    print('\nevents_for_baseline retrieved\n')
+    if verbose:
+        print('\nevents_for_baseline retrieved\n')
     return events_with_cross, events_of_interest
 
 def reshape_epochs(conf, raw_data, events, picks):
+    verbose = conf.verbose
     period_start = conf.period_start
     period_end = conf.period_end
     #  retrieve epochs associated with the events of interest
-    print('events', events)
+    if verbose:
+        print('events', events)
     epochs = mne.Epochs(raw_data, events, event_id = None, tmin = period_start,
-                        tmax = period_end, baseline = None, picks=picks, preload = True)
-    #epochs = epochs.pick(picks="meg")
+                        tmax = period_end, baseline = None, picks=picks, preload = True, verbose = 'ERROR')
     epochs_ar = epochs.get_data()
     # reshape data for calculations -> 3D matrix with the dimensions of N_chans, N_times, N_events
     epochs_ar = epochs_ar.swapaxes(0, 1)
@@ -147,15 +147,15 @@ def create_mne_epochs_evoked(conf, kind, subject, run, CORRECTED_DATA, events_of
     #data in shape (n_epochs, n_channels, n_times)
     period_start = conf.period_start
     period_end = conf.period_end
+    verbose = conf.verbose
     epochs_data = CORRECTED_DATA
     # create info for the Epoch object
     info = raw.info
     meg_indices = mne.pick_types(info, meg='grad')
     reduced_info = mne.pick_info(info, meg_indices)
-    print(events_of_interest)
-    print('subj', subject)
-    print('run', run)
-    print('CORR DATA shape', CORRECTED_DATA.shape)
+    if verbose:
+        print('CORR DATA shape', CORRECTED_DATA.shape)
+        print(events_of_interest)
     if kind == 'both':
     #explore reinforcement data with both pos and neg feedback
         if subject == 'P005' and run == '1' or subject == 'P003' and run == '1' or subject == 'P003' and run == '3' or subject == 'P004' and run == '4':
@@ -668,11 +668,13 @@ def create_mne_epochs_evoked(conf, kind, subject, run, CORRECTED_DATA, events_of
     # downsample to 250 Hz
     epochs_of_interest = epochs.copy().resample(250, npad='auto')
     evoked = epochs_of_interest.average()
-    print('ep of interest', epochs_of_interest)
+    if verbose:
+        print('ep of interest', epochs_of_interest)
 
     # plotting options for newly created epochs object, evoked, psd
     if plot:
-        print('Plotting after baseline...')
+        if verbose:
+            print('Plotting after baseline...')
         #plot epochs
         mne.viz.plot_epochs(epochs, picks=picks[0:204], scalings=None)
         #plot PSD
@@ -687,7 +689,7 @@ def create_mne_epochs_evoked(conf, kind, subject, run, CORRECTED_DATA, events_of
 
 def plot_epochs_with_without_BASELINE(events_of_interest, epochs_of_interest_w_BASELINE, raw_data, picks):
     epochs_of_interest_out_BASELINE = mne.Epochs(raw_data, events_of_interest, event_id = None, tmin = period_start,
-                        tmax = period_end, baseline = None, picks=picks, preload = True)
+                        tmax = period_end, baseline = None, picks=picks, preload = True, verbose = 'ERROR')
     title=' Before baseline'
     mne.viz.plot_epochs(epochs_of_interest_out_BASELINE, picks=picks[0:204], title=title, scalings=None)
     title=' After baseline'
@@ -720,11 +722,12 @@ def compute_baseline_substraction_and_power(conf, raw_data, events_with_cross, e
     BASELINE = BASELINE.transpose()
     #compute baseline II for power correction: mean  picks = picks!
     epochs_with_cross = mne.Epochs(raw_data, events_with_cross, event_id = None, tmin = period_start,
-                        tmax = period_end, baseline = None, picks=picks, preload = True)
+                        tmax = period_end, baseline = None, picks=picks, preload = True, verbose = 'ERROR')
     #epochs_with_cross = epochs_with_cross.pick(picks="meg")
     epochs_with_cross = epochs_with_cross.copy().resample(250, npad='auto')
     freq_show_baseline = mne.time_frequency.tfr_multitaper(epochs_with_cross, freqs = freqs, n_cycles = freqs//2, use_fft = False,
-                                                           return_itc = False).crop(tmin= baseline_interval_start_power-0.350, tmax=baseline_interval_end_power+0.350, include_tmax=True)
+                                                           return_itc = False, verbose = 'ERROR').crop(tmin= baseline_interval_start_power-0.350, 
+                                                                   tmax=baseline_interval_end_power+0.350, include_tmax=True)
     #remove artifacts
     freq_show_baseline = freq_show_baseline.crop(tmin=-0.350, tmax=-0.050, include_tmax=True)
     b_line  = freq_show_baseline.data.mean(axis=-1)
@@ -759,16 +762,19 @@ def correct_baseline_power(conf, epochs_of_interest, b_line, kind, b_line_manual
     period_start = conf.period_start
     period_end = conf.period_end
     frequency = conf.frequency
-
-    freq_show = mne.time_frequency.tfr_multitaper(epochs_of_interest, freqs = freqs, n_cycles =  freqs//2, use_fft = False, return_itc = False)
+    verbose = conf.verbose
+    freq_show = mne.time_frequency.tfr_multitaper(epochs_of_interest, freqs = freqs, n_cycles =  freqs//2, 
+            use_fft = False, return_itc = False, verbose = 'ERROR')
     #remove artifacts
     freq_show = freq_show.crop(tmin=period_start+0.350, tmax=period_end-0.350, include_tmax=True)
     #summarize power in tapers of theta freq
-    print('plot_spectrogram', plot_spectrogram)
+    if verbose:
+        print('plot_spectrogram', plot_spectrogram)
     if plot_spectrogram:
         freq_show.freqs = freqs
     else:
-        print('b_line with sum')
+        if verbose:
+            print('b_line with sum')
         temp = freq_show.data.sum(axis=1)
         freq_show.freqs  = np.array([5])
         freq_show.data = temp.reshape(temp.shape[0],1,temp.shape[1])
@@ -778,22 +784,25 @@ def correct_baseline_power(conf, epochs_of_interest, b_line, kind, b_line_manual
     #compute power baseline from epochs of interest: mean->sum->divide->log
     if b_line_manually:
         if plot_spectrogram:
-            print('before b_line', freq_show.data.shape)
-            print('b_line shape', b_line.shape)
+            if verbose:
+                print('before b_line', freq_show.data.shape)
+                print('b_line shape', b_line.shape)
             #spread b_line over N_times = 876
             b_line = np.repeat(b_line[:, :, np.newaxis], 876, axis=2)
-            print('b_line rep', b_line.shape)
+            if verbose:
+                print('b_line rep', b_line.shape)
             freq_show.data = np.log10(freq_show.data/b_line)
         else:
-            print('b_line with sum')
+            if verbose:
+                print('b_line with sum')
             b_line = b_line.sum(axis=1).reshape(temp.shape[0],1)
             freq_show.data = np.log10(freq_show.data/b_line[:, np.newaxis])
     else:
         freq_show.apply_baseline(baseline=(-0.5,-0.1), mode="logratio")
     #avrage the trials
-    #tfr_path = data_path
     freq_show.save(conf.path_tfr + data_path.format(subject, run, spec, frequency, stimulus, kind, train), overwrite=True)
-    print(data_path.format(subject, run, spec, frequency, stimulus, kind, train))
+    if verbose:
+        print(data_path.format(subject, run, spec, frequency, stimulus, kind, train))
     return freq_show
 
 def topomap_one(freq_show, reduced_info, events_of_interest, raw):
@@ -802,12 +811,10 @@ def topomap_one(freq_show, reduced_info, events_of_interest, raw):
     if freq_timecourse:
         info = raw.info
         info['sfreq'] = 250
-        #meg_indices = mne.pick_types(info, meg='grad')
-        #reduced_info = mne.pick_info(info, meg_indices)
         freq_show.freqs = freqs
         freq_show.data = freq_show.data.reshape(freq_show.data.shape[0],freq_show.data.shape[2])
         #for P003 run 3 negative
-        evoked = mne.EvokedArray(freq_show.data, info=reduced_info, tmin=period_start, comment='', nave=1, kind='average', verbose=None)
+        evoked = mne.EvokedArray(freq_show.data, info=reduced_info, tmin=period_start, comment='', nave=1, kind='average', verbose='ERROR')
         evoked.plot_topo()
         plt.show()
         exit()
@@ -819,7 +826,6 @@ def topomap_one(freq_show, reduced_info, events_of_interest, raw):
         save = True
         if save:
             fig.savefig('output.png')
-            print('Figure saved!')
         else:
             plt.show()
             exit()

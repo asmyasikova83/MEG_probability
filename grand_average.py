@@ -14,6 +14,7 @@ from mne import read_evokeds
 def grand_average_process(conf):
     kind = conf.kind
     path_home = conf.path_home
+    verbose = conf.verbose
     evoked_ave = []
     fpath_raw = '/net/server/data/Archive/prob_learn/vtretyakova/ICA_cleaned/{}/run{}_{}_raw_ica.fif'
     fpath_events = conf.path_mio + '/mio_out_{0}/{1}_run{2}_mio_corrected_{3}{4}{5}.txt'
@@ -23,39 +24,47 @@ def grand_average_process(conf):
     for i in range(len(kind)):
         for subject in subjects:
             for run in runs:
-                print('subject', subject)
-                print('run', run)
+                if verbose:
+                    print('subject', subject)
+                    print('run', run)
                 if run == runs[-1]:
-                    print('Dis is da last run!')
+                    if verbose:
+                        print('Dis is da last run!')
                     rf = fpath_events.format(kind[i], subject, run, stimulus, kind[i], train)
-                    print('rf', rf)
+                    if verbose:
+                        print('rf', rf)
                     file = pathlib.Path(rf)
                     if file.exists():
                         if mode  == 'server':
                             raw_file = fpath_raw.format(subject, run, subject)
-                            print('raw file path')
-                            print(raw_file)
+                            if verbose:
+                                print('raw file path')
+                                print(raw_file)
                         else:
                             raw_file = fpath_raw.format(subject, run)
-                            print('raw file path')
-                            print(raw_file)
-                        raw_data = mne.io.Raw(raw_file, preload=True)
+                            if verbose:
+                                print('raw file path')
+                                print(raw_file)
+                        raw_data = mne.io.Raw(raw_file, preload=True, verbose = 'ERROR')
                         raw_data = raw_data.filter(None, 50, fir_design='firwin') # for low frequencies, below the peaks of power-line noise low pass filter the data
                         raw_data = raw_data.filter(1., None, fir_design='firwin') #remove slow drifts
                         picks = mne.pick_types(raw_data.info, meg = 'grad')
                         KIND = kind[i]
-                        print(rf)
                         events_with_cross, events_of_interest = retrieve_events_for_baseline(conf, raw_data, rf, KIND, subject, run, picks)
-                        print('Done with the events!')
-                        print(events_with_cross)
-                        print(events_of_interest)
+                        if verbose:
+                            print('Done with the events!')
+                            print(events_with_cross)
+                            print(events_of_interest)
                         BASELINE, b_line = compute_baseline_substraction_and_power(conf, raw_data, events_with_cross, events_of_interest, picks)
                         if BASELINE.all== 0:
-                            print('Yes, BASELINE is dummy')
+                            if verbose:
+                                print('Yes, BASELINE is dummy')
                             continue
-                        print('\n\nDone with the BASELINE I!')
+                        if verbose:
+                            print('\n\nDone with the BASELINE I!')
                         CORRECTED_DATA = correct_baseline_substraction(conf, BASELINE, events_of_interest, raw_data, picks)
-                        print('\n\nDone with the CORRECTED!')
+                        if verbose:
+                            print('\n\nDone with the CORRECTED!')
                         plot_created_epochs_evoked = False
                         epochs_of_interest, evoked = create_mne_epochs_evoked(conf, KIND, subject, run, CORRECTED_DATA, events_of_interest, plot_created_epochs_evoked, raw_data, picks)
                         evoked_ave.append(evoked.data)
@@ -70,48 +79,56 @@ def grand_average_process(conf):
                         new_evoked.last = evoked.times.shape[0] - 1
                         ev_data = np.asarray(evoked_ave)
                         ev_data = ev_data[:, np.newaxis]
-                        print('ev_data shape', ev_data.shape)
+                        if verbose:
+                            print('ev_data shape', ev_data.shape)
                         #mean across runs
                         ev_data = ev_data.mean(axis=0).mean(axis=0)
-                        #v_data = ev_data.mean(axis = 0)
-                        print('shape', ev_data.shape)
+                        if verbose:
+                            print('shape', ev_data.shape)
                         new_evoked.data = ev_data
                         out_file = conf.path_GA + "/{0}_{1}{2}{3}_{4}_grand_ave.fif".format(subject, spec, stimulus,  kind[i], train)
-                        print(out_file)
+                        if verbose:
+                            print(out_file)
                         mne.write_evokeds(out_file, new_evoked)
                         run_counter = 0
                         evoked_ave = []
                     else:
-                        print('For this subj all runs are empty')
+                        if verbose:
+                            print('For this subj all runs are empty')
                         run_counter = 0
                         evoked_ave = []
                         continue
                 else:
-                    print('run', run)
                     rf = fpath_events.format(kind[i], subject, run, stimulus, kind[i], train)
                     file = pathlib.Path(rf)
                     if file.exists():
-                        print('This file is being processed: ', rf)
+                        if verbose:
+                            print('This file is being processed: ', rf)
                         if mode  == 'server':
                             raw_file = fpath_raw.format(subject, run, subject)
                         else:
                             raw_file = fpath_raw.format(subject, run)
-                        raw_data = mne.io.Raw(raw_file, preload=True)
+                        raw_data = mne.io.Raw(raw_file, preload=True, verbose = 'ERROR')
                         raw_data = raw_data.filter(None, 50, fir_design='firwin') # for low frequencies, below the peaks of power-line noise low pass filter the data
                         raw_data = raw_data.filter(1., None, fir_design='firwin') #remove slow drifts
                         picks = mne.pick_types(raw_data.info, meg = 'grad')
                         KIND = kind[i]
-                        print(rf)
+                        if verbose:
+                            print(rf)
                         events_with_cross, events_of_interest = retrieve_events_for_baseline(conf, raw_data, rf, KIND, subject, run, picks)
-                        print('Done with the events!')
-                        print(events_of_interest)
+                        if verbose:
+                            print('Done with the events!')
+                            print(events_of_interest)
                         BASELINE, b_line = compute_baseline_substraction_and_power(conf, raw_data, events_with_cross, events_of_interest, picks)
                         if BASELINE.all== 0:
-                            print('Yes, BASELINE is dummy')
+                            if verbose:
+                                 print('Yes, BASELINE is dummy')
                             continue
-                        print('\n\nDone with the BASELINE I!')
+                        if verbose:
+                            print('\n\nDone with the BASELINE I!')
                         CORRECTED_DATA = correct_baseline_substraction(conf, BASELINE, events_of_interest, raw_data, picks)
-                        print('\n\nDone with the CORRECTED!')
+                        if verbose:
+                            print('\n\nDone with the CORRECTED!')
                         plot_created_epochs_evoked = False
                         epochs_of_interest, evoked = create_mne_epochs_evoked(conf, KIND, subject, run, CORRECTED_DATA, events_of_interest, plot_created_epochs_evoked, raw_data, picks)
 
