@@ -27,26 +27,30 @@ def no_mio_events(epochs_ar, thres):
 fpath_raw = '/net/server/data/Archive/prob_learn/vtretyakova/ICA_cleaned/{}/run{}_{}_raw_ica.fif'
 
 def calculate_beta(conf, subj, run, stimulus, kind, train, fpath_raw, fpath_events, fpath_mio_out):
+    verbose = conf.verbose
     period_start = conf.period_start
     period_end = conf.period_end
 
-    raw_data = mne.io.Raw(fpath_raw.format(subj, run, subj), preload=True)
+    raw_data = mne.io.Raw(fpath_raw.format(subj, run, subj), preload=True, verbose='ERROR')
     raw_data = raw_data.filter(l_freq=70, h_freq=None)
     picks = mne.pick_types(raw_data.info, meg = True)
-    events_raw = mne.find_events(raw_data, stim_channel='STI101', output='onset', consecutive='increasing', min_duration=0, shortest_event=1, mask=None, uint_cast=False, mask_type='and', initial_event=False, verbose=None)
+    events_raw = mne.find_events(raw_data, stim_channel='STI101', output='onset', consecutive='increasing', min_duration=0, shortest_event=1, mask=None, uint_cast=False, mask_type='and', initial_event=False, verbose='ERROR')
     events = np.loadtxt(fpath_events.format(subj, run, stimulus, kind, train), dtype=int)
     if events.shape == (3,):
         events = events[np.newaxis, :]
-    print(events.shape)
-    epochs = mne.Epochs(raw_data, events, event_id = None, tmin = period_start, tmax = period_end, picks=picks, preload = True)
+    if verbose:
+        print(events.shape)
+    epochs = mne.Epochs(raw_data, events, event_id = None, tmin = period_start, tmax = period_end, picks=picks, preload = True, verbose = 'ERROR')
     epochs = epochs.pick(picks="grad")
 
     thres = 7 #procedure to remove epochs-outliers based on thres*STD difference
     clean = no_mio_events(epochs.get_data(), thres)
     if clean.any():
-        print(subj, thres, str(events.shape[0]) + " ~~~~ " + str(events[clean].shape[0]) )
+        if verbose:
+            print(subj, thres, str(events.shape[0]) + " ~~~~ " + str(events[clean].shape[0]) )
         cleaned = events[clean]
-        print(cleaned)
+        if verbose:
+            print(cleaned)
         del epochs, events, clean, picks, raw_data
 
         full_ev = []
@@ -59,12 +63,14 @@ def calculate_beta(conf, subj, run, stimulus, kind, train, fpath_raw, fpath_even
         np.savetxt(mio_corrected_events_file, full_ev, fmt="%d")
         mio_corrected_events_file.close()
     else:
-        print('Events cleaned are empty!')
+        if verbose:
+            print('Events cleaned are empty!')
 
     del events_raw
 
 def mio_correction(conf):
     kind = conf.kind
+    verbose = conf.verbose
     for i in range(len(kind)):
         fpath_events = conf.path_events + '{0}_run{1}_events_{2}{3}{4}.txt'
         fpath_mio_out = conf.path_mio + 'mio_out_{0}/{1}_run{2}_mio_corrected_{3}{4}{5}.txt'
@@ -75,13 +81,15 @@ def mio_correction(conf):
             for subject in subjects:
 
                 rf = fpath_events.format(subject, run, stimulus, kind[i], train)
-                print(rf)
+                if verbose:
+                    print(rf)
                 file = pathlib.Path(rf)
-                print('file', file)
                 if file.exists() and os.stat(rf).st_size != 0:
-                    print('This file is being processed: ', rf)
+                    if verbose:
+                        print('This file is being processed: ', rf)
                     calculate_beta(conf, subject, run, stimulus, kind[i], train, fpath_raw, fpath_events, fpath_mio_out)
                 else:
-                    print('This file: ', rf, 'does not exit')
+                    if verbose:
+                        print('This file: ', rf, 'does not exit')
                     continue
 
