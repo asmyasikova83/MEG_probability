@@ -52,9 +52,11 @@ def run(mode, stages=None, work_dir='WORK/', test_prefix='run', add_date=False, 
         conf = config.conf(mode='grand_average', kind=['norisk', 'risk'],
                 subjects=subjects, runs=runs, work_dir=work_dir, verbose=verbose)
     elif mode == 'tfr':
-        subjects = ['P014','P044','P048']
+        #subjects = ['P014','P044'] #P048
+        subjects = ['P045','P062']
+        runs = ['1', '3']
         conf = config.conf(mode='tfr', kind=['norisk', 'risk'],
-                subjects=subjects, frequency='theta', work_dir=work_dir, verbose=verbose)
+                subjects=subjects, runs=runs, frequency='theta', work_dir=work_dir, verbose=verbose)
 
     if not stages:
         print('All stages!')
