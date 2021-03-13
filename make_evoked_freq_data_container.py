@@ -29,7 +29,9 @@ def container_process(conf):
                         if verbose:
                             print('This file is being processed: ', rf)
                         freq_file = conf.path_tfr + data_path.format(subject, run, spec, frequency, stimulus, kind[i], train)
+                        old_level = mne.set_log_level(verbose='ERROR', return_old_level=True)
                         freq_data = mne.time_frequency.read_tfrs(freq_file)[0]
+                        mne.set_log_level(verbose=old_level)
                         data.append(freq_data.data)
                         run_counter = run_counter + 1
                     if run_counter > 0:
@@ -70,7 +72,9 @@ def container_process(conf):
                         if verbose:
                             print('This file is being processed: ', rf)
                         freq_file = conf.path_tfr + data_path.format(subject, run, spec, frequency, stimulus, kind[i], train)
+                        old_level = mne.set_log_level(verbose='ERROR', return_old_level=True)
                         freq_data = mne.time_frequency.read_tfrs(freq_file)[0]
+                        mne.set_log_level(verbose=old_level)
                         data.append(freq_data.data)
                         run_counter = run_counter + 1
     print('\ttfr container completed')
