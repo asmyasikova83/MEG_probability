@@ -75,7 +75,6 @@ def tfr_process(conf):
                         print('This file: ', rf, 'does not exit')
                     continue
     print('\ttfr completed')
-    exit()
 '''
 print('\n\nGrand_average:')
 freq_data = mne.grand_average(data)
