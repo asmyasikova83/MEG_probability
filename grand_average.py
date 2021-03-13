@@ -24,6 +24,7 @@ def grand_average_process(conf):
 
     for i in range(len(kind)):
         for subject in conf.subjects:
+            print('\t\t', kind[i], subject)
             for run in conf.runs:
                 if verbose:
                     print('subject', subject)

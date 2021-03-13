@@ -19,6 +19,7 @@ def container_process(conf):
         run_counter = 0
         for subject in conf.subjects:
             for run in conf.runs:
+                print('\t\t', kind[i], run, subject)
                 if run == conf.runs[-1]:
                     if verbose:
                         print('Dis is da last run!')

@@ -24,6 +24,7 @@ def tfr_process(conf):
     for i in range(len(kind)):
         for run in conf.runs:
             for subject in conf.subjects:
+                print('\t\t', kind[i], run, subject)
                 rf = fpath_events.format(kind[i],subject, run, stimulus, kind[i], train)
                 file = pathlib.Path(rf)
                 if file.exists() and os.stat(rf).st_size != 0:

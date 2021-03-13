@@ -80,7 +80,7 @@ def mio_correction(conf):
 
         for run in conf.runs:
             for subject in conf.subjects:
-
+                print('\t\t', kind[i], run, subject)
                 rf = fpath_events.format(subject, run, stimulus, kind[i], train)
                 if verbose:
                     print(rf)

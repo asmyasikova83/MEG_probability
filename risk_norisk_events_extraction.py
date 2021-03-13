@@ -16,6 +16,7 @@ def risk_norisk_events(conf):
 
     for run in conf.runs:
         for subject in conf.subjects:
+            print('\t\t', run, subject)
             if verbose:
                 print(fpath.format(subject, run, subject))
 

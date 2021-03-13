@@ -23,6 +23,7 @@ def compute_p_val(conf, subjects, kind, train, frequency, check_num_sens):
     i = 0
     subjects1 = []
     for ind, subj in enumerate(subjects):
+        print('\t\t', subj)
         if grand_average == False:
             rf1 = conf.path_container + "{0}_{1}{2}{3}_{4}{5}-ave.fif".format(subj, spec, stimulus, kind[0], frequency, train)
         else:
