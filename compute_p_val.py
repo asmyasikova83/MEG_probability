@@ -39,7 +39,7 @@ def compute_p_val(conf, subjects, kind, train, frequency, check_num_sens):
             if verbose:
                 print('This subject is being processed: ', subj, ' (', i, ') ( ', ind, ' ) ')
             subjects1.append(subj)
-        i = i + 1
+            i = i + 1
     if verbose:
         print('i: ', i)
     subject_counter = i

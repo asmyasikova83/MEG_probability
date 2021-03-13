@@ -135,7 +135,7 @@ def grand_average_process(conf):
 
                         evoked_ave.append(evoked.data)
                         run_counter = run_counter + 1
-    print('\tERF completed...')
+    print('\tERF completed')
 '''
 exit()
 for subject in subjects:
