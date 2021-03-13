@@ -42,10 +42,10 @@ def check_events(out_path, ref_path):
             return False
     return res
 
-def test(test_name, mode, stage, check_func):
+def test(test_name, mode, stages, check_func):
     print('Run test:', test_name)
     cur_dir = os.getcwd()
-    out_path = run(mode, stage, work_dir='TEST/', test_prefix=test_name, add_date=True)
+    out_path = run(mode, stages, work_dir='TEST/', test_prefix=test_name, add_date=True)
     os.chdir(cur_dir)
     check_result = check_func(out_path, 'ref/' + test_name + '/')
     if check_result:
@@ -54,6 +54,6 @@ def test(test_name, mode, stage, check_func):
         print('Test %s failed\n' % test_name)
         assert 0
 
-test('test1_events', 'ga', 'events', check_events)
-test('test2_tstat', 'ga', None, check_ga_tstat)
+test('test1_events', 'ga', ['events'], check_events)
+test('test2_tstat', 'ga', ['events', 'mio', 'ERF', 'tfce'], check_ga_tstat)
  

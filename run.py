@@ -24,7 +24,7 @@ def env(path, prev_path=None):
         shutil.rmtree(path)
     os.makedirs(path, exist_ok = True)
 
-def run(mode, stage=None, work_dir='WORK/', test_prefix='run', add_date=False, verbose=False):
+def run(mode, stages=None, work_dir='WORK/', test_prefix='run', add_date=False, verbose=False):
     if add_date:
         now = datetime.now()
         dt_string = now.strftime("%Y_%m_%d__%H_%M_%S")
@@ -51,7 +51,7 @@ def run(mode, stage=None, work_dir='WORK/', test_prefix='run', add_date=False, v
     elif mode == 'tfr':
         conf = config.conf(mode = 'tfr', kind = ['norisk', 'risk'], frequency = 'theta', work_dir = work_dir, verbose = verbose)
 
-    if not stage:
+    if not stages:
         print('All stages!')
         run_events_extraction = True
         run_mio_correction = True
@@ -68,30 +68,32 @@ def run(mode, stage=None, work_dir='WORK/', test_prefix='run', add_date=False, v
         run_fdr = True
         convert_fdr_pdf = True
 
-    elif stage == 'events':
-        run_events_extraction = True
-    elif stage == 'mio':
-        run_mio_correction = True
+    else:
+        for stage in stages:
+            if stage == 'events':
+                run_events_extraction = True
+            elif stage == 'mio':
+                run_mio_correction = True
 
-    elif stage == 'ERF':
-        assert mode == 'ga'
-        run_grand_average = True
-    elif stage == 'tfr':
-        assert mode == 'tfr'
-        run_tfr = True
-    elif stage == 'container_tfr':
-        assert mode == 'tfr'
-        run_container = True
+            elif stage == 'ERF':
+                assert mode == 'ga'
+                run_grand_average = True
+            elif stage == 'tfr':
+                assert mode == 'tfr'
+                run_tfr = True
+            elif stage == 'container_tfr':
+                assert mode == 'tfr'
+                run_container = True
 
-    elif stage == 'tfce':
-        run_tfce = True
-    elif stage == 'tfce_pdf':
-        convert_pdf = True
+            elif stage == 'tfce':
+                run_tfce = True
+            elif stage == 'tfce_pdf':
+                convert_pdf = True
 
-    elif stage == 'fdr':
-        run_fdr = True
-    elif stage == 'fdr_pdf':
-        convert_fdr_pdf = True
+            elif stage == 'fdr':
+                run_fdr = True
+            elif stage == 'fdr_pdf':
+                convert_fdr_pdf = True
 
     if run_events_extraction:
         env(conf.path_events)
@@ -144,4 +146,4 @@ if __name__ == '__main__':
     mode = args.mode
     stage = args.stage
 
-    run(mode, stage)
+    run(mode, [stage])
