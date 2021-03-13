@@ -50,6 +50,7 @@ def run(mode, stage=None, work_dir='WORK/', test_prefix='run', add_date=False, v
         conf = config.conf(mode = 'grand_average', kind = ['norisk', 'risk'], work_dir = work_dir, verbose = verbose)
     elif mode == 'tfr':
         conf = config.conf(mode = 'tfr', kind = ['norisk', 'risk'], frequency = 'theta', work_dir = work_dir, verbose = verbose)
+        print(work_dir)
 
     if not stage:
         print('All stages!')
