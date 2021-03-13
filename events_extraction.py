@@ -12,8 +12,8 @@ log_trained_events = []
 reinforcement_trained = []
 log_reinf_trained = []
 
-for run in runs:
-    for subject in subjects:
+for run in conf.runs:
+    for subject in conf.subjects:
         print(fpath.format(subject, subject, run))
 
         raw = mne.io.read_raw_fif(fpath.format(subject, subject, run), allow_maxshield=False, preload=True, verbose=None)

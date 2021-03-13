@@ -51,7 +51,7 @@ def tfce_process(conf):
         frequency = None
     else:
         frequency = conf.frequency
-    comp1_mean, comp2_mean, contr, temp1, temp2, p_val, binary, subjects1 = compute_p_val(conf, subjects, kind, train, frequency, check_num_sens)
+    comp1_mean, comp2_mean, contr, temp1, temp2, p_val, binary, subjects1 = compute_p_val(conf, conf.subjects, kind, train, frequency, check_num_sens)
     df1 = contr[:, 0, 204:, :]
     df2 = contr[:, 1, 204:, :]
     if verbose:

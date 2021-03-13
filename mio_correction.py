@@ -78,8 +78,8 @@ def mio_correction(conf):
         fpath_mio_dir = conf.path_mio + 'mio_out_{}/'
         os.makedirs(fpath_mio_dir.format(kind[i]), exist_ok = True)
 
-        for run in runs:
-            for subject in subjects:
+        for run in conf.runs:
+            for subject in conf.subjects:
 
                 rf = fpath_events.format(subject, run, stimulus, kind[i], train)
                 if verbose:

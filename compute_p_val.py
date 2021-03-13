@@ -15,6 +15,7 @@ from baseline_GA import baseline_GA
 def compute_p_val(conf, subjects, kind, train, frequency, check_num_sens):
     #coordinates and channel names from matlab files - the files are here https://github.com/niherus/MNE_TFR_ToolBox/tree/master/VISUALISATION
     grand_average = conf.grand_average
+    subjects = conf.subjects
     verbose = conf.verbose
 
     tfr_path = data_path

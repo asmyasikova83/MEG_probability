@@ -54,6 +54,7 @@ def topo_stat(conf):
     #donor data file
     temp = mne.Evoked(f'{conf.path_home}donor-ave.fif', verbose = 'ERROR')
     temp.times = conf.time
+    subjects = conf.subjects
     comp1_mean, comp2_mean, contr, temp1, temp2, p_val, binary, subjects1  = compute_p_val(conf, subjects, conf.kind, train, frequency, check_num_sens)
     #comp1_mean, comp2_mean, contr, temp1, temp2, p_val, binary, subjects1  = compute_p_val_over_runs(subjects, kind, train, frequency, check_num_sens)
     df1 = contr[:, 0, 204:, :] #per channel

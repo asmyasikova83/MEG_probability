@@ -111,6 +111,7 @@ def run(mode, stages=None, work_dir='WORK/', test_prefix='run', add_date=False, 
         if run_tfr:
             env(conf.path_tfr, conf.path_mio)
             tfr_process(conf)
+        print(run_container)
         if run_container:
             env(conf.path_container, conf.path_tfr)
             container_process(conf)
@@ -146,4 +147,4 @@ if __name__ == '__main__':
     mode = args.mode
     stage = args.stage
 
-    run(mode, [stage])
+    run(mode, None if not stage else [stage])

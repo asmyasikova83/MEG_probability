@@ -4,6 +4,17 @@ import mne
 
 class conf():
     def __init__(self, mode, kind, frequency = None, work_dir='WORK/', verbose= False):
+        default_subj_list = [
+        'P000',       'P002','P003','P004','P005','P006','P007','P008','P009',
+        'P010','P011','P012',       'P014','P015','P016','P017','P018','P019',
+        'P020','P021','P022','P023','P024',       'P026',       'P028','P029',
+        'P030','P031','P032','P033','P034','P035','P036','P037',       'P039',
+        'P040','P041','P042','P043','P044','P045','P046','P047','P048','P049',
+        'P050','P051','P052','P053','P054','P055','P056','P057','P058','P059',
+        'P060','P061','P062']
+        self.subjects = ['P045','P049','P062']
+        default_runs_list = ['1', '2', '3', '4', '5', '6'] 
+        self.runs = ['1','3']
         #kind = ['norisk', 'risk'] #'positive', 'negative', 'prerisk', 'risk', 'postrisk', 'norisk_fb_positive','norisk_fb_negative', 'fb_negative_norisk'
         self.kind = kind
         self.verbose = verbose
@@ -153,77 +164,4 @@ save_t_stat = False
 random_comp = False
 stat_over_subjects = False
 stat_over_runs = True
-
-#P008 P025 neg negative removed'
-
-subjects = [
-    'P045',
-    'P049',
-    'P062']
-'''
-subjects = [
-    'P000',  
-    'P002',
-    'P003',
-    'P004',
-    'P005',
-    'P007',
-    'P008', 
-    'P009',
-    'P010',
-    'P011',
-    'P012',
-    'P014',
-    'P015',
-    'P016',
-    'P017',
-    'P018',
-    'P019',
-    'P020',
-    'P021',
-    'P022',
-    'P023',
-    'P024',
-    'P026',
-    'P028',
-    'P029',
-    'P030',
-    'P031',
-    'P032',
-    'P033',
-    'P034',
-    'P035',
-    'P036',
-    'P037',
-    'P039',
-    'P040',
-    'P041',
-    'P042',
-    'P043',
-    'P044',
-    'P006',
-    'P045',
-    'P046',
-    'P047',
-    'P048',
-    'P049',
-    'P050',
-    'P051',
-    'P052',
-    'P053',
-    'P054',
-    'P055',
-    'P056',
-    'P057',
-    'P058',
-    'P059',
-    'P060',
-    'P061',
-    'P062',
-    'P006']
-
-
-runs  = ['1', '2', '3', '4', '5', '6'] #'1', '2', '3', '4', '5'
-'''
-runs = ['1','3']
 

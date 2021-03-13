@@ -14,8 +14,8 @@ def risk_norisk_events(conf):
     fpath_log = path_events + '{}_run{}_log_risk_norisk.txt'
     verbose = conf.verbose
 
-    for run in runs:
-        for subject in subjects:
+    for run in conf.runs:
+        for subject in conf.subjects:
             if verbose:
                 print(fpath.format(subject, run, subject))
 

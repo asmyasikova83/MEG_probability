@@ -23,12 +23,12 @@ def grand_average_process(conf):
     run_counter = 0
 
     for i in range(len(kind)):
-        for subject in subjects:
-            for run in runs:
+        for subject in conf.subjects:
+            for run in conf.runs:
                 if verbose:
                     print('subject', subject)
                     print('run', run)
-                if run == runs[-1]:
+                if run == conf.runs[-1]:
                     if verbose:
                         print('Dis is da last run!')
                     rf = fpath_events.format(kind[i], subject, run, stimulus, kind[i], train)
