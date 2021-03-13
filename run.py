@@ -24,7 +24,7 @@ def env(path, prev_path=None):
         shutil.rmtree(path)
     os.makedirs(path, exist_ok = True)
 
-def run(mode, stages=None, work_dir='WORK/', test_prefix='run', add_date=False, verbose=False):
+def run(mode, stages, subjects, runs, work_dir='WORK/', test_prefix='run', add_date=False, verbose=False):
     if add_date:
         now = datetime.now()
         dt_string = now.strftime("%Y_%m_%d__%H_%M_%S")
@@ -47,14 +47,9 @@ def run(mode, stages=None, work_dir='WORK/', test_prefix='run', add_date=False, 
     convert_fdr_pdf = False
 
     if mode == 'ga':
-        subjects = ['P045','P049','P062']
-        runs = ['1','3']
         conf = config.conf(mode='grand_average', kind=['norisk', 'risk'],
                 subjects=subjects, runs=runs, work_dir=work_dir, verbose=verbose)
     elif mode == 'tfr':
-        #subjects = ['P014','P044'] #P048
-        subjects = ['P045','P062']
-        runs = ['1', '3']
         conf = config.conf(mode='tfr', kind=['norisk', 'risk'],
                 subjects=subjects, runs=runs, frequency='theta', work_dir=work_dir, verbose=verbose)
 
@@ -151,6 +146,13 @@ if __name__ == '__main__':
         help='stage of processing')
     args = parser.parse_args()
     mode = args.mode
+    if mode == 'ga':
+        subjects = ['P045','P049','P062']
+        runs = ['1','3']
+    elif mode == 'tfr':
+        #subjects = ['P014','P044'] #P048
+        subjects = ['P045','P062']
+        runs = ['1', '3']
     stage = args.stage
 
-    run(mode, None if not stage else [stage])
+    run(mode, None if not stage else [stage], subjects, runs)
