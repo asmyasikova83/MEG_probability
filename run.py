@@ -47,9 +47,14 @@ def run(mode, stages=None, work_dir='WORK/', test_prefix='run', add_date=False, 
     convert_fdr_pdf = False
 
     if mode == 'ga':
-        conf = config.conf(mode = 'grand_average', kind = ['norisk', 'risk'], work_dir = work_dir, verbose = verbose)
+        subjects = ['P045','P049','P062']
+        runs = ['1','3']
+        conf = config.conf(mode='grand_average', kind=['norisk', 'risk'],
+                subjects=subjects, runs=runs, work_dir=work_dir, verbose=verbose)
     elif mode == 'tfr':
-        conf = config.conf(mode = 'tfr', kind = ['norisk', 'risk'], frequency = 'theta', work_dir = work_dir, verbose = verbose)
+        subjects = ['P014','P044','P048']
+        conf = config.conf(mode='tfr', kind=['norisk', 'risk'],
+                subjects=subjects, frequency='theta', work_dir=work_dir, verbose=verbose)
 
     if not stages:
         print('All stages!')

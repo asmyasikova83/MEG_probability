@@ -3,7 +3,7 @@ import numpy as np
 import mne
 
 class conf():
-    def __init__(self, mode, kind, frequency = None, work_dir='WORK/', verbose= False):
+    def __init__(self, mode, kind, subjects=None, runs=None, frequency=None, work_dir='WORK/', verbose=False):
         default_subj_list = [
         'P000',       'P002','P003','P004','P005','P006','P007','P008','P009',
         'P010','P011','P012',       'P014','P015','P016','P017','P018','P019',
@@ -12,9 +12,9 @@ class conf():
         'P040','P041','P042','P043','P044','P045','P046','P047','P048','P049',
         'P050','P051','P052','P053','P054','P055','P056','P057','P058','P059',
         'P060','P061','P062']
-        self.subjects = ['P045','P049','P062']
+        self.subjects = subjects if subjects else default_subj_list #['P045','P049','P062']
         default_runs_list = ['1', '2', '3', '4', '5', '6'] 
-        self.runs = ['1','3']
+        self.runs = runs if runs else default_runs_list #['1','3']
         #kind = ['norisk', 'risk'] #'positive', 'negative', 'prerisk', 'risk', 'postrisk', 'norisk_fb_positive','norisk_fb_negative', 'fb_negative_norisk'
         self.kind = kind
         self.verbose = verbose
