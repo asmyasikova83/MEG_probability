@@ -1,7 +1,12 @@
 import mne
 import numpy as np
 from config import conf
-       
+
+def correct_response(event):
+    return event[2] == 40 or event[2] == 41 or event[2] == 46 or event[2] == 47
+
+def incorrect_response(event):
+    return event[2] == 42 or event[2] == 43 or event[2] == 44 or event[2] == 45
 
 def risk_norisk_events(conf):
     print('\trun risk_norisk_events...')
@@ -34,14 +39,13 @@ def risk_norisk_events(conf):
             answer_count = 0
 
             for i in range(len(events)):
-                if events[i][2] == 40 or events[i][2] == 41 or events[i][2] == 46 or events[i][2] == 47: #correct responses
+                if correct_response(events[i]):
                     if trained:
                         res.append(events[i])
                         correct_counter = correct_counter + 1
                     else:
                         correct_count = correct_count + 1
-                    #risk
-                if events[i][2] == 42 or events[i][2] == 43 or events[i][2] == 44 or events[i][2] == 45: #incorrect response
+                if incorrect_response(events[i]):
                     if trained:
                         res.append(events[i])
                     else:
@@ -51,7 +55,7 @@ def risk_norisk_events(conf):
                     trained = True
                     res.append(events[i])
 
-                if trained and events[i - 1][2] == 40 or trained and events[i - 1][2] == 41 or trained and events[i - 1][2] == 46 or trained and events[i - 1][2] == 47:
+                if trained and correct_response(events[i - 1]):
                     if i + 7 >= len(events):
                         continue
                     str_digit1 = str(events[i + 3][2])
@@ -63,22 +67,12 @@ def risk_norisk_events(conf):
                     else:
                         if events[i + 3][2] == 42 or events[i + 3][2] == 43  or events[i + 3][2] == 43 or events[i + 3][2] == 44 or events[i + 3][2] == 45:
                             if verbose:
-                                print('risk:2d step')
+                                print('risk: 2d step')
                             if events[i + 7][2] == 40 or events[i + 7][2] == 41  or events[i + 7][2] == 46 or events[i + 7][2] == 47:
                                 risk.append(events[i + 3])
                                 if verbose:
                                     print('risk: 3d step')
               
-                if trained and events[i - 1][2] == 40 or trained and events[i - 1][2] == 41 or trained and events[i - 1][2] == 46 or trained and events[i - 1][2] == 47:
-                    if i + 7 >= len(events):
-                        continue
-                    str_digit1 = str(events[i + 3][2])
-                    str_digit2 = str(events[i + 4][2])
-                    d1 = [int(d) for d in str_digit1]
-                    d2 = [int(d) for d in str_digit2]
-                    if d1 == 4 and d2 == 4:
-                        continue
-                    else:
                         if events[i + 3][2] == 40 or events[i + 3][2] == 41 or events[i + 3][2] == 46 or events[i + 3][2] == 47:
                             if verbose:
                                 print('norisk: 2d step')
@@ -86,20 +80,6 @@ def risk_norisk_events(conf):
                                 if verbose:
                                     print('norisk: 3d step')
                                 norisk.append(events[i + 3])
-  
-                if trained and events[i - 1][2] == 40 or trained and events[i - 1][2] == 41 or trained and events[i - 1][2] == 46 or trained and events[i - 1][2] == 47:
-                    if i + 7 >= len(events):
-                        continue
-                    str_digit1 = str(events[i + 3][2])
-                    str_digit2 = str(events[i + 4][2])
-                    d1 = [int(d) for d in str_digit1]
-                    d2 = [int(d) for d in str_digit2]
-                    if d1 == 4 and d2 == 4:
-                        continue
-                    else:
-                        if events[i + 3][2] == 40 or events[i + 3][2] == 41 or events[i + 3][2] == 46 or events[i + 3][2] == 47:
-                            if verbose:
-                                print('prerisk: 2d step')
                             if events[i + 7][2] == 42 or events[i + 7][2] == 43 or events[i + 7][2] == 44 or events[i + 7][2] == 45:
                                 if verbose:
                                     print('prerisk: 3d step')
@@ -132,6 +112,7 @@ def risk_norisk_events(conf):
                     events_risk = open(fpath_events_risk.format(subject, run), "w")
                     events_prerisk = open(fpath_events_prerisk.format(subject, run), "w")
                     events_postrisk = open(fpath_events_postrisk.format(subject, run), "w")
+
                     if verbose:
                         print('events norisk', norisk)
                         print('events risk', risk)
