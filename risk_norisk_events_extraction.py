@@ -65,22 +65,22 @@ def risk_norisk_events(conf):
                     if d1 == 4 and d2 == 4:
                         continue
                     else:
-                        if events[i + 3][2] == 42 or events[i + 3][2] == 43  or events[i + 3][2] == 43 or events[i + 3][2] == 44 or events[i + 3][2] == 45:
+                        if incorrect_response(events[i + 3]):
                             if verbose:
                                 print('risk: 2d step')
-                            if events[i + 7][2] == 40 or events[i + 7][2] == 41  or events[i + 7][2] == 46 or events[i + 7][2] == 47:
+                            if correct_response(events[i + 7]):
                                 risk.append(events[i + 3])
                                 if verbose:
                                     print('risk: 3d step')
               
-                        if events[i + 3][2] == 40 or events[i + 3][2] == 41 or events[i + 3][2] == 46 or events[i + 3][2] == 47:
+                        if correct_response(events[i + 3]):
                             if verbose:
                                 print('norisk: 2d step')
-                            if events[i + 7][2] == 40 or events[i + 7][2] == 41 or events[i + 1][2] == 46 or events[i + 7][2] == 47:
+                            if correct_response(events[i + 7]):
                                 if verbose:
                                     print('norisk: 3d step')
                                 norisk.append(events[i + 3])
-                            if events[i + 7][2] == 42 or events[i + 7][2] == 43 or events[i + 7][2] == 44 or events[i + 7][2] == 45:
+                            if incorrect_response(events[i + 7]):
                                 if verbose:
                                     print('prerisk: 3d step')
                                 prerisk.append(events[i + 3])
