@@ -16,7 +16,7 @@ from plot_time_course_in_html_functions import space_fdr
 from compute_p_val import compute_p_val
 from tfce import *
 from scipy import stats, io
-from compute_p_val_stat_over_runs import compute_p_val_over_runs
+#from compute_p_val_stat_over_runs import compute_p_val_over_runs
 
 
 def topo_stat(conf):

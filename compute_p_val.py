@@ -10,7 +10,7 @@ import pathlib
 from plot_time_course_in_html_functions import p_val_binary
 import random
 from numpy import random
-from baseline_GA import baseline_GA
+#from baseline_GA import baseline_GA
 
 def compute_p_val(conf, subjects, kind, train, frequency, check_num_sens):
     #coordinates and channel names from matlab files - the files are here https://github.com/niherus/MNE_TFR_ToolBox/tree/master/VISUALISATION
