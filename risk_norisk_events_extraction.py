@@ -10,6 +10,7 @@ def incorrect_response(event):
 
 def risk_norisk_events(conf):
     print('\trun risk_norisk_events...')
+
     path_events = conf.path_events
     fpath = '/net/server/data/Archive/prob_learn/vtretyakova/ICA_cleaned/{}/run{}_{}_raw_ica.fif'
     fpath_events_risk = path_events + '{}_run{}_events_risk.txt'
@@ -21,12 +22,12 @@ def risk_norisk_events(conf):
     for run in conf.runs:
         for subject in conf.subjects:
             print('\t\t', run, subject)
-            if verbose:
-                print(fpath.format(subject, run, subject))
 
             raw = mne.io.read_raw_fif(fpath.format(subject, run, subject), allow_maxshield=False, preload=True, verbose='ERROR')
 
-            events = mne.find_events(raw, stim_channel='STI101', output='onset', consecutive='increasing', min_duration=0, shortest_event=1, mask=None, uint_cast=False, mask_type='and',  initial_event=False, verbose='ERROR')
+            events = mne.find_events(raw, stim_channel='STI101', output='onset',
+                    consecutive='increasing', min_duration=0, shortest_event=1,
+                    mask=None, uint_cast=False, mask_type='and',  initial_event=False, verbose='ERROR')
 
             res = []
             risk = []
@@ -51,7 +52,7 @@ def risk_norisk_events(conf):
                     else:
                         correct_count = 0
 
-                if correct_count > 3 and trained == False:
+                if correct_count > 3 and not trained:
                     trained = True
                     res.append(events[i])
 
@@ -65,27 +66,16 @@ def risk_norisk_events(conf):
                     if d1 == 4 and d2 == 4:
                         continue
                     else:
-                        if incorrect_response(events[i + 3]):
-                            if verbose:
-                                print('risk: 2d step')
-                            if correct_response(events[i + 7]):
-                                risk.append(events[i + 3])
-                                if verbose:
-                                    print('risk: 3d step')
+                        if incorrect_response(events[i + 3]) and correct_response(events[i + 7]):
+                            risk.append(events[i + 3])
               
                         if correct_response(events[i + 3]):
-                            if verbose:
-                                print('norisk: 2d step')
                             if correct_response(events[i + 7]):
-                                if verbose:
-                                    print('norisk: 3d step')
                                 norisk.append(events[i + 3])
                             if incorrect_response(events[i + 7]):
-                                if verbose:
-                                    print('prerisk: 3d step')
                                 prerisk.append(events[i + 3])
 
-                if trained and events[i - 1][2] == 42 or trained and events[i - 1][2] == 43 or trained and events[i - 1][2] == 44 or trained and events[i - 1][2] == 45:
+                if trained and incorrect_response(events[i - 1]):
                     if i + 7 >= len(events):
                         continue
                     str_digit1 = str(events[i + 3][2])
@@ -95,13 +85,8 @@ def risk_norisk_events(conf):
                     if d1 == 4 and d2 == 4:
                         continue
                     else:
-                        if events[i + 3][2] == 40 or events[i + 3][2] == 41 or events[i + 3][2] == 46 or events[i + 3][2] == 47:
-                            if verbose:
-                                print('postrisk: 2d step')
-                            if events[i + 7][2] == 40 or events[i + 7][2] == 41 or events[i + 7][2] == 46 or events[i+7][2] == 47:
-                                if verbose:
-                                    print('postrisk: 3d step')
-                                postrisk.append(events[i + 3])
+                        if correct_response(events[i + 3]) and correct_response(events[i + 7]):
+                            postrisk.append(events[i + 3])
  
             if len(res) != 0:
                 answer_count = correct_counter/len(res)
