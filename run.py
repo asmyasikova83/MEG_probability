@@ -52,6 +52,8 @@ def run(mode, stages, subjects, runs, work_dir='WORK/', test_prefix='run', add_d
     elif mode == 'tfr':
         conf = config.conf(mode='tfr', kind=['norisk', 'risk'],
                 subjects=subjects, runs=runs, frequency='theta', work_dir=work_dir, verbose=verbose)
+    else:
+        assert 0, 'Wrong mode'
 
     if not stages:
         print('All stages!')

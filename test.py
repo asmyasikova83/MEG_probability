@@ -67,9 +67,11 @@ def test(test_name, mode, stages, subjects, runs, check_func):
         assert 0
 
 if __name__ == '__main__':
+    subjects_all = ['P00' + str(i) for i in range(10)] + ['P0' + str(i) for i in range(10,63)]
+    
     test('test1_events', 'ga', ['events'], ['P045','P049','P062'], ['1','3'], check_events)
     test('test2_tstat', 'ga', ['events', 'mio', 'ERF', 'tfce'], ['P045','P049','P062'], ['1','3'], check_ga_tstat)
     test('test3_TFR', 'tfr', ['events', 'mio', 'tfr', 'container_tfr', 'tfce'], ['P045', 'P062'], ['1','3'], check_tfr)
     test('test4_TFR_P0', 'tfr', ['events', 'mio', 'tfr', 'container_tfr', 'tfce'], ['P000', 'P045', 'P062'], ['1','3'], check_tfr)
-    test('test5_events_all', 'ga', ['events'], [], [], check_events)
+    test('test5_events_all', 'ga', ['events'], subjects_all, [], check_events)
 
