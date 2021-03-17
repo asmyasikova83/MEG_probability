@@ -36,32 +36,30 @@ def risk_norisk_events(conf):
             postrisk = []
             correct_count = 0
             correct_counter = 0
-            trained = False
             answer_count = 0
 
             begin = 0
             for i in range(len(events)):
-                if not trained:
-                    if correct_response(events[i]):
-                        correct_count = correct_count + 1
-                        if correct_count > 3:
-                            trained = True
-                            begin = i
-                            break
-                    elif incorrect_response(events[i]):
-                        correct_count = 0
+                if correct_response(events[i]):
+                    correct_count = correct_count + 1
+                    if correct_count > 3:
+                        begin = i
+                        break
+                elif incorrect_response(events[i]):
+                    correct_count = 0
             if begin == 0:
+                if verbose:
+                    print('Did not find trained (correct_count > 3)!')
                 continue
 
             for i in range(begin, len(events)):
-                if trained:
-                    if correct_response(events[i]):
-                        res.append(events[i])
-                        correct_counter = correct_counter + 1
-                    if incorrect_response(events[i]):
-                        res.append(events[i])
+                if correct_response(events[i]):
+                    res.append(events[i])
+                    correct_counter = correct_counter + 1
+                if incorrect_response(events[i]):
+                    res.append(events[i])
 
-                if trained and correct_response(events[i - 1]):
+                if correct_response(events[i - 1]):
                     if i + 7 >= len(events):
                         continue
                     str_digit1 = str(events[i + 3][2])
@@ -80,7 +78,7 @@ def risk_norisk_events(conf):
                             if incorrect_response(events[i + 7]):
                                 prerisk.append(events[i + 3])
 
-                if trained and incorrect_response(events[i - 1]):
+                if incorrect_response(events[i - 1]):
                     if i + 7 >= len(events):
                         continue
                     str_digit1 = str(events[i + 3][2])
