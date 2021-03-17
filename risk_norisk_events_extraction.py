@@ -43,6 +43,9 @@ def risk_norisk_events(conf):
                 if not trained:
                     if correct_response(events[i]):
                         correct_count = correct_count + 1
+                        if correct_count > 3:
+                            trained = True
+                            res.append(events[i])
                     elif incorrect_response(events[i]):
                         correct_count = 0
                 else:
@@ -51,10 +54,6 @@ def risk_norisk_events(conf):
                         correct_counter = correct_counter + 1
                     if incorrect_response(events[i]):
                         res.append(events[i])
-
-                if correct_count > 3 and not trained:
-                    trained = True
-                    res.append(events[i])
 
                 if trained and correct_response(events[i - 1]):
                     if i + 7 >= len(events):
