@@ -20,17 +20,38 @@ def detect_trained(events):
              correct_counter = 0
     return end
 
-def risk_norisk_events(conf):
-    print('\trun risk_norisk_events...')
-
+def save_events(norisk, risk, prerisk, postrisk, conf, subject, run):
+    verbose = conf.verbose 
     path_events = conf.path_events
-    fpath = '/net/server/data/Archive/prob_learn/vtretyakova/ICA_cleaned/{}/run{}_{}_raw_ica.fif'
     fpath_events_risk = path_events + '{}_run{}_events_risk.txt'
     fpath_events_norisk = path_events + '{}_run{}_events_norisk.txt'
     fpath_events_prerisk = path_events + '{}_run{}_events_prerisk.txt'
     fpath_events_postrisk = path_events + '{}_run{}_events_postrisk.txt'
-    verbose = conf.verbose
+    events_norisk  = open(fpath_events_norisk.format(subject, run), "w")
+    events_risk = open(fpath_events_risk.format(subject, run), "w")
+    events_prerisk = open(fpath_events_prerisk.format(subject, run), "w")
+    events_postrisk = open(fpath_events_postrisk.format(subject, run), "w")
+    if verbose:
+        print('events norisk', norisk)
+        print('events risk', risk)
+        print('events prerisk', prerisk)
+        print('events postrisk', postrisk)
+    np.savetxt(events_risk, risk, fmt = "%d")
+    np.savetxt(events_norisk, norisk, fmt = "%d")
+    np.savetxt(events_prerisk, prerisk, fmt = "%d")
+    np.savetxt(events_postrisk, postrisk, fmt = "%d")
+    events_norisk.close()
+    events_risk.close()
+    events_prerisk.close()
+    events_postrisk.close()
+    if verbose:
+        print('Saved!')
 
+def risk_norisk_events(conf):
+    verbose = conf.verbose
+    print('\trun risk_norisk_events...')
+
+    fpath = '/net/server/data/Archive/prob_learn/vtretyakova/ICA_cleaned/{}/run{}_{}_raw_ica.fif'
     for run in conf.runs:
         for subject in conf.subjects:
             print('\t\t', run, subject)
@@ -96,27 +117,7 @@ def risk_norisk_events(conf):
                 if verbose:
                     print(answer_count)
                 if answer_count > 0.66:
-                    events_norisk  = open(fpath_events_norisk.format(subject, run), "w")
-                    events_risk = open(fpath_events_risk.format(subject, run), "w")
-                    events_prerisk = open(fpath_events_prerisk.format(subject, run), "w")
-                    events_postrisk = open(fpath_events_postrisk.format(subject, run), "w")
-
-                    if verbose:
-                        print('events norisk', norisk)
-                        print('events risk', risk)
-                        print('events prerisk', prerisk)
-                        print('events postrisk', postrisk)
-                    np.savetxt(events_risk, risk, fmt = "%d")
-                    np.savetxt(events_norisk, norisk, fmt = "%d")
-                    np.savetxt(events_prerisk, prerisk, fmt = "%d")
-                    np.savetxt(events_postrisk, postrisk, fmt = "%d")
-
-                    events_norisk.close()
-                    events_risk.close()
-                    events_prerisk.close()
-                    events_postrisk.close()
-                    if verbose:
-                        print('Saved!')
+                    save_events(norisk, risk, prerisk, postrisk, conf, subject, run)
             else:
                 if verbose:
                     print('Did not find trained!')
