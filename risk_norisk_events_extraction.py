@@ -78,10 +78,8 @@ def risk_norisk_events(conf):
                     print('Did not find trained!')
                 continue
 
-            for i in range(begin, end):
+            for i in range(begin, end-7):
                 if correct_response(events[i - 1]):
-                    if i + 7 >= end:
-                        continue
                     str_digit1 = str(events[i + 3][2])
                     str_digit2 = str(events[i + 4][2])
                     d1 = [int(d) for d in str_digit1]
@@ -97,8 +95,6 @@ def risk_norisk_events(conf):
                             if incorrect_response(events[i + 7]):
                                 prerisk.append(events[i + 3])
                 if incorrect_response(events[i - 1]):
-                    if i + 7 >= end:
-                        continue
                     str_digit1 = str(events[i + 3][2])
                     str_digit2 = str(events[i + 4][2])
                     d1 = [int(d) for d in str_digit1]
