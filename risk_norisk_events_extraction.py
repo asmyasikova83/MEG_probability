@@ -70,13 +70,10 @@ def risk_norisk_events(conf):
             prerisk = []
             postrisk = []
 
-            correct_counter = 0
+            correct_counter = sum([1 for i in range(begin+1, end) if correct_response(events[i])]) #FIXME
             for i in range(begin, end):
                 if correct_response(events[i]):
                     res.append(events[i])
-                    # FIXME
-                    if i != begin:
-                        correct_counter += 1
                 if incorrect_response(events[i]):
                     res.append(events[i])
 
