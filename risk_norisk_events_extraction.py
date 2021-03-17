@@ -39,16 +39,22 @@ def risk_norisk_events(conf):
             trained = False
             answer_count = 0
 
+            begin = 0
             for i in range(len(events)):
                 if not trained:
                     if correct_response(events[i]):
                         correct_count = correct_count + 1
                         if correct_count > 3:
                             trained = True
-                            res.append(events[i])
+                            begin = i
+                            break
                     elif incorrect_response(events[i]):
                         correct_count = 0
-                else:
+            if begin == 0:
+                continue
+
+            for i in range(begin, len(events)):
+                if trained:
                     if correct_response(events[i]):
                         res.append(events[i])
                         correct_counter = correct_counter + 1
