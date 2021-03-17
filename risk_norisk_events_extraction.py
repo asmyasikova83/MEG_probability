@@ -8,6 +8,18 @@ def correct_response(event):
 def incorrect_response(event):
     return event[2] == 42 or event[2] == 43 or event[2] == 44 or event[2] == 45
 
+def detect_trained(events):
+    end = len(events)
+    correct_counter = 0
+    for i in range(end):
+         if correct_response(events[i]):
+             correct_counter += 1
+             if correct_counter > 3:
+                 return i
+         elif incorrect_response(events[i]):
+             correct_counter = 0
+    return end
+
 def risk_norisk_events(conf):
     print('\trun risk_norisk_events...')
 
@@ -28,39 +40,27 @@ def risk_norisk_events(conf):
             events = mne.find_events(raw, stim_channel='STI101', output='onset',
                     consecutive='increasing', min_duration=0, shortest_event=1,
                     mask=None, uint_cast=False, mask_type='and',  initial_event=False, verbose='ERROR')
+            begin = detect_trained(events)
+            end = len(events)
 
             res = []
             risk = []
             norisk = []
             prerisk = []
             postrisk = []
-            answer_count = 0
-
-            begin = 0
-            correct_counter = 0
-            for i in range(len(events)):
-                if correct_response(events[i]):
-                    correct_counter += 1
-                    if correct_counter > 3:
-                        begin = i
-                        break
-                elif incorrect_response(events[i]):
-                    correct_counter = 0
-            if begin == 0:
-                if verbose:
-                    print('Did not find trained (correct_count > 3)!')
-                continue
 
             correct_counter = 0
-            for i in range(begin, len(events)):
+            for i in range(begin, end):
                 if correct_response(events[i]):
                     res.append(events[i])
-                    correct_counter = correct_counter + 1
+                    # FIXME
+                    if i != begin:
+                        correct_counter += 1
                 if incorrect_response(events[i]):
                     res.append(events[i])
 
                 if correct_response(events[i - 1]):
-                    if i + 7 >= len(events):
+                    if i + 7 >= end:
                         continue
                     str_digit1 = str(events[i + 3][2])
                     str_digit2 = str(events[i + 4][2])
@@ -79,7 +79,7 @@ def risk_norisk_events(conf):
                                 prerisk.append(events[i + 3])
 
                 if incorrect_response(events[i - 1]):
-                    if i + 7 >= len(events):
+                    if i + 7 >= end:
                         continue
                     str_digit1 = str(events[i + 3][2])
                     str_digit2 = str(events[i + 4][2])

@@ -13,7 +13,7 @@ if __name__ == '__main__':
         check_func = check_ga
     elif name == 'full_TFR':
         mode = 'tfr'
-        stages += ['TFR', 'contaner_tfr']
+        stages += ['tfr', 'contaner_tfr']
         check_func = check_tfr
     stages += ['tfce']
     test(name, mode, stages, [], [], check_func)
