@@ -71,12 +71,14 @@ def risk_norisk_events(conf):
             postrisk = []
 
             correct_counter = sum([1 for i in range(begin+1, end) if correct_response(events[i])]) #FIXME
-            for i in range(begin, end):
-                if correct_response(events[i]):
-                    res.append(events[i])
-                if incorrect_response(events[i]):
-                    res.append(events[i])
+            answer_counter = sum([1 for i in range(begin, end) if correct_response(events[i]) or incorrect_response(events[i])])
+            if answer_counter == 0 or correct_counter/answer_counter <= 0.66:
+                if verbose:
+                    print(answer_counter, correct_counter/answer_counter)
+                    print('Did not find trained!')
+                continue
 
+            for i in range(begin, end):
                 if correct_response(events[i - 1]):
                     if i + 7 >= end:
                         continue
@@ -89,13 +91,11 @@ def risk_norisk_events(conf):
                     else:
                         if incorrect_response(events[i + 3]) and correct_response(events[i + 7]):
                             risk.append(events[i + 3])
-              
                         if correct_response(events[i + 3]):
                             if correct_response(events[i + 7]):
                                 norisk.append(events[i + 3])
                             if incorrect_response(events[i + 7]):
                                 prerisk.append(events[i + 3])
-
                 if incorrect_response(events[i - 1]):
                     if i + 7 >= end:
                         continue
@@ -109,14 +109,6 @@ def risk_norisk_events(conf):
                         if correct_response(events[i + 3]) and correct_response(events[i + 7]):
                             postrisk.append(events[i + 3])
  
-            if len(res) != 0:
-                answer_count = correct_counter/len(res)
-                if verbose:
-                    print(answer_count)
-                if answer_count > 0.66:
-                    save_events(norisk, risk, prerisk, postrisk, conf, subject, run)
-            else:
-                if verbose:
-                    print('Did not find trained!')
+            save_events(norisk, risk, prerisk, postrisk, conf, subject, run)
     print('\trisk_norisk_events completed')
 
