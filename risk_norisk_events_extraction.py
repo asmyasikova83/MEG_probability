@@ -80,11 +80,7 @@ def risk_norisk_events(conf):
 
             for i in range(begin, end-7):
                 if correct_response(events[i - 1]):
-                    str_digit1 = str(events[i + 3][2])
-                    str_digit2 = str(events[i + 4][2])
-                    d1 = [int(d) for d in str_digit1]
-                    d2 = [int(d) for d in str_digit2]
-                    if d1 == 4 and d2 == 4:
+                    if str(events[i + 3][2])[0] == '4' and str(events[i + 4][2])[0] == '4':
                         continue
                     else:
                         if incorrect_response(events[i + 3]) and correct_response(events[i + 7]):
@@ -95,11 +91,7 @@ def risk_norisk_events(conf):
                             if incorrect_response(events[i + 7]):
                                 prerisk.append(events[i + 3])
                 if incorrect_response(events[i - 1]):
-                    str_digit1 = str(events[i + 3][2])
-                    str_digit2 = str(events[i + 4][2])
-                    d1 = [int(d) for d in str_digit1]
-                    d2 = [int(d) for d in str_digit2]
-                    if d1 == 4 and d2 == 4:
+                    if str(events[i + 3][2])[0] == '4' and str(events[i + 4][2])[0] == '4':
                         continue
                     else:
                         if correct_response(events[i + 3]) and correct_response(events[i + 7]):
