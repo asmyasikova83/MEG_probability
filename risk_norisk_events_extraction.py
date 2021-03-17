@@ -34,24 +34,24 @@ def risk_norisk_events(conf):
             norisk = []
             prerisk = []
             postrisk = []
-            correct_count = 0
-            correct_counter = 0
             answer_count = 0
 
             begin = 0
+            correct_counter = 0
             for i in range(len(events)):
                 if correct_response(events[i]):
-                    correct_count = correct_count + 1
-                    if correct_count > 3:
+                    correct_counter += 1
+                    if correct_counter > 3:
                         begin = i
                         break
                 elif incorrect_response(events[i]):
-                    correct_count = 0
+                    correct_counter = 0
             if begin == 0:
                 if verbose:
                     print('Did not find trained (correct_count > 3)!')
                 continue
 
+            correct_counter = 0
             for i in range(begin, len(events)):
                 if correct_response(events[i]):
                     res.append(events[i])
