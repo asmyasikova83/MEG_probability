@@ -19,7 +19,7 @@ def grand_average_process(conf):
     train = conf.train
     verbose = conf.verbose
     evoked_ave = []
-    fpath_raw = '/net/server/data/Archive/prob_learn/vtretyakova/ICA_cleaned/{}/run{}_{}_raw_ica.fif'
+    fpath_raw = conf.fpath_raw
     fpath_events = conf.path_mio + '/mio_out_{0}/{1}_run{2}_mio_corrected_{3}{4}{5}.txt'
     temp1 = mne.Evoked(f'{path_home}donor-ave.fif', verbose='ERROR')
     run_counter = 0

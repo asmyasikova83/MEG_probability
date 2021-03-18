@@ -31,6 +31,7 @@ class conf():
 
         self.verbose = verbose
         self.path_home = '/home/asmyasnikova83/'
+        self.fpath_raw = '/net/server/data/Archive/prob_learn/vtretyakova/ICA_cleaned/{}/run{}_{}_raw_ica.fif'
         prefix_out = self.path_home + work_dir
         if not os.path.exists(prefix_out) or not os.path.isdir(prefix_out):
             os.makedirs(prefix_out)

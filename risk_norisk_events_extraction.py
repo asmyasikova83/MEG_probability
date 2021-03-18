@@ -51,12 +51,11 @@ def risk_norisk_events(conf):
     verbose = conf.verbose
     print('\trun risk_norisk_events...')
 
-    fpath = '/net/server/data/Archive/prob_learn/vtretyakova/ICA_cleaned/{}/run{}_{}_raw_ica.fif'
     for run in conf.runs:
         for subject in conf.subjects:
             print('\t\t', run, subject)
 
-            raw = mne.io.read_raw_fif(fpath.format(subject, run, subject), allow_maxshield=False, preload=True, verbose='ERROR')
+            raw = mne.io.read_raw_fif(conf.fpath_raw.format(subject, run, subject), allow_maxshield=False, preload=True, verbose='ERROR')
 
             events = mne.find_events(raw, stim_channel='STI101', output='onset',
                     consecutive='increasing', min_duration=0, shortest_event=1,

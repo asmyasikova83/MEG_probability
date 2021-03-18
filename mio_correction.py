@@ -24,14 +24,12 @@ def clean_events(epochs_ar, thres):
 
     return np.array(good_events)
 
-fpath_raw = '/net/server/data/Archive/prob_learn/vtretyakova/ICA_cleaned/{}/run{}_{}_raw_ica.fif'
-
-def calculate_beta(conf, subj, run, stimulus, kind, train, fpath_raw, fpath_events, fpath_mio_out):
+def calculate_beta(conf, subj, run, stimulus, kind, train, fpath_events, fpath_mio_out):
     verbose = conf.verbose
     period_start = conf.period_start
     period_end = conf.period_end
 
-    raw_data = mne.io.Raw(fpath_raw.format(subj, run, subj), preload=True, verbose='ERROR')
+    raw_data = mne.io.Raw(conf.fpath_raw.format(subj, run, subj), preload=True, verbose='ERROR')
     raw_data = raw_data.filter(l_freq=70, h_freq=None)
     picks = mne.pick_types(raw_data.info, meg = True)
     events_raw = mne.find_events(raw_data, stim_channel='STI101', output='onset', consecutive='increasing', min_duration=0, shortest_event=1, mask=None, uint_cast=False, mask_type='and', initial_event=False, verbose='ERROR')
@@ -90,7 +88,7 @@ def mio_correction(conf):
                 if file.exists() and os.stat(rf).st_size != 0:
                     if verbose:
                         print('This file is being processed: ', rf)
-                    calculate_beta(conf, subject, run, stimulus, kind[i], train, fpath_raw, fpath_events, fpath_mio_out)
+                    calculate_beta(conf, subject, run, stimulus, kind[i], train, fpath_events, fpath_mio_out)
                 else:
                     if verbose:
                         print('This file: ', rf, 'does not exit')
