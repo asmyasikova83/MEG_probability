@@ -100,8 +100,8 @@ def risk_norisk_events(conf):
                     if correct_response(events[i]) and incorrect_response(events[i + 8]):
                         prerisk.append(events[i + 4])
 
-                if incorrect_response(events[i]):
-                    if correct_response(events[i + 4]) and correct_response(events[i + 8]):
+                if correct_response(events[i + 4]):
+                    if incorrect_response(events[i]) and correct_response(events[i + 8]):
                         postrisk.append(events[i + 4])
  
             save_events(norisk, risk, prerisk, postrisk, conf, subject, run)
