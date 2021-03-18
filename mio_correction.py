@@ -3,10 +3,9 @@ import numpy as np
 from config import conf
 import pathlib
 
-def no_mio_events(epochs_ar, thres):
+def clean_events(epochs_ar, thres):
     #N_events, N_chans, N_times
-    epochs_ar = epochs_ar.swapaxes(0, 1)
-    epochs_ar = epochs_ar.swapaxes(1, 2)
+    epochs_ar = epochs_ar.swapaxes(0, 1).swapaxes(1, 2)
     N_chans, N_times, N_events = epochs_ar.shape
     
     EV_DATA = np.abs(epochs_ar)
@@ -17,12 +16,13 @@ def no_mio_events(epochs_ar, thres):
     CHAN_MEAN = np.mean(RESH_DATA, axis=1)
     CHAN_STD = np.std(RESH_DATA, axis=1)
     
-    good_chan = []
+    good_events = []
     for i in range(N_events):
         select = np.where(CHAN_MAX[:, i] > CHAN_MEAN + thres*CHAN_STD)
         if select[0].shape[0] <= N_chans//4:
-            good_chan.append(i)
-    return np.array(good_chan) 
+            good_events.append(i)
+
+    return np.array(good_events)
 
 fpath_raw = '/net/server/data/Archive/prob_learn/vtretyakova/ICA_cleaned/{}/run{}_{}_raw_ica.fif'
 
@@ -44,7 +44,7 @@ def calculate_beta(conf, subj, run, stimulus, kind, train, fpath_raw, fpath_even
     epochs = epochs.pick(picks="grad")
 
     thres = 7 #procedure to remove epochs-outliers based on thres*STD difference
-    clean = no_mio_events(epochs.get_data(), thres)
+    clean = clean_events(epochs.get_data(), thres)
     if clean.any():
         if verbose:
             print(subj, thres, str(events.shape[0]) + " ~~~~ " + str(events[clean].shape[0]) )
