@@ -23,14 +23,16 @@ def detect_trained(events):
 def save_events(norisk, risk, prerisk, postrisk, conf, subject, run):
     verbose = conf.verbose 
     path_events = conf.path_events
-    fpath_events_risk = path_events + '{}_run{}_events_risk.txt'
-    fpath_events_norisk = path_events + '{}_run{}_events_norisk.txt'
-    fpath_events_prerisk = path_events + '{}_run{}_events_prerisk.txt'
-    fpath_events_postrisk = path_events + '{}_run{}_events_postrisk.txt'
-    events_norisk  = open(fpath_events_norisk.format(subject, run), "w")
-    events_risk = open(fpath_events_risk.format(subject, run), "w")
-    events_prerisk = open(fpath_events_prerisk.format(subject, run), "w")
-    events_postrisk = open(fpath_events_postrisk.format(subject, run), "w")
+    stimulus = conf.stimulus
+    train = conf.train
+    fpath_events_risk = path_events + '{}_run{}_events_{}risk{}.txt'
+    fpath_events_norisk = path_events + '{}_run{}_events_{}norisk{}.txt'
+    fpath_events_prerisk = path_events + '{}_run{}_events_{}prerisk{}.txt'
+    fpath_events_postrisk = path_events + '{}_run{}_events_{}postrisk{}.txt'
+    events_norisk  = open(fpath_events_norisk.format(subject, run, stimulus, train), "w")
+    events_risk = open(fpath_events_risk.format(subject, run, stimulus, train), "w")
+    events_prerisk = open(fpath_events_prerisk.format(subject, run, stimulus, train), "w")
+    events_postrisk = open(fpath_events_postrisk.format(subject, run, stimulus, train), "w")
     if verbose:
         print('events norisk', norisk)
         print('events risk', risk)
