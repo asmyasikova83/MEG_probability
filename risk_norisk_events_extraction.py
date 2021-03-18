@@ -66,14 +66,8 @@ def risk_norisk_events(conf):
             begin = detect_trained(events)
             end = len(events)
 
-            res = []
-            risk = []
-            norisk = []
-            prerisk = []
-            postrisk = []
-
             # countera for correct responses and the proportion of correct responses in a block (should be no less than 2/3 for trained)
-            correct_counter = sum([1 for i in range(begin+1, end) if correct_response(events[i])]) #FIXME
+            correct_counter = sum([1 for i in range(begin+1, end) if correct_response(events[i])]) #FIXME begin+1
             answer_counter = sum([1 for i in range(begin, end) if correct_response(events[i]) or incorrect_response(events[i])])
             if answer_counter == 0 or correct_counter/answer_counter <= 0.66:
                 if verbose:
@@ -81,24 +75,30 @@ def risk_norisk_events(conf):
                     print('Did not find trained!')
                 continue
 
-            for i in range(begin, end-7):
+            res = []
+            risk = []
+            norisk = []
+            prerisk = []
+            postrisk = []
+            # FIXME begin-1
+            for i in range(begin-1, end-8):
 
                 # check double responses starting from '4'
-                if str(events[i + 3][2])[0] == '4' and str(events[i + 4][2])[0] == '4':
+                if str(events[i + 4][2])[0] == '4' and str(events[i + 5][2])[0] == '4':
                     continue
 
                 # TODO
-                if correct_response(events[i - 1]):
-                    if incorrect_response(events[i + 3]) and correct_response(events[i + 7]):
-                        risk.append(events[i + 3])
-                    if correct_response(events[i + 3]):
-                        if correct_response(events[i + 7]):
-                            norisk.append(events[i + 3])
-                        if incorrect_response(events[i + 7]):
-                            prerisk.append(events[i + 3])
-                if incorrect_response(events[i - 1]):
-                    if correct_response(events[i + 3]) and correct_response(events[i + 7]):
-                        postrisk.append(events[i + 3])
+                if correct_response(events[i]):
+                    if incorrect_response(events[i + 4]) and correct_response(events[i + 8]):
+                        risk.append(events[i + 4])
+                    if correct_response(events[i + 4]):
+                        if correct_response(events[i + 8]):
+                            norisk.append(events[i + 4])
+                        if incorrect_response(events[i + 8]):
+                            prerisk.append(events[i + 4])
+                if incorrect_response(events[i]):
+                    if correct_response(events[i + 4]) and correct_response(events[i + 8]):
+                        postrisk.append(events[i + 4])
  
             save_events(norisk, risk, prerisk, postrisk, conf, subject, run)
     print('\trisk_norisk_events completed')
