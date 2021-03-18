@@ -7,7 +7,7 @@ from baseline_correction import reshape_epochs
 from baseline_correction import create_mne_epochs_evoked
 from baseline_correction import compute_baseline_substraction_and_power
 from baseline_correction import correct_baseline_substraction
-from config import *
+from config import conf
 import pathlib
 from mne import read_evokeds
 
@@ -17,6 +17,7 @@ def grand_average_process(conf):
     path_home = conf.path_home
     stimulus = conf.stimulus
     train = conf.train
+    spec = conf.spec
     verbose = conf.verbose
     evoked_ave = []
     fpath_raw = conf.fpath_raw
@@ -39,16 +40,10 @@ def grand_average_process(conf):
                         print('rf', rf)
                     file = pathlib.Path(rf)
                     if file.exists():
-                        if mode  == 'server':
-                            raw_file = fpath_raw.format(subject, run, subject)
-                            if verbose:
-                                print('raw file path')
-                                print(raw_file)
-                        else:
-                            raw_file = fpath_raw.format(subject, run)
-                            if verbose:
-                                print('raw file path')
-                                print(raw_file)
+                        raw_file = fpath_raw.format(subject, run, subject)
+                        if verbose:
+                            print('raw file path')
+                            print(raw_file)
                         raw_data = mne.io.Raw(raw_file, preload=True, verbose = 'ERROR')
                         raw_data = raw_data.filter(None, 50, fir_design='firwin') # for low frequencies, below the peaks of power-line noise low pass filter the data
                         raw_data = raw_data.filter(1., None, fir_design='firwin') #remove slow drifts
@@ -108,10 +103,7 @@ def grand_average_process(conf):
                     if file.exists():
                         if verbose:
                             print('This file is being processed: ', rf)
-                        if mode  == 'server':
-                            raw_file = fpath_raw.format(subject, run, subject)
-                        else:
-                            raw_file = fpath_raw.format(subject, run)
+                        raw_file = fpath_raw.format(subject, run, subject)
                         raw_data = mne.io.Raw(raw_file, preload=True, verbose = 'ERROR')
                         raw_data = raw_data.filter(None, 50, fir_design='firwin') # for low frequencies, below the peaks of power-line noise low pass filter the data
                         raw_data = raw_data.filter(1., None, fir_design='firwin') #remove slow drifts

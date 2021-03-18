@@ -10,6 +10,7 @@ def container_process(conf):
     stimulus = conf.stimulus
     train = conf.train
     frequency = conf.frequency
+    spec = conf.spec
     verbose = conf.verbose
 
     temp1 = mne.Evoked(f'{path_home}donor-ave.fif', verbose = 'ERROR')

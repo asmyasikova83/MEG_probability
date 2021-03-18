@@ -17,6 +17,7 @@ def compute_p_val(conf, subjects, kind, train, frequency, check_num_sens):
     grand_average = conf.grand_average
     subjects = conf.subjects
     stimulus = conf.stimulus
+    spec = conf.spec
     verbose = conf.verbose
 
     tfr_path = data_path

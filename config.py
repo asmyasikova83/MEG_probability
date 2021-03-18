@@ -28,6 +28,8 @@ class conf():
         #type of analysis
         #if trained set train = '', in nontrained, set train = '_no_train'
         self.train = ''
+        #plot_spectrogram param, if plot_spectrogram = True, spec = '_spec'
+        self.spec = ''
 
         self.verbose = verbose
         self.path_home = '/home/asmyasnikova83/'
@@ -154,13 +156,11 @@ if baseline == 'fixation_cross_general':
     #tfr_path_dir = '/net/server/data/Archive/prob_learn/asmyasnikova83/TFR/{}/'
 #do not use built-in baseline correction
 b_line_manually = True
-#plot_spectrogram param, if plot_spectrogram = True, spec = '_spec'
 plot_spectrogram = False
 #grand average plotting
 ERF = 'event related fields'
 topomap = True
 butterfly = False
-spec = ''
 
 stim  = False
 response = True

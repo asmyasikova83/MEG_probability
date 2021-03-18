@@ -764,6 +764,7 @@ def correct_baseline_power(conf, epochs_of_interest, b_line, kind, b_line_manual
     frequency = conf.frequency
     stimulus = conf.stimulus
     train = conf.train
+    spec = conf.spec
     verbose = conf.verbose
     freq_show = mne.time_frequency.tfr_multitaper(epochs_of_interest, freqs = freqs, n_cycles =  freqs//2, 
             use_fft = False, return_itc = False, verbose = 'ERROR')
