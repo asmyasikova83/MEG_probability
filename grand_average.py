@@ -42,16 +42,17 @@ def grand_average_process(conf):
                         print('raw file path')
                         print(raw_file)
 
+                    raw_data = mne.io.Raw(raw_file, preload=True, verbose = 'ERROR')
+                    # for low frequencies, below the peaks of power-line noise low pass filter the data
+                    raw_data = raw_data.filter(None, 50, fir_design='firwin')
+                    #remove slow drifts
+                    raw_data = raw_data.filter(1., None, fir_design='firwin')
+
+                    picks = mne.pick_types(raw_data.info, meg = 'grad')
+                    KIND = kind[i]
+
                 if run == conf.runs[-1]:
                     if file_exists:
-                        raw_data = mne.io.Raw(raw_file, preload=True, verbose = 'ERROR')
-                        # for low frequencies, below the peaks of power-line noise low pass filter the data
-                        raw_data = raw_data.filter(None, 50, fir_design='firwin')
-                        #remove slow drifts
-                        raw_data = raw_data.filter(1., None, fir_design='firwin')
-
-                        picks = mne.pick_types(raw_data.info, meg = 'grad')
-                        KIND = kind[i]
                         events_with_cross, events_of_interest = retrieve_events_for_baseline(conf, raw_data, rf, KIND, subject, run, picks)
 
                         if verbose:
@@ -63,6 +64,7 @@ def grand_average_process(conf):
                         if BASELINE.all== 0:
                             if verbose:
                                 print('Yes, BASELINE is dummy')
+                            # FIXME if run == conf.runs[-1] and processing_done: save_results
                             continue
 
                         if verbose:
@@ -104,14 +106,6 @@ def grand_average_process(conf):
                             print('For this subj all runs are empty')
                 else:
                     if file_exists:
-                        raw_file = fpath_raw.format(subject, run, subject)
-                        raw_data = mne.io.Raw(raw_file, preload=True, verbose = 'ERROR')
-                        raw_data = raw_data.filter(None, 50, fir_design='firwin') # for low frequencies, below the peaks of power-line noise low pass filter the data
-                        raw_data = raw_data.filter(1., None, fir_design='firwin') #remove slow drifts
-                        picks = mne.pick_types(raw_data.info, meg = 'grad')
-                        KIND = kind[i]
-                        if verbose:
-                            print(rf)
                         events_with_cross, events_of_interest = retrieve_events_for_baseline(conf, raw_data, rf, KIND, subject, run, picks)
                         if verbose:
                             print('Done with the events!')
