@@ -4,6 +4,9 @@ from config import conf
 import pathlib
 
 def clean_events(epochs_ar, thres):
+    '''
+    conditions for clean
+    '''
     #N_events, N_chans, N_times
     epochs_ar = epochs_ar.swapaxes(0, 1).swapaxes(1, 2)
     N_chans, N_times, N_events = epochs_ar.shape
@@ -25,24 +28,29 @@ def clean_events(epochs_ar, thres):
     return np.array(good_events)
 
 def call_clean_events(conf, subj, run, kind_idx, fpath_events, fpath_mio_out):
+    '''
+    extract cleaned events (txt) and save raw events by extracted index
+    '''
     verbose = conf.verbose
     stimulus = conf.stimulus
     train = conf.train
     kind = conf.kind
-    period_start = conf.period_start
-    period_end = conf.period_end
 
-    raw_data = mne.io.Raw(conf.fpath_raw.format(subj, run, subj), preload=True, verbose='ERROR')
-    raw_data = raw_data.filter(l_freq=70, h_freq=None)
-    picks = mne.pick_types(raw_data.info, meg = True)
-    events_raw = mne.find_events(raw_data, stim_channel='STI101', output='onset', consecutive='increasing', min_duration=0, shortest_event=1, mask=None, uint_cast=False, mask_type='and', initial_event=False, verbose='ERROR')
+    raw_data = mne.io.Raw(conf.fpath_raw.format(subj, run, subj), preload=True, verbose='ERROR').filter(l_freq=70, h_freq=None)
+
+    events_raw = mne.find_events(raw_data, stim_channel='STI101', output='onset',
+        consecutive='increasing', min_duration=0, shortest_event=1, mask=None,
+        uint_cast=False, mask_type='and', initial_event=False, verbose='ERROR')
+
     events = np.loadtxt(fpath_events.format(subj, run, stimulus, kind[kind_idx], train), dtype=int)
+    # (3,) -> (3,1)
     if events.shape == (3,):
         events = events[np.newaxis, :]
     if verbose:
         print(events.shape)
-    epochs = mne.Epochs(raw_data, events, event_id = None, tmin = period_start, tmax = period_end, picks=picks, preload = True, verbose = 'ERROR')
-    epochs = epochs.pick(picks="grad")
+
+    epochs = mne.Epochs(raw_data, events, event_id=None, tmin=conf.period_start, tmax=conf.period_end,
+        picks=mne.pick_types(raw_data.info, meg=True), preload=True, verbose='ERROR').pick(picks="grad")
 
     thres = 7 #procedure to remove epochs-outliers based on thres*STD difference
     clean = clean_events(epochs.get_data(), thres)
@@ -52,7 +60,6 @@ def call_clean_events(conf, subj, run, kind_idx, fpath_events, fpath_mio_out):
         cleaned = events[clean]
         if verbose:
             print(cleaned)
-        del epochs, events, clean, picks, raw_data
 
         full_ev = []
         for i in range(cleaned.shape[0]):
@@ -67,9 +74,10 @@ def call_clean_events(conf, subj, run, kind_idx, fpath_events, fpath_mio_out):
         if verbose:
             print('Events cleaned are empty!')
 
-    del events_raw
-
 def mio_correction(conf):
+    '''
+    extract cleaned events
+    '''
     print('\trun mio_extraction...')
     kind = conf.kind
     stimulus = conf.stimulus
