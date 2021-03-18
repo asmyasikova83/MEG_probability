@@ -87,7 +87,6 @@ def risk_norisk_events(conf):
                 if str(events[i + 4][2])[0] == '4' and str(events[i + 5][2])[0] == '4':
                     continue
 
-                # TODO
                 if correct_response(events[i]) and correct_response(events[i + 8]):
                     if incorrect_response(events[i + 4]):
                         risk.append(events[i + 4])
