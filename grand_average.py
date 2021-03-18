@@ -29,20 +29,21 @@ def grand_average_process(conf):
             processing_done = False
             for run in conf.runs:
                 print('\t\t', kind[i], subject, run)
+
+                rf = fpath_events.format(kind[i], subject, run, stimulus, kind[i], train)
+                if verbose:
+                    print('rf', rf)
+
+                file_exists = False
+                if pathlib.Path(rf).exists():
+                    file_exists = True
+                    raw_file = fpath_raw.format(subject, run, subject)
+                    if verbose:
+                        print('raw file path')
+                        print(raw_file)
+
                 if run == conf.runs[-1]:
-                    if verbose:
-                        print('Dis is da last run!')
-
-                    rf = fpath_events.format(kind[i], subject, run, stimulus, kind[i], train)
-                    if verbose:
-                        print('rf', rf)
-
-                    if pathlib.Path(rf).exists():
-                        raw_file = fpath_raw.format(subject, run, subject)
-                        if verbose:
-                            print('raw file path')
-                            print(raw_file)
-
+                    if file_exists:
                         raw_data = mne.io.Raw(raw_file, preload=True, verbose = 'ERROR')
                         # for low frequencies, below the peaks of power-line noise low pass filter the data
                         raw_data = raw_data.filter(None, 50, fir_design='firwin')
@@ -102,11 +103,7 @@ def grand_average_process(conf):
                         if verbose:
                             print('For this subj all runs are empty')
                 else:
-                    rf = fpath_events.format(kind[i], subject, run, stimulus, kind[i], train)
-                    file = pathlib.Path(rf)
-                    if file.exists():
-                        if verbose:
-                            print('This file is being processed: ', rf)
+                    if file_exists:
                         raw_file = fpath_raw.format(subject, run, subject)
                         raw_data = mne.io.Raw(raw_file, preload=True, verbose = 'ERROR')
                         raw_data = raw_data.filter(None, 50, fir_design='firwin') # for low frequencies, below the peaks of power-line noise low pass filter the data
