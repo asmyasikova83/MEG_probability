@@ -27,46 +27,55 @@ def grand_average_process(conf):
 
     for i in range(len(kind)):
         for subject in conf.subjects:
-            print('\t\t', kind[i], subject)
             for run in conf.runs:
-                if verbose:
-                    print('subject', subject)
-                    print('run', run)
+                print('\t\t', kind[i], subject, run)
                 if run == conf.runs[-1]:
                     if verbose:
                         print('Dis is da last run!')
+
                     rf = fpath_events.format(kind[i], subject, run, stimulus, kind[i], train)
                     if verbose:
                         print('rf', rf)
-                    file = pathlib.Path(rf)
-                    if file.exists():
+
+                    if pathlib.Path(rf).exists():
                         raw_file = fpath_raw.format(subject, run, subject)
                         if verbose:
                             print('raw file path')
                             print(raw_file)
+
                         raw_data = mne.io.Raw(raw_file, preload=True, verbose = 'ERROR')
-                        raw_data = raw_data.filter(None, 50, fir_design='firwin') # for low frequencies, below the peaks of power-line noise low pass filter the data
-                        raw_data = raw_data.filter(1., None, fir_design='firwin') #remove slow drifts
+                        # for low frequencies, below the peaks of power-line noise low pass filter the data
+                        raw_data = raw_data.filter(None, 50, fir_design='firwin')
+                        #remove slow drifts
+                        raw_data = raw_data.filter(1., None, fir_design='firwin')
+
                         picks = mne.pick_types(raw_data.info, meg = 'grad')
                         KIND = kind[i]
                         events_with_cross, events_of_interest = retrieve_events_for_baseline(conf, raw_data, rf, KIND, subject, run, picks)
+
                         if verbose:
                             print('Done with the events!')
                             print(events_with_cross)
                             print(events_of_interest)
+
                         BASELINE, b_line = compute_baseline_substraction_and_power(conf, raw_data, events_with_cross, events_of_interest, picks)
                         if BASELINE.all== 0:
                             if verbose:
                                 print('Yes, BASELINE is dummy')
                             continue
+
                         if verbose:
                             print('\n\nDone with the BASELINE I!')
+
                         CORRECTED_DATA = correct_baseline_substraction(conf, BASELINE, events_of_interest, raw_data, picks)
                         if verbose:
                             print('\n\nDone with the CORRECTED!')
+
                         plot_created_epochs_evoked = False
-                        epochs_of_interest, evoked = create_mne_epochs_evoked(conf, KIND, subject, run, CORRECTED_DATA, events_of_interest, plot_created_epochs_evoked, raw_data, picks)
+                        epochs_of_interest, evoked = create_mne_epochs_evoked(conf, KIND, subject, run, CORRECTED_DATA,
+                            events_of_interest, plot_created_epochs_evoked, raw_data, picks)
                         evoked_ave.append(evoked.data)
+
                         run_counter = run_counter + 1
                     if run_counter > 0:
                         new_evoked = temp1.copy()
@@ -131,6 +140,9 @@ def grand_average_process(conf):
                         evoked_ave.append(evoked.data)
                         run_counter = run_counter + 1
     print('\tERF completed')
+
+
+
 '''
 exit()
 for subject in subjects:
