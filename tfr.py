@@ -15,6 +15,8 @@ import pathlib
 def tfr_process(conf):
     print('\trun tfr...')
     kind = conf.kind
+    stimulus = conf.stimulus
+    train = conf.train
     verbose = conf.verbose
     fpath_raw = '/net/server/data/Archive/prob_learn/vtretyakova/ICA_cleaned/{}/run{}_{}_raw_ica.fif'
     fpath_events = f'{conf.path_mio}/' + 'mio_out_{0}/{1}_run{2}_mio_corrected_{3}{4}{5}.txt'

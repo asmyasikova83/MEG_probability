@@ -1,6 +1,6 @@
 import mne, os
 import numpy as np
-from config import *
+from config import conf
 import pathlib
 
 def no_mio_events(epochs_ar, thres):
@@ -71,6 +71,8 @@ def calculate_beta(conf, subj, run, stimulus, kind, train, fpath_raw, fpath_even
 def mio_correction(conf):
     print('\trun mio_extraction...')
     kind = conf.kind
+    stimulus = conf.stimulus
+    train = conf.train
     verbose = conf.verbose
     for i in range(len(kind)):
         fpath_events = conf.path_events + '{0}_run{1}_events_{2}{3}{4}.txt'

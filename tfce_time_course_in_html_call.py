@@ -33,6 +33,8 @@ def tfce_process(conf):
 
     grand_average = conf.grand_average
     kind = conf.kind
+    stimulus = conf.stimulus
+    train = conf.train
     verbose = conf.verbose
 
     # perfom statistical check by means of Threshold Free Cluster Enhancement 

@@ -18,8 +18,17 @@ class conf():
         self.subjects = subjects if subjects else default_subj_list #['P045','P049','P062']
         default_runs_list = ['1', '2', '3', '4', '5', '6'] 
         self.runs = runs if runs else default_runs_list #['1','3']
+
         #kind = ['norisk', 'risk'] #'positive', 'negative', 'prerisk', 'risk', 'postrisk', 'norisk_fb_positive','norisk_fb_negative', 'fb_negative_norisk'
         self.kind = kind
+
+        #if stimulus data. set 'stimulus_', if response, set ''. If stimulus, don't forget to set stim at True!!
+        self.stimulus = ''
+
+        #type of analysis
+        #if trained set train = '', in nontrained, set train = '_no_train'
+        self.train = ''
+
         self.verbose = verbose
         self.path_home = '/home/asmyasnikova83/'
         prefix_out = self.path_home + work_dir
@@ -152,11 +161,6 @@ topomap = True
 butterfly = False
 spec = ''
 
-#type of analysis
-#if trained set train = '', in nontrained, set train = '_no_train'
-train = ''
-#if stimulus data. set 'stimulus_', if response, set ''. If stimulus, don't forget to set stim at True!!
-stimulus = ''
 stim  = False
 response = True
 zero_point = 'averaged_over_response'

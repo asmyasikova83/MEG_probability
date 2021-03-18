@@ -7,6 +7,8 @@ def container_process(conf):
     print('\trun tfr container...')
     path_home = conf.path_home
     kind = conf.kind
+    stimulus = conf.stimulus
+    train = conf.train
     frequency = conf.frequency
     verbose = conf.verbose
 

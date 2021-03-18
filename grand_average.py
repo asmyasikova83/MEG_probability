@@ -15,6 +15,8 @@ def grand_average_process(conf):
     print('\trun ERF...')
     kind = conf.kind
     path_home = conf.path_home
+    stimulus = conf.stimulus
+    train = conf.train
     verbose = conf.verbose
     evoked_ave = []
     fpath_raw = '/net/server/data/Archive/prob_learn/vtretyakova/ICA_cleaned/{}/run{}_{}_raw_ica.fif'
