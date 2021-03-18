@@ -91,8 +91,6 @@ def risk_norisk_events(conf):
                 if correct_response(events[i]) and correct_response(events[i + 8]):
                     if incorrect_response(events[i + 4]):
                         risk.append(events[i + 4])
-
-                if correct_response(events[i]) and correct_response(events[i + 8]):
                     if correct_response(events[i + 4]):
                         norisk.append(events[i + 4])
 
