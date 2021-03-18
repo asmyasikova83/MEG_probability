@@ -19,13 +19,13 @@ def grand_average_process(conf):
     train = conf.train
     spec = conf.spec
     verbose = conf.verbose
-    evoked_ave = []
     fpath_raw = conf.fpath_raw
     fpath_events = conf.path_mio + '/mio_out_{0}/{1}_run{2}_mio_corrected_{3}{4}{5}.txt'
     temp1 = mne.Evoked(f'{path_home}donor-ave.fif', verbose='ERROR')
 
     for i in range(len(kind)):
         for subject in conf.subjects:
+            evoked_ave = []
             processing_done = False
             for run in conf.runs:
                 print('\t\t', kind[i], subject, run)
@@ -98,12 +98,9 @@ def grand_average_process(conf):
                         if verbose:
                             print(out_file)
                         mne.write_evokeds(out_file, new_evoked)
-                        evoked_ave = []
                     else:
                         if verbose:
                             print('For this subj all runs are empty')
-                        evoked_ave = []
-                        continue
                 else:
                     rf = fpath_events.format(kind[i], subject, run, stimulus, kind[i], train)
                     file = pathlib.Path(rf)
