@@ -55,20 +55,22 @@ def call_clean_events(conf, subj, run, kind_idx, fpath_events, fpath_mio_out):
     thres = 7 #procedure to remove epochs-outliers based on thres*STD difference
     clean = clean_events(epochs.get_data(), thres)
     if clean.any():
+
         if verbose:
             print(subj, thres, str(events.shape[0]) + " ~~~~ " + str(events[clean].shape[0]) )
         cleaned = events[clean]
         if verbose:
             print(cleaned)
-
+        '''
         full_ev = []
         for i in range(cleaned.shape[0]):
             event_ind = events_raw.tolist().index(cleaned[i].tolist())
             full_ev.append(events_raw[event_ind].tolist())
             event_ind += 1
+        '''
 
         mio_corrected_events_file = open(fpath_mio_out.format(kind[kind_idx], subj, run, stimulus, kind[kind_idx], train), "w")
-        np.savetxt(mio_corrected_events_file, full_ev, fmt="%d")
+        np.savetxt(mio_corrected_events_file, cleaned, fmt="%d")
         mio_corrected_events_file.close()
     else:
         if verbose:
