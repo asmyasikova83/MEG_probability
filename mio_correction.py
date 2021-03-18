@@ -38,10 +38,6 @@ def call_clean_events(conf, subj, run, kind_idx, fpath_events, fpath_mio_out):
 
     raw_data = mne.io.Raw(conf.fpath_raw.format(subj, run, subj), preload=True, verbose='ERROR').filter(l_freq=70, h_freq=None)
 
-    events_raw = mne.find_events(raw_data, stim_channel='STI101', output='onset',
-        consecutive='increasing', min_duration=0, shortest_event=1, mask=None,
-        uint_cast=False, mask_type='and', initial_event=False, verbose='ERROR')
-
     events = np.loadtxt(fpath_events.format(subj, run, stimulus, kind[kind_idx], train), dtype=int)
     # (3,) -> (3,1)
     if events.shape == (3,):
@@ -55,19 +51,11 @@ def call_clean_events(conf, subj, run, kind_idx, fpath_events, fpath_mio_out):
     thres = 7 #procedure to remove epochs-outliers based on thres*STD difference
     clean = clean_events(epochs.get_data(), thres)
     if clean.any():
-
         if verbose:
             print(subj, thres, str(events.shape[0]) + " ~~~~ " + str(events[clean].shape[0]) )
         cleaned = events[clean]
         if verbose:
             print(cleaned)
-        '''
-        full_ev = []
-        for i in range(cleaned.shape[0]):
-            event_ind = events_raw.tolist().index(cleaned[i].tolist())
-            full_ev.append(events_raw[event_ind].tolist())
-            event_ind += 1
-        '''
 
         mio_corrected_events_file = open(fpath_mio_out.format(kind[kind_idx], subj, run, stimulus, kind[kind_idx], train), "w")
         np.savetxt(mio_corrected_events_file, cleaned, fmt="%d")
@@ -97,14 +85,12 @@ def mio_correction(conf):
                 rf = fpath_events.format(subject, run, stimulus, kind[i], train)
                 if verbose:
                     print(rf)
-                file = pathlib.Path(rf)
-                if file.exists() and os.stat(rf).st_size != 0:
+                if pathlib.Path(rf).exists() and os.stat(rf).st_size != 0:
                     if verbose:
                         print('This file is being processed: ', rf)
                     call_clean_events(conf, subject, run, i, fpath_events, fpath_mio_out)
                 else:
                     if verbose:
                         print('This file: ', rf, 'does not exit')
-                    continue
 
     print('\tmio_extraction completed')
