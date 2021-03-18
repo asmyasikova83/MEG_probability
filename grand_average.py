@@ -23,10 +23,10 @@ def grand_average_process(conf):
     fpath_raw = conf.fpath_raw
     fpath_events = conf.path_mio + '/mio_out_{0}/{1}_run{2}_mio_corrected_{3}{4}{5}.txt'
     temp1 = mne.Evoked(f'{path_home}donor-ave.fif', verbose='ERROR')
-    run_counter = 0
 
     for i in range(len(kind)):
         for subject in conf.subjects:
+            processing_done = False
             for run in conf.runs:
                 print('\t\t', kind[i], subject, run)
                 if run == conf.runs[-1]:
@@ -76,8 +76,8 @@ def grand_average_process(conf):
                             events_of_interest, plot_created_epochs_evoked, raw_data, picks)
                         evoked_ave.append(evoked.data)
 
-                        run_counter = run_counter + 1
-                    if run_counter > 0:
+                        processing_done = True
+                    if processing_done:
                         new_evoked = temp1.copy()
                         new_evoked.info = evoked.info
                         new_evoked.nave = 98  #all
@@ -98,12 +98,10 @@ def grand_average_process(conf):
                         if verbose:
                             print(out_file)
                         mne.write_evokeds(out_file, new_evoked)
-                        run_counter = 0
                         evoked_ave = []
                     else:
                         if verbose:
                             print('For this subj all runs are empty')
-                        run_counter = 0
                         evoked_ave = []
                         continue
                 else:
@@ -138,7 +136,7 @@ def grand_average_process(conf):
                         epochs_of_interest, evoked = create_mne_epochs_evoked(conf, KIND, subject, run, CORRECTED_DATA, events_of_interest, plot_created_epochs_evoked, raw_data, picks)
 
                         evoked_ave.append(evoked.data)
-                        run_counter = run_counter + 1
+                        processing_done = True
     print('\tERF completed')
 
 
