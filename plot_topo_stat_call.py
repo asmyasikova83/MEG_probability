@@ -55,8 +55,7 @@ def topo_stat(conf):
     temp = mne.Evoked(f'{conf.path_home}donor-ave.fif', verbose = 'ERROR')
     temp.times = conf.time
     subjects = conf.subjects
-    comp1_mean, comp2_mean, contr, temp1, temp2, p_val, binary, subjects1  = compute_p_val(conf, subjects, conf.kind, train, frequency, check_num_sens)
-    #comp1_mean, comp2_mean, contr, temp1, temp2, p_val, binary, subjects1  = compute_p_val_over_runs(subjects, kind, train, frequency, check_num_sens)
+    comp1_mean, comp2_mean, contr, temp1, temp2, p_val, binary, subjects1  = compute_p_val(conf, subjects, conf.kind, conf.train, frequency, check_num_sens)
     df1 = contr[:, 0, 204:, :] #per channel
     df2 = contr[:, 1, 204:, :]
     if verbose:
@@ -157,9 +156,9 @@ def topo_stat(conf):
     add_str_html(html_name, '<html>')
     add_str_html(html_name, '<body>')
     if grand_average:
-        add_str_html(html_name, '<p style="font-size:20px;"><b> %s, %s, %s, trained, %s, %s, %d subjects </b></p>' % (legend[0] + '_vs_' + legend[1], ERF, stimulus, baseline, zero_point, len(subjects1)))
+        add_str_html(html_name, '<p style="font-size:20px;"><b> %s, %s, %s, trained, %s, %s, %d subjects </b></p>' % (legend[0] + '_vs_' + legend[1], ERF, conf.stimulus, baseline, zero_point, len(subjects1)))
     else:
-        add_str_html(html_name, '<p style="font-size:20px;"><b> %s, %s, %s, trained, %s, %s, %d subjects </b></p>' % (legend[0] + '_vs_' + legend[1], frequency, stimulus, baseline, zero_point, len(subjects1)))
+        add_str_html(html_name, '<p style="font-size:20px;"><b> %s, %s, %s, trained, %s, %s, %d subjects </b></p>' % (legend[0] + '_vs_' + legend[1], frequency, conf.stimulus, baseline, zero_point, len(subjects1)))
 
     add_str_html(html_name, '<p style="font-size:20px;"><b> boolean fdr  = 1  marked </b></p>' )
     add_str_html(html_name, '<table>')

@@ -74,4 +74,5 @@ if __name__ == '__main__':
     test('test3_TFR', 'tfr', ['events', 'mio', 'tfr', 'container_tfr', 'tfce'], ['P045', 'P062'], ['1','3'], check_tfr)
     test('test4_TFR_P0', 'tfr', ['events', 'mio', 'tfr', 'container_tfr', 'tfce'], ['P000', 'P045', 'P062'], ['1','3'], check_tfr)
     test('test5_events_all', 'ga', ['events'], subjects_all, [], check_events)
+    test('test6_ERF_all_stages', 'ga', [], ['P007', 'P008'], ['1'], check_ga)
 
