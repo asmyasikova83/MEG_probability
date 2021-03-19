@@ -7,6 +7,27 @@ from baseline_correction import correct_baseline_substraction
 from config import conf
 import pathlib
 
+def container_results(evoked, evoked_ave, donor, out_file, verbose):
+    new_evoked = donor.copy()
+    new_evoked.info = evoked.info
+    new_evoked.nave = 98  #all
+    new_evoked.kind = "average"
+    new_evoked.times = evoked.times
+    new_evoked.first = 0
+    new_evoked.last = evoked.times.shape[0] - 1
+    ev_data = np.asarray(evoked_ave)
+    ev_data = ev_data[:, np.newaxis]
+    if verbose:
+        print('ev_data shape', ev_data.shape)
+    #mean across runs
+    ev_data = ev_data.mean(axis=0).mean(axis=0)
+    if verbose:
+        print('shape', ev_data.shape)
+    new_evoked.data = ev_data
+    if verbose:
+        print(out_file)
+    mne.write_evokeds(out_file, new_evoked)
+
 def grand_average_process(conf):
     print('\trun ERF...')
     kind = conf.kind
@@ -17,7 +38,7 @@ def grand_average_process(conf):
     verbose = conf.verbose
     fpath_raw = conf.fpath_raw
     fpath_events = conf.path_mio + '/mio_out_{0}/{1}_run{2}_mio_corrected_{3}{4}{5}.txt'
-    temp1 = mne.Evoked(f'{path_home}donor-ave.fif', verbose='ERROR')
+    donor = mne.Evoked(f'{path_home}donor-ave.fif', verbose='ERROR')
 
     for i in range(len(kind)):
         for subject in conf.subjects:
@@ -73,26 +94,8 @@ def grand_average_process(conf):
 
                 if run == conf.runs[-1]:
                     if processing_done:
-                        new_evoked = temp1.copy()
-                        new_evoked.info = evoked.info
-                        new_evoked.nave = 98  #all
-                        new_evoked.kind = "average"
-                        new_evoked.times = evoked.times
-                        new_evoked.first = 0
-                        new_evoked.last = evoked.times.shape[0] - 1
-                        ev_data = np.asarray(evoked_ave)
-                        ev_data = ev_data[:, np.newaxis]
-                        if verbose:
-                            print('ev_data shape', ev_data.shape)
-                        #mean across runs
-                        ev_data = ev_data.mean(axis=0).mean(axis=0)
-                        if verbose:
-                            print('shape', ev_data.shape)
-                        new_evoked.data = ev_data
                         out_file = conf.path_GA + "/{0}_{1}{2}{3}_{4}_grand_ave.fif".format(subject, spec, stimulus,  kind[i], train)
-                        if verbose:
-                            print(out_file)
-                        mne.write_evokeds(out_file, new_evoked)
+                        container_results(evoked, evoked_ave, donor, out_file, verbose)
                     else:
                         if verbose:
                             print('For this subj all runs are empty')
