@@ -51,15 +51,14 @@ def grand_average_process(conf):
                     picks = mne.pick_types(raw_data.info, meg = 'grad')
                     KIND = kind[i]
 
+                    events_with_cross, events_of_interest = retrieve_events_for_baseline(conf, raw_data, rf, KIND, subject, run, picks)
+                    if verbose:
+                        print('Done with the events!')
+                        print(events_with_cross)
+                        print(events_of_interest)
+
                 if run == conf.runs[-1]:
                     if file_exists:
-                        events_with_cross, events_of_interest = retrieve_events_for_baseline(conf, raw_data, rf, KIND, subject, run, picks)
-
-                        if verbose:
-                            print('Done with the events!')
-                            print(events_with_cross)
-                            print(events_of_interest)
-
                         BASELINE, b_line = compute_baseline_substraction_and_power(conf, raw_data, events_with_cross, events_of_interest, picks)
                         if BASELINE.all== 0:
                             if verbose:
@@ -106,10 +105,6 @@ def grand_average_process(conf):
                             print('For this subj all runs are empty')
                 else:
                     if file_exists:
-                        events_with_cross, events_of_interest = retrieve_events_for_baseline(conf, raw_data, rf, KIND, subject, run, picks)
-                        if verbose:
-                            print('Done with the events!')
-                            print(events_of_interest)
                         BASELINE, b_line = compute_baseline_substraction_and_power(conf, raw_data, events_with_cross, events_of_interest, picks)
                         if BASELINE.all== 0:
                             if verbose:
