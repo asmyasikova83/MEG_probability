@@ -24,13 +24,22 @@ class conf():
 
         #if stimulus data. set 'stimulus_', if response, set ''. If stimulus, don't forget to set stim at True!!
         self.stimulus = ''
-
+        self.stim = False
+        self.response = True
         #type of analysis
         #if trained set train = '', in nontrained, set train = '_no_train'
         self.train = ''
         #plot_spectrogram param, if plot_spectrogram = True, spec = '_spec'
         self.spec = ''
+        self.baseline =  'fixation_cross_norisks'#'fixation_cross_general'# 'fixation_cross_norisks'# 'fixation_cross_general'
+        # time interval before the appearance of the fixation cross
+        self.baseline_interval_start_power = -0.350
+        self.baseline_interval_end_power = -0.50
 
+        self.baseline_interval_start_sub = -350
+        self.baseline_interval_end_sub = -50
+        self.freqs = np.arange(L_freq, H_freq+1, f_step)
+        self.random_comp = False
         self.verbose = verbose
         self.path_home = '/home/asmyasnikova83/'
         self.fpath_raw = '/net/server/data/Archive/prob_learn/vtretyakova/ICA_cleaned/{}/run{}_{}_raw_ica.fif'
@@ -80,7 +89,12 @@ class conf():
             self.frequency = frequency
             self.grand_average = False
 
+            self.baseline == 'fixation_cross_norisks'
+            self.data_path = '{0}_run{1}{2}_{3}_{4}{5}{6}_int_50ms-tfr.h5'
             self.period_start = -1.750
+            #if self.baseline == 'fixation_cross_general':
+            #self.data_path = '{0}TFR_av/{2}_run{3}{4}_{5}_{6}{7}{8}_int_50ms-tfr.h5'
+            #self.tfr_path_dir = '{0}TFR_av/{1}/'
             self.period_end = 2.350
             self.time = np.arange(-1.400, 2.002, 0.004)
             self.times_to_plot = np.arange(-1.4, 2.0, 0.2)
@@ -131,7 +145,6 @@ L_freq = 4
 H_freq = 8
 f_step = 1
 
-freqs = np.arange(L_freq, H_freq+1, f_step)
 legend = ['norisk', 'risk']
 mode = 'server'
 
@@ -140,20 +153,6 @@ GA_correction = False
 #settings for topomap plotting
 topomap_plotting = True
 
-# time interval before the appearance of the fixation cross
-baseline_interval_start_power = -0.350
-baseline_interval_end_power = -0.50
-
-baseline_interval_start_sub = -350
-baseline_interval_end_sub = -50
-baseline =  'fixation_cross_norisks'#'fixation_cross_general'# 'fixation_cross_norisks'# 'fixation_cross_general'
-if baseline == 'fixation_cross_norisks':
-    data_path = '{0}_run{1}{2}_{3}_{4}{5}{6}_int_50ms-tfr.h5'
-if baseline == 'fixation_cross_general':
-    data_path = '{0}TFR_av/{2}_run{3}{4}_{5}_{6}{7}{8}_int_50ms-tfr.h5'
-    tfr_path_dir = '{0}TFR_av/{1}/'
-    #data_path = '/net/server/data/Archive/prob_learn/asmyasnikova83/TFR/{1}/{2}_run{3}{4}_{5}_{6}{7}{8}_int_50ms-tfr.h5' 
-    #tfr_path_dir = '/net/server/data/Archive/prob_learn/asmyasnikova83/TFR/{}/'
 #do not use built-in baseline correction
 b_line_manually = True
 plot_spectrogram = False
@@ -162,14 +161,11 @@ ERF = 'event related fields'
 topomap = True
 butterfly = False
 
-stim  = False
-response = True
 zero_point = 'averaged_over_response'
 #settings for visualization
 sign_sensors = False
 check_num_sens = False
 save_t_stat = False
-random_comp = False
 stat_over_subjects = False
 stat_over_runs = True
 

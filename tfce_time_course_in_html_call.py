@@ -35,6 +35,7 @@ def tfce_process(conf):
     kind = conf.kind
     stimulus = conf.stimulus
     train = conf.train
+    baseline = conf.baseline
     verbose = conf.verbose
 
     # perfom statistical check by means of Threshold Free Cluster Enhancement 

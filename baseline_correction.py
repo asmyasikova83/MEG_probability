@@ -2,7 +2,7 @@ import mne, os
 import numpy as np
 import numpy.matlib
 import matplotlib.pyplot as plt
-from config import *
+from config import conf
 from mne.time_frequency import tfr_morlet, psd_multitaper
 
 with open("config.py", "r") as f_in:
@@ -11,6 +11,8 @@ with open("config.py", "r") as f_in:
 def retrieve_events_for_baseline(conf, raw_data, fpath_events, kind, subject, run, picks):
     events_with_cross = []
     events_of_interest = []
+    stim = conf.stim
+    baseline = conf.baseline
     verbose = conf.verbose
     #takes events with fixation cross followed by the events of interest (positive and negative feedback)
     events_raw = mne.find_events(raw_data, stim_channel='STI101', output='onset',
@@ -30,7 +32,7 @@ def retrieve_events_for_baseline(conf, raw_data, fpath_events, kind, subject, ru
         # kind == 'norisk_fb_negative' or kind == 'norisk_fb_positive'
         if stim:
             p = 1
-        if response:
+        if conf.response:
             p = 2
     # extract events with fixation cross followed by positive or negative feedback
     for i in range(len(events_raw)):
@@ -147,7 +149,9 @@ def create_mne_epochs_evoked(conf, kind, subject, run, CORRECTED_DATA, events_of
     #data in shape (n_epochs, n_channels, n_times)
     period_start = conf.period_start
     period_end = conf.period_end
+    stim = conf.stim
     verbose = conf.verbose
+
     epochs_data = CORRECTED_DATA
     # create info for the Epoch object
     info = raw.info
@@ -703,6 +707,12 @@ def compute_baseline_substraction_and_power(conf, raw_data, events_with_cross, e
     # prepare data for numerical calculations for events_with_cross
     period_start = conf.period_start
     period_end = conf.period_end
+    baseline_interval_start_power = conf.baseline_interval_start_power
+    baseline_interval_end_power = conf.baseline_interval_end_power
+    baseline_interval_start_sub = conf.baseline_interval_start_sub
+    baseline_interval_end_sub = conf.baseline_interval_end_sub
+    freqs = conf.freqs
+
     N_chans, N_times, N_events, epochs_ar = reshape_epochs(conf, raw_data, events_with_cross, picks)
     N_chan_interests, N_times_interest, N_events_interest, epochs_ar_interest = reshape_epochs(conf, raw_data, events_of_interest, picks)
     assert(N_events == len(events_with_cross))
@@ -713,7 +723,7 @@ def compute_baseline_substraction_and_power(conf, raw_data, events_with_cross, e
         baseline_chunk = epochs_ar[:, baseline_interval_start_sub:baseline_interval_end_sub, i]
         #baseline computation over the time samples in column data (axis=1)
         BASELINE[i, 0:N_chans] = np.mean(baseline_chunk, axis=1)
-    if baseline == 'fixation_cross_norisks':
+    if conf.baseline == 'fixation_cross_norisks':
         #adjust the num ov events to that of events_of_interest
         NEW_BASELINE = np.mean(BASELINE, axis=0)
         #add new dim according to events_of_interest

@@ -5,7 +5,7 @@ from scipy import stats, io, signal
 import matplotlib.pyplot as plt
 import os
 import copy
-from config import *
+from config import conf
 import pathlib
 from plot_time_course_in_html_functions import p_val_binary
 import random
@@ -17,10 +17,10 @@ def compute_p_val(conf, subjects, kind, train, frequency, check_num_sens):
     grand_average = conf.grand_average
     subjects = conf.subjects
     stimulus = conf.stimulus
+    random_comp = conf.random_comp
     spec = conf.spec
     verbose = conf.verbose
 
-    tfr_path = data_path
     subject_counter = 0 
     i = 0
     subjects1 = []

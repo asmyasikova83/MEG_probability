@@ -27,6 +27,7 @@ def topo_stat(conf):
     p_mul_topo = conf.p_mul_topo
     p_mul_topo_contrast = conf.p_mul_topo_contrast
     p_mul_topo_fdr_contrast = conf.p_mul_topo_fdr_contrast
+    baseline = conf.baseline
 
     cur_dir = conf.path_fdr
     verbose = conf.verbose
