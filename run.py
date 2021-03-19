@@ -152,9 +152,8 @@ if __name__ == '__main__':
         subjects = ['P007', 'P008']
         runs = ['1']
     elif mode == 'tfr':
-        #subjects = ['P014','P044'] #P048
-        subjects = ['P045','P062']
-        runs = ['1', '3']
+        subjects = ['P007', 'P008']
+        runs = ['2']
     stage = args.stage
 
     run(mode, None if not stage else [stage], subjects, runs)
