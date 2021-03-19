@@ -66,13 +66,13 @@ def grand_average_process(conf):
                     if verbose:
                         print('\n\nDone with the CORRECTED!')
 
+                    plot_created_epochs_evoked = False
+                    epochs_of_interest, evoked = create_mne_epochs_evoked(conf, KIND, subject, run, CORRECTED_DATA,
+                        events_of_interest, plot_created_epochs_evoked, raw_data, picks)
+                    evoked_ave.append(evoked.data)
+
                 if run == conf.runs[-1]:
                     if file_exists:
-                        plot_created_epochs_evoked = False
-                        epochs_of_interest, evoked = create_mne_epochs_evoked(conf, KIND, subject, run, CORRECTED_DATA,
-                            events_of_interest, plot_created_epochs_evoked, raw_data, picks)
-                        evoked_ave.append(evoked.data)
-
                         processing_done = True
                     if processing_done:
                         new_evoked = temp1.copy()
@@ -100,10 +100,6 @@ def grand_average_process(conf):
                             print('For this subj all runs are empty')
                 else:
                     if file_exists:
-                        plot_created_epochs_evoked = False
-                        epochs_of_interest, evoked = create_mne_epochs_evoked(conf, KIND, subject, run, CORRECTED_DATA, events_of_interest, plot_created_epochs_evoked, raw_data, picks)
-
-                        evoked_ave.append(evoked.data)
                         processing_done = True
     print('\tERF completed')
 
