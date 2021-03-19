@@ -1,15 +1,11 @@
 import mne, os
 import numpy as np
-import numpy.matlib
-import matplotlib.pyplot as plt
 from baseline_correction import retrieve_events_for_baseline
-from baseline_correction import reshape_epochs
 from baseline_correction import create_mne_epochs_evoked
 from baseline_correction import compute_baseline_substraction_and_power
 from baseline_correction import correct_baseline_substraction
 from config import conf
 import pathlib
-from mne import read_evokeds
 
 def grand_average_process(conf):
     print('\trun ERF...')
@@ -117,7 +113,7 @@ def grand_average_process(conf):
 
 
 '''
-exit()
+import matplotlib.pyplot as plt
 for subject in subjects:
     sdata = []
     #change kind[0] to kind[1] to get another output.png
