@@ -24,14 +24,19 @@ class conf():
 
         #if stimulus data. set 'stimulus_', if response, set ''. If stimulus, don't forget to set stim at True!!
         self.stimulus = ''
+        #settings for averaging over stimulus and over response
         self.stim = False
         self.response = True
+        #setting for legends
+        self.zero_point = 'averaged_over_response'
         #type of analysis
         #if trained set train = '', in nontrained, set train = '_no_train'
         self.train = ''
         #plot_spectrogram param, if plot_spectrogram = True, spec = '_spec'
         self.spec = ''
-        self.baseline =  'fixation_cross_norisks'#'fixation_cross_general'# 'fixation_cross_norisks'# 'fixation_cross_general'
+        self.plot_spectrogram = False
+        #'fixation_cross_general'# 'fixation_cross_norisks'# 'fixation_cross_general'
+        self.baseline =  'fixation_cross_norisks'
         # time interval before the appearance of the fixation cross
         self.baseline_interval_start_power = -0.350
         self.baseline_interval_end_power = -0.50
@@ -40,6 +45,8 @@ class conf():
         self.baseline_interval_end_sub = -50
         self.freqs = np.arange(L_freq, H_freq+1, f_step)
         self.random_comp = False
+        self.check_num_sens = False
+        self.legend = ['norisk', 'risk']
         self.verbose = verbose
         self.path_home = '/home/asmyasnikova83/'
         self.fpath_raw = '/net/server/data/Archive/prob_learn/vtretyakova/ICA_cleaned/{}/run{}_{}_raw_ica.fif'
@@ -88,7 +95,8 @@ class conf():
 
             self.frequency = frequency
             self.grand_average = False
-
+            #do not use built-in baseline correction
+            self.b_line_manually = True
             self.baseline == 'fixation_cross_norisks'
             self.data_path = '{0}_run{1}{2}_{3}_{4}{5}{6}_int_50ms-tfr.h5'
             self.period_start = -1.750
@@ -145,26 +153,16 @@ L_freq = 4
 H_freq = 8
 f_step = 1
 
-legend = ['norisk', 'risk']
-mode = 'server'
-
-#remove trend from GA
-GA_correction = False
 #settings for topomap plotting
 topomap_plotting = True
 
-#do not use built-in baseline correction
-b_line_manually = True
-plot_spectrogram = False
 #grand average plotting
 ERF = 'event related fields'
 topomap = True
 butterfly = False
 
-zero_point = 'averaged_over_response'
 #settings for visualization
 sign_sensors = False
-check_num_sens = False
 save_t_stat = False
 stat_over_subjects = False
 stat_over_runs = True

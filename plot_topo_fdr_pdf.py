@@ -5,6 +5,7 @@ def make_fdr_pdf(conf):
     print('\trun pdf fdr on topomaps...')
 
     grand_average = conf.grand_average
+    legend = conf.legend
     verbose = conf.verbose
 
     config = pdfkit.configuration(wkhtmltopdf='/usr/bin/wkhtmltopdf')

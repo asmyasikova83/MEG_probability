@@ -1,15 +1,13 @@
 import mne, os
 import numpy as np
-import numpy.matlib
 import matplotlib.pyplot as plt
 from baseline_correction import retrieve_events_for_baseline
-from baseline_correction import reshape_epochs
 from baseline_correction import create_mne_epochs_evoked
 from baseline_correction import compute_baseline_substraction_and_power
 from baseline_correction import correct_baseline_substraction
 from baseline_correction import correct_baseline_power
 from baseline_correction import topomap_one
-from config import *
+from config import conf
 import pathlib
 
 def tfr_process(conf):
@@ -20,7 +18,7 @@ def tfr_process(conf):
     verbose = conf.verbose
     fpath_raw = conf.fpath_raw
     fpath_events = f'{conf.path_mio}/' + 'mio_out_{0}/{1}_run{2}_mio_corrected_{3}{4}{5}.txt'
-    freq_path = data_path
+    freq_path = conf.data_path
     data = []
     
     for i in range(len(kind)):
@@ -32,10 +30,7 @@ def tfr_process(conf):
                 if file.exists() and os.stat(rf).st_size != 0:
                     if verbose:
                         print('This file is being processed: ', rf)
-                    if mode == 'server':
-                        raw_file = fpath_raw.format(subject, run, subject)
-                    else:
-                        raw_file = fpath_raw.format(run, subject)
+                    raw_file = fpath_raw.format(subject, run, subject)
                     raw_data = mne.io.Raw(raw_file, preload=True, verbose = 'ERROR')
                     #filter 1-50 Hz
                     raw_data = raw_data.filter(None, 50, fir_design='firwin') # for low frequencies, below the peaks of power-line noise low pass filter the data
@@ -60,12 +55,12 @@ def tfr_process(conf):
                     epochs_of_interest, evoked = create_mne_epochs_evoked(conf, KIND, subject, run, CORRECTED_DATA,
                             events_of_interest, plot_created_epochs_evoked, raw_data, picks)
                     # for time frequency analysis we need baseline II (power correction)
-                    freq_show = correct_baseline_power(conf, epochs_of_interest, b_line, KIND, b_line_manually, subject, run, plot_spectrogram)
+                    freq_show = correct_baseline_power(conf, epochs_of_interest, b_line, KIND, conf.b_line_manually, subject, run, conf.plot_spectrogram)
                     if verbose:
                         print('\n\nDone with the BASELINE II!')
                     #plot an example of topomap
                     show_one = False
-                    if mode == 'server'and show_one:
+                    if show_one:
                         topomap_one(freq_show)
                         freq_file = freq_fpath.format(prefix, kind[i], subject, run, spec, frequency, subject, KIND, train)
                         #read tfr data from (freq_file)[0]

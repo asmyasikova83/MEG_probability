@@ -11,6 +11,7 @@ def container_process(conf):
     train = conf.train
     frequency = conf.frequency
     spec = conf.spec
+    data_path = conf.data_path
     verbose = conf.verbose
 
     temp1 = mne.Evoked(f'{path_home}donor-ave.fif', verbose = 'ERROR')

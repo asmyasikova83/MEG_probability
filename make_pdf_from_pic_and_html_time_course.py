@@ -1,8 +1,9 @@
 import pdfkit
-from config import *
+from config import conf
 
 def make_pdf(conf):
     print('\trun pdf tfce on time courses...')
+    legend = conf.legend
     verbose = conf.verbose
     config = pdfkit.configuration(wkhtmltopdf='/usr/bin/wkhtmltopdf')
 

@@ -1,15 +1,9 @@
 import numpy as np
-import matplotlib.pyplot as plt
 import os
-import pandas as pd
 from scipy import stats
 import scipy
 import statsmodels.stats.multitest as mul
-from itertools import combinations
-import matplotlib.gridspec as gridspec
-from array import array
-import subprocess
-from config import *
+from config import conf
 import pathlib
 import random
 from scipy import stats, io
@@ -36,6 +30,7 @@ def tfce_process(conf):
     stimulus = conf.stimulus
     train = conf.train
     baseline = conf.baseline
+    legend = conf.legend
     verbose = conf.verbose
 
     # perfom statistical check by means of Threshold Free Cluster Enhancement 
@@ -54,7 +49,7 @@ def tfce_process(conf):
         frequency = None
     else:
         frequency = conf.frequency
-    comp1_mean, comp2_mean, contr, temp1, temp2, p_val, binary, subjects1 = compute_p_val(conf, conf.subjects, kind, train, frequency, check_num_sens)
+    comp1_mean, comp2_mean, contr, temp1, temp2, p_val, binary, subjects1 = compute_p_val(conf, conf.subjects, kind, train, frequency, conf.check_num_sens)
     df1 = contr[:, 0, 204:, :]
     df2 = contr[:, 1, 204:, :]
     if verbose:
@@ -100,9 +95,9 @@ def tfce_process(conf):
             add_str_html(html_name, '<p style="font-size:32px;"><b> %s, %s, %s, trained, TFCE corrected, %s,  %d subjects <span style="color:cyan;"> (p_val < 0.05)*(res_tfce==0)) </span> <span style="color:crimson;"> res_tfce == 1 </span> </b></p>' % (planar, ERF, stimulus, baseline, len(subjects1)))
         else:
             assert(grand_average == False)
-            if response:
-                add_str_html(html_name, '<p style="font-size:32px;"><b> %s, averaged %s, trained, TFCE corrected, %s, %s, %d subjects <span style="color:cyan;"> (p_val < 0.05)*(res_tfce==0)) </span> <span style="color:crimson;"> res_tfce == 1 </span> </b></p>' % (planar, frequency, baseline, zero_point, len(subjects1)))
-            if stim:
+            if conf.response:
+                add_str_html(html_name, '<p style="font-size:32px;"><b> %s, averaged %s, trained, TFCE corrected, %s, %s, %d subjects <span style="color:cyan;"> (p_val < 0.05)*(res_tfce==0)) </span> <span style="color:crimson;"> res_tfce == 1 </span> </b></p>' % (planar, frequency, baseline, conf.zero_point, len(subjects1)))
+            if conf.stim:
                 add_str_html(html_name, '<p style="font-size:32px;"><b> %s, averaged %s, trained, TFCE corrected, %s, zero point at stimulus, %d subjects <span style="color:cyan;"> (p_val < 0.05)*(res_tfce==0)) </span> <span style="color:crimson;"> res_tfce == 1 </span> </b></p>' % (planar, frequency, baseline, len(subjects1)))
         add_str_html(html_name, '<p style="font-size:32px;"><b> <span style="color: blue;"> %s </span> vs <span style="color: red;"> %s </span> </b></p>' % (legend[0], legend[1]))
         #placing the channel time courses and save the html
