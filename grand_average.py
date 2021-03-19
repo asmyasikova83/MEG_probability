@@ -30,9 +30,7 @@ def grand_average_process(conf):
                 if verbose:
                     print('rf', rf)
 
-                file_exists = False
                 if pathlib.Path(rf).exists():
-                    file_exists = True
                     raw_file = fpath_raw.format(subject, run, subject)
                     if verbose:
                         print('raw file path')
@@ -71,9 +69,9 @@ def grand_average_process(conf):
                         events_of_interest, plot_created_epochs_evoked, raw_data, picks)
                     evoked_ave.append(evoked.data)
 
+                    processing_done = True
+
                 if run == conf.runs[-1]:
-                    if file_exists:
-                        processing_done = True
                     if processing_done:
                         new_evoked = temp1.copy()
                         new_evoked.info = evoked.info
@@ -98,9 +96,6 @@ def grand_average_process(conf):
                     else:
                         if verbose:
                             print('For this subj all runs are empty')
-                else:
-                    if file_exists:
-                        processing_done = True
     print('\tERF completed')
 
 
