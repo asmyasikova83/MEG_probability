@@ -50,8 +50,10 @@ def grand_average_process(conf):
                 rf = fpath_events.format(kind[i], subject, run, stimulus, kind[i], train)
                 if verbose:
                     print('rf', rf)
-
                 if pathlib.Path(rf).exists():
+
+                    out_file = conf.path_GA + "/{0}_{1}{2}{3}_{4}_grand_ave.fif".format(subject, spec, stimulus, kind[i], train)
+
                     raw_file = fpath_raw.format(subject, run, subject)
                     if verbose:
                         print('raw file path')
@@ -92,13 +94,9 @@ def grand_average_process(conf):
 
                     processing_done = True
 
-                if run == conf.runs[-1]:
-                    if processing_done:
-                        out_file = conf.path_GA + "/{0}_{1}{2}{3}_{4}_grand_ave.fif".format(subject, spec, stimulus,  kind[i], train)
-                        container_results(evoked, evoked_ave, donor, out_file, verbose)
-                    else:
-                        if verbose:
-                            print('For this subj all runs are empty')
+                if run == conf.runs[-1] and processing_done:
+                    container_results(evoked, evoked_ave, donor, out_file, verbose)
+
     print('\tERF completed')
 
 
