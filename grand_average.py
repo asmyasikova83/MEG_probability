@@ -62,12 +62,12 @@ def grand_average_process(conf):
                     if verbose:
                         print('\n\nDone with the BASELINE I!')
 
+                    CORRECTED_DATA = correct_baseline_substraction(conf, BASELINE, events_of_interest, raw_data, picks)
+                    if verbose:
+                        print('\n\nDone with the CORRECTED!')
+
                 if run == conf.runs[-1]:
                     if file_exists:
-                        CORRECTED_DATA = correct_baseline_substraction(conf, BASELINE, events_of_interest, raw_data, picks)
-                        if verbose:
-                            print('\n\nDone with the CORRECTED!')
-
                         plot_created_epochs_evoked = False
                         epochs_of_interest, evoked = create_mne_epochs_evoked(conf, KIND, subject, run, CORRECTED_DATA,
                             events_of_interest, plot_created_epochs_evoked, raw_data, picks)
@@ -100,9 +100,6 @@ def grand_average_process(conf):
                             print('For this subj all runs are empty')
                 else:
                     if file_exists:
-                        CORRECTED_DATA = correct_baseline_substraction(conf, BASELINE, events_of_interest, raw_data, picks)
-                        if verbose:
-                            print('\n\nDone with the CORRECTED!')
                         plot_created_epochs_evoked = False
                         epochs_of_interest, evoked = create_mne_epochs_evoked(conf, KIND, subject, run, CORRECTED_DATA, events_of_interest, plot_created_epochs_evoked, raw_data, picks)
 
