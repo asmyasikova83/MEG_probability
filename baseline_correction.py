@@ -46,15 +46,13 @@ def retrieve_events_for_baseline(conf, raw_data, path_events, kind, subject, run
     for i in range(len(events_raw)):
         # check the fixation cross and find the response after the fix cross
         if events_raw[i][2] == 1:
-            if response(events_raw[i + 2]) and response(events_raw[i + 3]):
-                continue
-            if response(events_raw[i + 2]) and find_event(events_raw[i + p], events_cleaned):
+            if find_event(events_raw[i + p], events_cleaned):
                 if baseline == 'fixation_cross_general':
                     events_with_cross.append(events_raw[i])
                 events_of_interest.append(events_raw[i + p])
                 if verbose:
                     print('extracting event of interest', events_cleaned[j])
-            if response(events_raw[i + 3]) and find_event(events_raw[i + p + 1], events_cleaned):
+            if find_event(events_raw[i + p + 1], events_cleaned):
                 if baseline == 'fixation_cross_general':
                     events_with_cross.append(events_raw[i])
                 events_of_interest.append(events_raw[i + p + 1])
