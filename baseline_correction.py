@@ -18,6 +18,9 @@ def retrieve_events_for_baseline(conf, raw_data, fpath_events, kind, subject, ru
     if verbose:
         print('fpath_events', fpath_events)
     events_cleaned = np.loadtxt(fpath_events, dtype=int)
+    # (3,) -> (1,3)
+    if events_cleaned.shape == (3,):
+        events_cleaned = events_cleaned[np.newaxis, :]
     if verbose:
         print(kind)
         print('events cl')
@@ -81,6 +84,9 @@ def retrieve_events_for_baseline(conf, raw_data, fpath_events, kind, subject, ru
         if verbose:
             print('fpath events norisk', fpath_events)
         events_cleaned = np.loadtxt(fpath_events, dtype=int)
+        # (3,) -> (1,3)
+        if events_cleaned.shape == (3,):
+            events_cleaned = events_cleaned[np.newaxis, :]
         if verbose:
             print('baseline fix cross norisks')
             print(events_cleaned)
