@@ -8,6 +8,9 @@ def correct_response(event):
 def incorrect_response(event):
     return event[2] == 42 or event[2] == 43 or event[2] == 44 or event[2] == 45
 
+def response(event):
+    return correct_response(event) or incorrect_response(event)
+
 def detect_trained(events):
     end = len(events)
     correct_counter = 0
@@ -84,8 +87,8 @@ def risk_norisk_events(conf):
             # FIXME begin-1
             for i in range(begin-1, end-8):
 
-                # check double responses starting from '4'
-                if str(events[i + 4][2])[0] == '4' and str(events[i + 5][2])[0] == '4':
+                # do not process double responses
+                if response(events[i + 4]) and response(events[i + 5]):
                     continue
 
                 if correct_response(events[i]) and correct_response(events[i + 8]):
