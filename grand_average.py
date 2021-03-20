@@ -47,10 +47,10 @@ def grand_average_process(conf):
             for run in conf.runs:
                 print('\t\t', kind[i], subject, run)
 
-                rf = fpath_events.format(kind[i], subject, run, stimulus, kind[i], train)
+                path_events = fpath_events.format(kind[i], subject, run, stimulus, kind[i], train)
                 if verbose:
-                    print('rf', rf)
-                if pathlib.Path(rf).exists():
+                    print('path_events', path_events)
+                if pathlib.Path(path_events).exists():
 
                     out_file = conf.path_GA + "/{0}_{1}{2}{3}_{4}_grand_ave.fif".format(subject, spec, stimulus, kind[i], train)
 
@@ -68,7 +68,7 @@ def grand_average_process(conf):
                     picks = mne.pick_types(raw_data.info, meg = 'grad')
                     KIND = kind[i]
 
-                    events_with_cross, events_of_interest = retrieve_events_for_baseline(conf, raw_data, rf, KIND, subject, run, picks)
+                    events_with_cross, events_of_interest = retrieve_events_for_baseline(conf, raw_data, path_events, KIND, subject, run, picks)
                     if verbose:
                         print('Done with the events!')
                         print(events_with_cross)

@@ -5,19 +5,19 @@ import matplotlib.pyplot as plt
 from config import conf
 from mne.time_frequency import tfr_morlet, psd_multitaper
 
-def retrieve_events_for_baseline(conf, raw_data, fpath_events, kind, subject, run, picks):
+def retrieve_events_for_baseline(conf, raw_data, path_events, kind, subject, run, picks):
     events_with_cross = []
     events_of_interest = []
-    stim = conf.stim
     baseline = conf.baseline
     verbose = conf.verbose
+
     #takes events with fixation cross followed by the events of interest (positive and negative feedback)
     events_raw = mne.find_events(raw_data, stim_channel='STI101', output='onset',
                                  consecutive='increasing', min_duration=0, shortest_event=1,
                                  mask=None, uint_cast=False, mask_type='and', initial_event=False, verbose='ERROR')
     if verbose:
-        print('fpath_events', fpath_events)
-    events_cleaned = np.loadtxt(fpath_events, dtype=int)
+        print('path_events', path_events)
+    events_cleaned = np.loadtxt(path_events, dtype=int)
     # (3,) -> (1,3)
     if events_cleaned.shape == (3,):
         events_cleaned = events_cleaned[np.newaxis, :]
@@ -26,14 +26,15 @@ def retrieve_events_for_baseline(conf, raw_data, fpath_events, kind, subject, ru
         print('events cl')
         print(events_cleaned)
         print(events_raw)
+
     if kind == 'negative' or kind ==  'positive':
         p = 3
-    if kind == 'prerisk' or kind == 'risk' or kind == 'postrisk' or kind == 'norisk' or kind == 'fb_negative_norisk' or kind == 'fb_positive_norisk' or kind == 'fb_negative_risk' or kind == 'fb_positive_risk' or  kind == 'risk_fb_negative' or kind == 'risk_fb_positive':
-        # kind == 'norisk_fb_negative' or kind == 'norisk_fb_positive'
-        if stim:
+    else:
+        if conf.stim:
             p = 1
         if conf.response:
             p = 2
+
     # extract events with fixation cross followed by positive or negative feedback
     for i in range(len(events_raw)):
         for j in range(len(events_cleaned)):
@@ -65,6 +66,7 @@ def retrieve_events_for_baseline(conf, raw_data, fpath_events, kind, subject, ru
                             print('extracting event of interest', events_cleaned[j])
                     else:
                         continue
+
     if baseline == 'fixation_cross_norisks':
         fpath_events = f'{conf.path_mio}/mio_out_norisk/{subject}_run{run}_mio_corrected_norisk.txt'
         if verbose:

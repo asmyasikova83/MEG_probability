@@ -27,6 +27,7 @@ class conf():
         #settings for averaging over stimulus and over response
         self.stim = False
         self.response = True
+        assert self.stim and not self.response or self.response and not self.stim
         #setting for legends
         self.zero_point = 'averaged_over_response'
         #type of analysis
