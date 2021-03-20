@@ -40,13 +40,8 @@ def retrieve_events_for_baseline(conf, raw_data, path_events, kind, subject, run
         for j in range(len(events_cleaned)):
             # check the fixation cross and find the response after the fix cross
             if events_raw[i][2] == 1:
-                str_digit1 = str(events_raw[i + 2][2])
-                str_digit2 = str(events_raw[i + 3][2])
-                d1 = [int(d) for d in str_digit1]
-                d2 = [int(d) for d in str_digit2]
-                if d1[0] == 4:
-                    factor = 'k'
-                    if factor == 'k' and events_cleaned[j][0] == events_raw[i + p][0]:
+                if str(events_raw[i + 2][2])[0] == '4':
+                    if events_cleaned[j][0] == events_raw[i + p][0]:
                         assert(events_cleaned[j][2] == events_raw[i + p][2])
                         if baseline == 'fixation_cross_general':
                             events_with_cross.append(events_raw[i])
@@ -55,9 +50,8 @@ def retrieve_events_for_baseline(conf, raw_data, path_events, kind, subject, run
                             print('extracting event of interest', events_cleaned[j])
                     else:
                         continue
-                if d2[0] == 4:
-                    factor = 'l'
-                    if factor == 'l' and events_cleaned[j][0] == events_raw[i + p + 1][0]:
+                if str(events_raw[i + 3][2])[0] == '4':
+                    if events_cleaned[j][0] == events_raw[i + p + 1][0]:
                         assert(events_cleaned[j][2] == events_raw[i + p + 1][2])
                         if baseline == 'fixation_cross_general':
                             events_with_cross.append(events_raw[i])
