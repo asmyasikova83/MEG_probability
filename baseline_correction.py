@@ -47,7 +47,7 @@ def retrieve_events_for_baseline(conf, raw_data, path_events, kind, subject, run
                         assert(events_cleaned[j][2] == events_raw[i + p][2])
                         if baseline == 'fixation_cross_general':
                             events_with_cross.append(events_raw[i])
-                        events_of_interest.append(events_cleaned[j])
+                        events_of_interest.append(events_raw[i + p])
                         if verbose:
                             print('extracting event of interest', events_cleaned[j])
                 if response(events_raw[i + 3]):
@@ -55,7 +55,7 @@ def retrieve_events_for_baseline(conf, raw_data, path_events, kind, subject, run
                         assert(events_cleaned[j][2] == events_raw[i + p + 1][2])
                         if baseline == 'fixation_cross_general':
                             events_with_cross.append(events_raw[i])
-                        events_of_interest.append(events_cleaned[j])
+                        events_of_interest.append(events_raw[i + p + 1])
                         if verbose:
                             print('extracting event of interest', events_cleaned[j])
 
