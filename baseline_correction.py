@@ -12,6 +12,44 @@ def find_event(event, events):
             return True
     return False
 
+def retrieve_events(conf, raw_data, path_events, kind, subject, run, picks, cross):
+    events = []
+    verbose = conf.verbose
+
+    #takes events with fixation cross followed by the events of interest (positive and negative feedback)
+    events_raw = mne.find_events(raw_data, stim_channel='STI101', output='onset',
+                                 consecutive='increasing', min_duration=0, shortest_event=1,
+                                 mask=None, uint_cast=False, mask_type='and', initial_event=False, verbose='ERROR')
+    if verbose:
+        print('path_events', path_events)
+    events_cleaned = np.loadtxt(path_events, dtype=int)
+    # (3,) -> (1,3)
+    if events_cleaned.shape == (3,):
+        events_cleaned = events_cleaned[np.newaxis, :]
+    if verbose:
+        print(kind)
+        print('events cl')
+        print(events_cleaned)
+        print(events_raw)
+
+    if kind == 'negative' or kind ==  'positive':
+        p = 3
+    else:
+        if conf.stim:
+            p = 1
+        if conf.response:
+            p = 2
+
+    # extract events with fixation cross followed by positive or negative feedback
+    for i in range(len(events_raw)):
+        # check the fixation cross and find the response after the fix cross
+        if events_raw[i][2] == 1:
+            if find_event(events_raw[i + p], events_cleaned):
+                events.append(events_raw[i] if cross else events_raw[i + p])
+            if find_event(events_raw[i + p + 1], events_cleaned):
+                events.append(events_raw[i] if cross else events_raw[i + p + 1])
+    return events
+
 def retrieve_events_for_baseline(conf, raw_data, path_events, kind, subject, run, picks):
     events_with_cross = []
     events_of_interest = []

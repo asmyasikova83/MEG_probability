@@ -1,6 +1,6 @@
 import mne, os
 import numpy as np
-from baseline_correction import retrieve_events_for_baseline
+from baseline_correction import retrieve_events
 from baseline_correction import create_mne_epochs_evoked
 from baseline_correction import compute_baseline_substraction_and_power
 from baseline_correction import correct_baseline_substraction
@@ -68,7 +68,9 @@ def grand_average_process(conf):
                     picks = mne.pick_types(raw_data.info, meg = 'grad')
                     KIND = kind[i]
 
-                    events_with_cross, events_of_interest = retrieve_events_for_baseline(conf, raw_data, path_events, KIND, subject, run, picks)
+                    events_of_interest = retrieve_events(conf, raw_data, path_events, KIND, subject, run, picks, False)
+                    path_events_with_cross = f'{conf.path_mio}/mio_out_norisk/{subject}_run{run}_mio_corrected_norisk.txt'
+                    events_with_cross = retrieve_events(conf, raw_data, path_events_with_cross, KIND, subject, run, picks, True)
                     if verbose:
                         print('Done with the events!')
                         print(events_with_cross)
