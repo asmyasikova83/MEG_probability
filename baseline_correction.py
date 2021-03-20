@@ -5,9 +5,6 @@ import matplotlib.pyplot as plt
 from config import conf
 from mne.time_frequency import tfr_morlet, psd_multitaper
 
-with open("config.py", "r") as f_in:
-    settings = f_in.readlines()
-
 def retrieve_events_for_baseline(conf, raw_data, fpath_events, kind, subject, run, picks):
     events_with_cross = []
     events_of_interest = []

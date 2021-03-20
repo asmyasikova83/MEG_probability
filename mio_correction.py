@@ -39,7 +39,7 @@ def call_clean_events(conf, subj, run, kind_idx, fpath_events, fpath_mio_out):
     raw_data = mne.io.Raw(conf.fpath_raw.format(subj, run, subj), preload=True, verbose='ERROR').filter(l_freq=70, h_freq=None)
 
     events = np.loadtxt(fpath_events.format(subj, run, stimulus, kind[kind_idx], train), dtype=int)
-    # (3,) -> (3,1)
+    # (3,) -> (1,3)
     if events.shape == (3,):
         events = events[np.newaxis, :]
     if verbose:
