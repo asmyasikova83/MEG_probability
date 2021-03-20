@@ -45,7 +45,7 @@ def retrieve_events_for_baseline(conf, raw_data, fpath_events, kind, subject, ru
                 d2 = [int(d) for d in str_digit2]
                 if d1[0] == 4:
                     factor = 'k'
-                    if factor == 'k' and events_cleaned.shape != (3,) and events_cleaned[j][0] == events_raw[i + p][0]:
+                    if factor == 'k' and events_cleaned[j][0] == events_raw[i + p][0]:
                         assert(events_cleaned[j][2] == events_raw[i + p][2])
                         if baseline == 'fixation_cross_general':
                             events_with_cross.append(events_raw[i])
@@ -56,7 +56,7 @@ def retrieve_events_for_baseline(conf, raw_data, fpath_events, kind, subject, ru
                         continue
                 if d2[0] == 4:
                     factor = 'l'
-                    if factor == 'l' and events_cleaned.shape != (3,) and events_cleaned[j][0] == events_raw[i + p + 1][0]:
+                    if factor == 'l' and events_cleaned[j][0] == events_raw[i + p + 1][0]:
                         assert(events_cleaned[j][2] == events_raw[i + p + 1][2])
                         if baseline == 'fixation_cross_general':
                             events_with_cross.append(events_raw[i])
@@ -90,7 +90,7 @@ def retrieve_events_for_baseline(conf, raw_data, fpath_events, kind, subject, ru
                         #pick out fix cross preceding norisks
                         factor = 'm'
                         #events_with_cross, events_of_interest = pick_events(i, j, factor, events_raw, events_cleaned, kind)
-                        if factor == 'm' and events_cleaned.shape != (3,) and events_cleaned[j][0] == events_raw[i + p][0]:
+                        if factor == 'm' and events_cleaned[j][0] == events_raw[i + p][0]:
                             assert(events_cleaned[j][2] == events_raw[i + p][2])
                             events_with_cross.append(events_raw[i])
                         else:
@@ -102,7 +102,7 @@ def retrieve_events_for_baseline(conf, raw_data, fpath_events, kind, subject, ru
                     d2 = [int(d) for d in str_digit2]
                     if d2[0] == 4 and d2[1] == 0 or d2[0] == 4 and d2[1] == 1 or d2[0] == 4 and d2[1] == 6 or d2[0] == 4 and d2[1] == 7:
                         factor = 'n'
-                        if factor == 'n' and events_cleaned.shape != (3,) and events_cleaned[j][0] == events_raw[i + p + 1][0]:
+                        if factor == 'n' and events_cleaned[j][0] == events_raw[i + p + 1][0]:
                             assert(events_cleaned[2] == events_raw[i + p + 1][2])
                             events_with_cross.append(events_raw[i])
                         else:
