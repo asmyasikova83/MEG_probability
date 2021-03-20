@@ -52,13 +52,6 @@ def retrieve_events_for_baseline(conf, raw_data, fpath_events, kind, subject, ru
                         events_of_interest.append(events_cleaned[j])
                         if verbose:
                             print('extracting event of interest', events_cleaned[j])
-                    elif factor == 'k' and events_cleaned.shape == (3,) and events_cleaned[j] == events_raw[i + p][0]:
-                        assert(events_cleaned[2] == events_raw[i + p][2])
-                        if baseline == 'fixation_cross_general':
-                            events_with_cross.append(events_raw[i])
-                        events_of_interest.append(events_cleaned)
-                        if verbose:
-                            print('extracting event of interest', events_cleaned[j])
                     else:
                         continue
                 if d2[0] == 4:
@@ -68,13 +61,6 @@ def retrieve_events_for_baseline(conf, raw_data, fpath_events, kind, subject, ru
                         if baseline == 'fixation_cross_general':
                             events_with_cross.append(events_raw[i])
                         events_of_interest.append(events_cleaned[j])
-                        if verbose:
-                            print('extracting event of interest', events_cleaned[j])
-                    elif factor == 'l' and events_cleaned.shape == (3,) and events_cleaned[j] == events_raw[i + p + 1][0]:
-                        assert(events_cleaned[2] == events_raw[i + p + 1][2])
-                        if baseline == 'fixation_cross_general':
-                            events_with_cross.append(events_raw[i])
-                        events_of_interest.append(events_cleaned)
                         if verbose:
                             print('extracting event of interest', events_cleaned[j])
                     else:
@@ -107,9 +93,6 @@ def retrieve_events_for_baseline(conf, raw_data, fpath_events, kind, subject, ru
                         if factor == 'm' and events_cleaned.shape != (3,) and events_cleaned[j][0] == events_raw[i + p][0]:
                             assert(events_cleaned[j][2] == events_raw[i + p][2])
                             events_with_cross.append(events_raw[i])
-                        elif factor == 'm' and events_cleaned.shape == (3,) and events_cleaned[j] == events_raw[i + p][0]:
-                            assert(events_cleaned[2] == events_raw[i + p][2])
-                            events_with_cross.append(events_raw[i])
                         else:
                             continue
                 if events_raw[i][2] == 1:
@@ -120,9 +103,6 @@ def retrieve_events_for_baseline(conf, raw_data, fpath_events, kind, subject, ru
                     if d2[0] == 4 and d2[1] == 0 or d2[0] == 4 and d2[1] == 1 or d2[0] == 4 and d2[1] == 6 or d2[0] == 4 and d2[1] == 7:
                         factor = 'n'
                         if factor == 'n' and events_cleaned.shape != (3,) and events_cleaned[j][0] == events_raw[i + p + 1][0]:
-                            assert(events_cleaned[2] == events_raw[i + p + 1][2])
-                            events_with_cross.append(events_raw[i])
-                        elif factor == 'n' and events_cleaned.shape == (3,) and events_cleaned[j] == events_raw[i + p + 1][0]:
                             assert(events_cleaned[2] == events_raw[i + p + 1][2])
                             events_with_cross.append(events_raw[i])
                         else:
