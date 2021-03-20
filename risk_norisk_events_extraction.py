@@ -1,15 +1,6 @@
 import mne
 import numpy as np
-from config import conf
-
-def correct_response(event):
-    return event[2] == 40 or event[2] == 41 or event[2] == 46 or event[2] == 47
-
-def incorrect_response(event):
-    return event[2] == 42 or event[2] == 43 or event[2] == 44 or event[2] == 45
-
-def response(event):
-    return correct_response(event) or incorrect_response(event)
+from config import conf, correct_response, incorrect_response, response
 
 def detect_trained(events):
     end = len(events)

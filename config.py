@@ -2,6 +2,15 @@ import os
 import numpy as np
 import mne
 
+def correct_response(event):
+    return event[2] == 40 or event[2] == 41 or event[2] == 46 or event[2] == 47
+
+def incorrect_response(event):
+    return event[2] == 42 or event[2] == 43 or event[2] == 44 or event[2] == 45
+
+def response(event):
+    return correct_response(event) or incorrect_response(event)
+
 class conf():
     def __init__(self, mode, kind, subjects=None, runs=None, frequency=None, work_dir='WORK/', verbose=False):
         # P036, P055, P044: ValueError: The number of epochs and the number of events must match
