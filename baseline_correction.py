@@ -2,7 +2,7 @@ import mne, os
 import numpy as np
 import numpy.matlib
 import matplotlib.pyplot as plt
-from config import conf
+from config import conf, response
 from mne.time_frequency import tfr_morlet, psd_multitaper
 
 def retrieve_events_for_baseline(conf, raw_data, path_events, kind, subject, run, picks):
@@ -40,7 +40,7 @@ def retrieve_events_for_baseline(conf, raw_data, path_events, kind, subject, run
         for j in range(len(events_cleaned)):
             # check the fixation cross and find the response after the fix cross
             if events_raw[i][2] == 1:
-                if str(events_raw[i + 2][2])[0] == '4':
+                if response(events_raw[i + 2]):
                     if events_cleaned[j][0] == events_raw[i + p][0]:
                         assert(events_cleaned[j][2] == events_raw[i + p][2])
                         if baseline == 'fixation_cross_general':
@@ -50,7 +50,7 @@ def retrieve_events_for_baseline(conf, raw_data, path_events, kind, subject, run
                             print('extracting event of interest', events_cleaned[j])
                     else:
                         continue
-                if str(events_raw[i + 3][2])[0] == '4':
+                if response(events_raw[i + 3]):
                     if events_cleaned[j][0] == events_raw[i + p + 1][0]:
                         assert(events_cleaned[j][2] == events_raw[i + p + 1][2])
                         if baseline == 'fixation_cross_general':
