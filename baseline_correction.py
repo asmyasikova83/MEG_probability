@@ -5,6 +5,13 @@ import matplotlib.pyplot as plt
 from config import conf, response
 from mne.time_frequency import tfr_morlet, psd_multitaper
 
+def find_event(event, events):
+    for e in events:
+        if e[0] == event[0]:
+            assert e[2] == event[2]
+            return True
+    return False
+
 def retrieve_events_for_baseline(conf, raw_data, path_events, kind, subject, run, picks):
     events_with_cross = []
     events_of_interest = []
@@ -37,27 +44,22 @@ def retrieve_events_for_baseline(conf, raw_data, path_events, kind, subject, run
 
     # extract events with fixation cross followed by positive or negative feedback
     for i in range(len(events_raw)):
-        for j in range(len(events_cleaned)):
-            # check the fixation cross and find the response after the fix cross
-            if events_raw[i][2] == 1:
-                if response(events_raw[i + 2]) and response(events_raw[i + 3]):
-                    continue
-                if response(events_raw[i + 2]):
-                    if events_cleaned[j][0] == events_raw[i + p][0]:
-                        assert(events_cleaned[j][2] == events_raw[i + p][2])
-                        if baseline == 'fixation_cross_general':
-                            events_with_cross.append(events_raw[i])
-                        events_of_interest.append(events_raw[i + p])
-                        if verbose:
-                            print('extracting event of interest', events_cleaned[j])
-                if response(events_raw[i + 3]):
-                    if events_cleaned[j][0] == events_raw[i + p + 1][0]:
-                        assert(events_cleaned[j][2] == events_raw[i + p + 1][2])
-                        if baseline == 'fixation_cross_general':
-                            events_with_cross.append(events_raw[i])
-                        events_of_interest.append(events_raw[i + p + 1])
-                        if verbose:
-                            print('extracting event of interest', events_cleaned[j])
+        # check the fixation cross and find the response after the fix cross
+        if events_raw[i][2] == 1:
+            if response(events_raw[i + 2]) and response(events_raw[i + 3]):
+                continue
+            if response(events_raw[i + 2]) and find_event(events_raw[i + p], events_cleaned):
+                if baseline == 'fixation_cross_general':
+                    events_with_cross.append(events_raw[i])
+                events_of_interest.append(events_raw[i + p])
+                if verbose:
+                    print('extracting event of interest', events_cleaned[j])
+            if response(events_raw[i + 3]) and find_event(events_raw[i + p + 1], events_cleaned):
+                if baseline == 'fixation_cross_general':
+                    events_with_cross.append(events_raw[i])
+                events_of_interest.append(events_raw[i + p + 1])
+                if verbose:
+                    print('extracting event of interest', events_cleaned[j])
 
     if baseline == 'fixation_cross_norisks':
         fpath_events = f'{conf.path_mio}/mio_out_norisk/{subject}_run{run}_mio_corrected_norisk.txt'
