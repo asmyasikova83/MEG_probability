@@ -83,6 +83,7 @@ class conf():
             self.p_mul_topo = 0.0000000000006
             self.p_mul_topo_contrast = 0.0000000000005
             self.p_mul_topo_fdr_contrast = 0.0000000000005
+            self.ERF = 'event related fields'
         elif mode == 'tfr':
             tfr_dir = 'TFR/'
             self.path_tfr = prefix_out + tfr_dir
@@ -157,7 +158,6 @@ f_step = 1
 topomap_plotting = True
 
 #grand average plotting
-ERF = 'event related fields'
 topomap = True
 butterfly = False
 
