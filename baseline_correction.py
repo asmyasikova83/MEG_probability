@@ -12,9 +12,10 @@ def find_event(event, events):
             return True
     return False
 
-def retrieve_events(conf, raw_data, path_events, kind, subject, run, picks, cross):
+def retrieve_events(conf, raw_data, path_events, kind_idx, cross):
     events = []
     verbose = conf.verbose
+    kind = conf.kind[kind_idx]
 
     #takes events with fixation cross followed by the events of interest (positive and negative feedback)
     events_raw = mne.find_events(raw_data, stim_channel='STI101', output='onset',

@@ -68,9 +68,12 @@ def grand_average_process(conf):
                     picks = mne.pick_types(raw_data.info, meg = 'grad')
                     KIND = kind[i]
 
-                    events_of_interest = retrieve_events(conf, raw_data, path_events, KIND, subject, run, picks, False)
-                    path_events_with_cross = f'{conf.path_mio}/mio_out_norisk/{subject}_run{run}_mio_corrected_norisk.txt'
-                    events_with_cross = retrieve_events(conf, raw_data, path_events_with_cross, KIND, subject, run, picks, True)
+                    events_of_interest = retrieve_events(conf, raw_data, path_events, i, False)
+                    if conf.baseline == 'fixation_cross_norisks':
+                        path_events_with_cross = f'{conf.path_mio}/mio_out_norisk/{subject}_run{run}_mio_corrected_norisk.txt'
+                    else:
+                        path_events_with_cross = path_events
+                    events_with_cross = retrieve_events(conf, raw_data, path_events_with_cross, i, True)
                     if verbose:
                         print('Done with the events!')
                         print(events_with_cross)
