@@ -80,7 +80,7 @@ def grand_average_process(conf):
                         print(events_of_interest)
 
                     BASELINE, b_line = compute_baseline_substraction_and_power(conf, raw_data, events_with_cross, events_of_interest, picks)
-                    if BASELINE.all== 0:
+                    if BASELINE.all == 0:
                         if verbose:
                             print('Yes, BASELINE is dummy')
                         # FIXME if run == conf.runs[-1] and processing_done: save_results

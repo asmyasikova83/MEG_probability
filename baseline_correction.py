@@ -710,9 +710,11 @@ def plot_epochs_with_without_BASELINE(events_of_interest, epochs_of_interest_w_B
     exit()
 
 def compute_baseline_substraction_and_power(conf, raw_data, events_with_cross, events_of_interest, picks):
-    # average each epoch with fixation cross followed by the events of interest
-    # substract this average from the relevant epoch of interest
-    # prepare data for numerical calculations for events_with_cross
+    '''
+    average each epoch with fixation cross followed by the events of interest
+    substract this average from the relevant epoch of interest
+    prepare data for numerical calculations for events_with_cross
+    '''
     period_start = conf.period_start
     period_end = conf.period_end
     baseline_interval_start_power = conf.baseline_interval_start_power
@@ -724,6 +726,7 @@ def compute_baseline_substraction_and_power(conf, raw_data, events_with_cross, e
     N_chans, N_times, N_events, epochs_ar = reshape_epochs(conf, raw_data, events_with_cross, picks)
     N_chan_interests, N_times_interest, N_events_interest, epochs_ar_interest = reshape_epochs(conf, raw_data, events_of_interest, picks)
     assert(N_events == len(events_with_cross))
+
     BASELINE = np.zeros((N_events, N_chans))
     for i in range(N_events):
         #extract data for baseline computation for each event
@@ -731,34 +734,43 @@ def compute_baseline_substraction_and_power(conf, raw_data, events_with_cross, e
         baseline_chunk = epochs_ar[:, baseline_interval_start_sub:baseline_interval_end_sub, i]
         #baseline computation over the time samples in column data (axis=1)
         BASELINE[i, 0:N_chans] = np.mean(baseline_chunk, axis=1)
+
     if conf.baseline == 'fixation_cross_norisks':
         #adjust the num ov events to that of events_of_interest
         NEW_BASELINE = np.mean(BASELINE, axis=0)
         #add new dim according to events_of_interest
         BASELINE = np.tile(NEW_BASELINE, (N_events_interest, 1))
+
     # We need to operate on further data as of (204,2001), so we need to transpose BASELINE as of (2001,25)
     BASELINE = BASELINE.transpose()
+
     #compute baseline II for power correction: mean  picks = picks!
     epochs_with_cross = mne.Epochs(raw_data, events_with_cross, event_id = None, tmin = period_start,
                         tmax = period_end, baseline = None, picks=picks, preload = True, verbose = 'ERROR')
+
     #epochs_with_cross = epochs_with_cross.pick(picks="meg")
     epochs_with_cross = epochs_with_cross.copy().resample(250, npad='auto')
     freq_show_baseline = mne.time_frequency.tfr_multitaper(epochs_with_cross, freqs = freqs, n_cycles = freqs//2, use_fft = False,
                                                            return_itc = False, verbose = 'ERROR').crop(tmin= baseline_interval_start_power-0.350, 
                                                                    tmax=baseline_interval_end_power+0.350, include_tmax=True)
+
     #remove artifacts
     freq_show_baseline = freq_show_baseline.crop(tmin=-0.350, tmax=-0.050, include_tmax=True)
     b_line  = freq_show_baseline.data.mean(axis=-1)
+
     #return array of (N_chan, N_events) with averaged value over the baseline time interval
     return BASELINE, b_line
 
 def correct_baseline_substraction(conf, BASELINE, events_of_interest, raw_data, picks):
+
     # prepare data for numerical calculations for events_of_interest
     N_chans, N_times, N_events, epochs_ar = reshape_epochs(conf, raw_data, events_of_interest, picks)
     assert(N_events == len(events_of_interest))
+
     #any data in shape (n_epochs, n_channels, n_times) can be used
     CD = (N_events,  N_chans, N_times)
     CORRECTED_DATA = np.zeros(CD)
+
     for i in range(N_events):
         # spread the baseline for current event over the time samples of the epoch -> 2D matrix of N chan, N_times
         BASELINE_CUR = np.matlib.repmat(BASELINE[:,i], N_times, 1)
@@ -768,6 +780,7 @@ def correct_baseline_substraction(conf, BASELINE, events_of_interest, raw_data, 
         #correct data in each event of interest
         CORRECTED_DATA_CUR = epochs_ar[:, :, i]  - BASELINE_CUR
         CORRECTED_DATA[i, :, :] = CORRECTED_DATA_CUR
+
     return CORRECTED_DATA
 
 def correct_baseline_power(conf, epochs_of_interest, b_line, kind, b_line_manually, subject, run, plot_spectrogram):
