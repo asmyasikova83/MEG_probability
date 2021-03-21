@@ -3,6 +3,27 @@ from config import *
 import pathlib
 import subprocess
 
+def container_results(freq_data, data, donor, out_file, verbose):
+    new_evoked = donor.copy()
+    new_evoked.info = freq_data.info
+    new_evoked.nave = 98  #all
+    new_evoked.kind = "average"
+    new_evoked.times = freq_data.times
+    new_evoked.first = 0
+    new_evoked.last = new_evoked.times.shape[0] - 1
+    new_evoked.comment = freq_data.comment
+    fq_data = np.asarray(data)
+    if verbose:
+        print('fq_data shape', fq_data.shape)
+    #mean across runs
+    fq_data = fq_data.mean(axis=0).mean(axis=1)
+    if verbose:
+        print('shape', fq_data.shape)
+    new_evoked.data = fq_data
+    if verbose:
+        print(out_file)
+    new_evoked.save(out_file)
+
 def container_process(conf):
     print('\trun tfr container...')
     path_home = conf.path_home
@@ -14,7 +35,7 @@ def container_process(conf):
     data_path = conf.data_path
     verbose = conf.verbose
 
-    temp1 = mne.Evoked(f'{path_home}donor-ave.fif', verbose = 'ERROR')
+    donor = mne.Evoked(f'{path_home}donor-ave.fif', verbose = 'ERROR')
     fpath_events = conf.path_mio + '/mio_out_{0}/{1}_run{2}_mio_corrected_{3}{4}{5}.txt'
 
     #get rid of runs, leave frequency data for pos and neg feedback for time course plotting 
@@ -22,6 +43,7 @@ def container_process(conf):
         for subject in conf.subjects:
             data = []
             processing_done = False
+            out_file = conf.path_container + "{0}_{1}{2}{3}_{4}{5}-ave.fif".format(subject, spec, stimulus, kind[i], frequency, train)
             for run in conf.runs:
                 print('\t\t', kind[i], run, subject)
                 if run == conf.runs[-1]:
@@ -40,26 +62,7 @@ def container_process(conf):
                         data.append(freq_data.data)
                         processing_done = True
                     if processing_done:
-                        new_evoked = temp1.copy()
-                        new_evoked.info = freq_data.info
-                        new_evoked.nave = 98  #all
-                        new_evoked.kind = "average"
-                        new_evoked.times = freq_data.times
-                        new_evoked.first = 0
-                        new_evoked.last = new_evoked.times.shape[0] - 1
-                        new_evoked.comment = freq_data.comment
-                        fq_data = np.asarray(data)
-                        if verbose:
-                            print('fq_data shape', fq_data.shape)
-                        #mean across runs
-                        fq_data = fq_data.mean(axis=0).mean(axis=1)
-                        if verbose:
-                            print('shape', fq_data.shape)
-                        new_evoked.data = fq_data
-                        out_file = conf.path_container + "{0}_{1}{2}{3}_{4}{5}-ave.fif".format(subject, spec, stimulus,  kind[i], frequency, train)
-                        if verbose:
-                            print(out_file)
-                        new_evoked.save(out_file)
+                        container_results(freq_data, data, donor, out_file, verbose)
                     else:
                         if verbose:
                             print('For this subj all runs are empty')
