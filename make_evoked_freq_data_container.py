@@ -45,12 +45,10 @@ def container_process(conf):
             out_file = conf.path_container + "{0}_{1}{2}{3}_{4}{5}-ave.fif".format(subject, spec, stimulus, kind[i], frequency, train)
             for run in conf.runs:
                 print('\t\t', kind[i], run, subject)
-                file_exists = False
                 path_events = fpath_events.format(kind[i], subject, run, stimulus, kind[i], train)
                 if pathlib.Path(path_events).exists():
                     if verbose:
                         print('This file is being processed: ', path_events)
-                    file_exists = True
 
                     freq_file = conf.path_tfr + data_path.format(subject, run, spec, frequency, stimulus, kind[i], train)
                     old_level = mne.set_log_level(verbose='ERROR', return_old_level=True)
@@ -58,17 +56,10 @@ def container_process(conf):
                     mne.set_log_level(verbose=old_level)
                     data.append(freq_data.data)
 
-                if run == conf.runs[-1]:
-                    if file_exists:
-                        processing_done = True
-                    if processing_done:
-                        container_results(freq_data, data, donor, out_file, verbose)
-                    else:
-                        if verbose:
-                            print('For this subj all runs are empty')
-                else:
-                    if file_exists:
-                        processing_done = True
+                    processing_done = True
+
+                if run == conf.runs[-1] and processing_done:
+                    container_results(freq_data, data, donor, out_file, verbose)
 
     print('\ttfr container completed')
 
