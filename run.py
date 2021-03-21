@@ -149,8 +149,8 @@ if __name__ == '__main__':
     args = parser.parse_args()
     mode = args.mode
     if mode == 'ga':
-        subjects = ['P007', 'P008']
-        runs = ['1']
+        subjects = ['P041', 'P042']
+        runs = ['6']
     elif mode == 'tfr':
         subjects = ['P007', 'P008']
         runs = ['2']

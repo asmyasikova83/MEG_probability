@@ -27,7 +27,12 @@ def tfr_process(conf):
                 print('\t\t', kind[i], run, subject)
 
                 path_events = fpath_events.format(kind[i],subject, run, stimulus, kind[i], train)
-                if pathlib.Path(path_events).exists() and os.stat(path_events).st_size != 0:
+                if conf.baseline == 'fixation_cross_norisks':
+                    path_events_with_cross = f'{conf.path_mio}/mio_out_norisk/{subject}_run{run}_mio_corrected_norisk.txt'
+                else:
+                    path_events_with_cross = path_events
+                if pathlib.Path(path_events).exists() and os.stat(path_events).st_size != 0 and \
+                    pathlib.Path(path_events_with_cross).exists() and os.stat(path_events_with_cross).st_size != 0:
                     if verbose:
                         print('This file is being processed: ', path_events)
 
@@ -41,10 +46,6 @@ def tfr_process(conf):
                     picks = mne.pick_types(raw_data.info, meg = 'grad')
 
                     events_of_interest = retrieve_events(conf, raw_data, path_events, i, False)
-                    if conf.baseline == 'fixation_cross_norisks':
-                        path_events_with_cross = f'{conf.path_mio}/mio_out_norisk/{subject}_run{run}_mio_corrected_norisk.txt'
-                    else:
-                        path_events_with_cross = path_events
                     events_with_cross = retrieve_events(conf, raw_data, path_events_with_cross, i, True)
                     if verbose:
                         print('\n\nDone with the events!')
