@@ -46,15 +46,14 @@ def container_process(conf):
             out_file = conf.path_container + "{0}_{1}{2}{3}_{4}{5}-ave.fif".format(subject, spec, stimulus, kind[i], frequency, train)
             for run in conf.runs:
                 print('\t\t', kind[i], run, subject)
-                if run == conf.runs[-1]:
+                file_exists = False
+                path_events = fpath_events.format(kind[i], subject, run, stimulus, kind[i], train)
+                if pathlib.Path(path_events).exists():
                     if verbose:
-                        print('Dis is da last run!')
-                        print('run', run)
-                    rf = fpath_events.format(kind[i], subject, run, stimulus, kind[i], train)
-                    file = pathlib.Path(rf)
-                    if file.exists():
-                        if verbose:
-                            print('This file is being processed: ', rf)
+                        print('This file is being processed: ', path_events)
+                    file_exists = True
+                if run == conf.runs[-1]:
+                    if file_exists:
                         freq_file = conf.path_tfr + data_path.format(subject, run, spec, frequency, stimulus, kind[i], train)
                         old_level = mne.set_log_level(verbose='ERROR', return_old_level=True)
                         freq_data = mne.time_frequency.read_tfrs(freq_file)[0]
@@ -67,13 +66,7 @@ def container_process(conf):
                         if verbose:
                             print('For this subj all runs are empty')
                 else:
-                    if verbose:
-                        print('run', run)
-                    rf = fpath_events.format(kind[i], subject, run, stimulus, kind[i], train)
-                    file = pathlib.Path(rf)
-                    if file.exists():
-                        if verbose:
-                            print('This file is being processed: ', rf)
+                    if file_exists:
                         freq_file = conf.path_tfr + data_path.format(subject, run, spec, frequency, stimulus, kind[i], train)
                         old_level = mne.set_log_level(verbose='ERROR', return_old_level=True)
                         freq_data = mne.time_frequency.read_tfrs(freq_file)[0]
