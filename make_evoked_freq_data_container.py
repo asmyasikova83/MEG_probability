@@ -1,5 +1,5 @@
 import mne, os, sys, numpy as np
-from config import *
+from config import conf
 import pathlib
 import subprocess
 
