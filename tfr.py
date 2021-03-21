@@ -5,7 +5,7 @@ from baseline_correction import retrieve_events
 from baseline_correction import create_mne_epochs_evoked
 from baseline_correction import compute_baseline_substraction_and_power
 from baseline_correction import correct_baseline_substraction
-from baseline_correction import correct_baseline_power
+from baseline_correction import correct_baseline_power_and_save
 from baseline_correction import topomap_one
 from config import conf
 import pathlib
@@ -66,8 +66,8 @@ def tfr_process(conf):
                             events_of_interest, plot_created_epochs_evoked, raw_data, picks)
 
                     # for time frequency analysis we need baseline II (power correction)
-                    KIND = kind[i]
-                    freq_show = correct_baseline_power(conf, epochs_of_interest, b_line, KIND, conf.b_line_manually, subject, run, conf.plot_spectrogram)
+                    data_path = conf.data_path.format(subject, run, conf.spec, conf.frequency, stimulus, kind[i], train)
+                    freq_show = correct_baseline_power_and_save(conf, epochs_of_interest, b_line, data_path, conf.b_line_manually, conf.plot_spectrogram)
                     if verbose:
                         print('\n\nDone with the BASELINE II!')
 

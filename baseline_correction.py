@@ -191,26 +191,23 @@ def correct_baseline_substraction(conf, BASELINE, events_of_interest, raw_data, 
 
     return CORRECTED_DATA
 
-def correct_baseline_power(conf, epochs_of_interest, b_line, kind, b_line_manually, subject, run, plot_spectrogram):
-    # baseline power correction of TFR data after baseline I substraction from the signal
-    #for theta n_cycles = 2
-    #average over epochs to eliminate inconsistency in the number of epochs over conditions (i.e., risk_vs_norisk)
-    #epochs_of_interest = epochs_of_interest.average(method='mean')
-    #print('averaging epochs of interest', epochs_of_interest)
+def correct_baseline_power_and_save(conf, epochs_of_interest, b_line, data_path, b_line_manually, plot_spectrogram):
+    '''
+    baseline power correction of TFR data after baseline I substraction from the signal
+    for theta n_cycles = 2
+    average over epochs to eliminate inconsistency in the number of epochs over conditions (i.e., risk_vs_norisk)
+    epochs_of_interest = epochs_of_interest.average(method='mean')
+    '''
 
-    period_start = conf.period_start
-    period_end = conf.period_end
-    frequency = conf.frequency
-    stimulus = conf.stimulus
-    train = conf.train
-    spec = conf.spec
     freqs = conf.freqs
-    data_path = conf.data_path
     verbose = conf.verbose
+
     freq_show = mne.time_frequency.tfr_multitaper(epochs_of_interest, freqs = freqs, n_cycles =  freqs//2, 
             use_fft = False, return_itc = False, verbose = 'ERROR')
+
     #remove artifacts
-    freq_show = freq_show.crop(tmin=period_start+0.350, tmax=period_end-0.350, include_tmax=True)
+    freq_show = freq_show.crop(tmin=conf.period_start+0.350, tmax=conf.period_end-0.350, include_tmax=True)
+
     #summarize power in tapers of theta freq
     if verbose:
         print('plot_spectrogram', plot_spectrogram)
@@ -222,6 +219,7 @@ def correct_baseline_power(conf, epochs_of_interest, b_line, kind, b_line_manual
         temp = freq_show.data.sum(axis=1)
         freq_show.freqs  = np.array([5])
         freq_show.data = temp.reshape(temp.shape[0],1,temp.shape[1])
+
     # now fred dim == 1
     #b_line mean (306, 2) ->freq data sum (306, 875)->b_line sum reshape (306, 1)->
     #freq data reshape (306, 1, 875) ->freq data b_line corrected (306, 1, 875)
@@ -243,10 +241,11 @@ def correct_baseline_power(conf, epochs_of_interest, b_line, kind, b_line_manual
             freq_show.data = np.log10(freq_show.data/b_line[:, np.newaxis])
     else:
         freq_show.apply_baseline(baseline=(-0.5,-0.1), mode="logratio")
-    #avrage the trials
-    freq_show.save(conf.path_tfr + data_path.format(subject, run, spec, frequency, stimulus, kind, train), overwrite=True)
+
+    # save
+    freq_show.save(conf.path_tfr + data_path, overwrite=True)
     if verbose:
-        print(data_path.format(subject, run, spec, frequency, stimulus, kind, train))
+        print(data_path)
     return freq_show
 
 def topomap_one(freq_show, reduced_info, events_of_interest, raw):
