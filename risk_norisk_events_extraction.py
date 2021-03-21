@@ -62,7 +62,7 @@ def risk_norisk_events(conf):
             end = len(events)
 
             # countera for correct responses and the proportion of correct responses in a block (should be no less than 2/3 for trained)
-            correct_counter = sum([1 for i in range(begin+1, end) if correct_response(events[i])]) #FIXME begin+1
+            correct_counter = sum([1 for i in range(begin, end) if correct_response(events[i])])
             answer_counter = sum([1 for i in range(begin, end) if correct_response(events[i]) or incorrect_response(events[i])])
             if answer_counter == 0 or correct_counter/answer_counter <= 0.66:
                 if verbose:
@@ -75,8 +75,7 @@ def risk_norisk_events(conf):
             norisk = []
             prerisk = []
             postrisk = []
-            # FIXME begin-1
-            for i in range(begin-1, end-8):
+            for i in range(begin, end-8):
 
                 # do not process double responses
                 if response(events[i + 4]) and response(events[i + 5]):
