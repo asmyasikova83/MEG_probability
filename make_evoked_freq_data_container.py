@@ -19,9 +19,9 @@ def container_process(conf):
 
     #get rid of runs, leave frequency data for pos and neg feedback for time course plotting 
     for i in range(len(kind)):
-        data = []
-        run_counter = 0
         for subject in conf.subjects:
+            data = []
+            processing_done = False
             for run in conf.runs:
                 print('\t\t', kind[i], run, subject)
                 if run == conf.runs[-1]:
@@ -38,8 +38,8 @@ def container_process(conf):
                         freq_data = mne.time_frequency.read_tfrs(freq_file)[0]
                         mne.set_log_level(verbose=old_level)
                         data.append(freq_data.data)
-                        run_counter = run_counter + 1
-                    if run_counter > 0:
+                        processing_done = True
+                    if processing_done:
                         new_evoked = temp1.copy()
                         new_evoked.info = freq_data.info
                         new_evoked.nave = 98  #all
@@ -60,14 +60,9 @@ def container_process(conf):
                         if verbose:
                             print(out_file)
                         new_evoked.save(out_file)
-                        run_counter = 0
-                        data = []
                     else:
                         if verbose:
                             print('For this subj all runs are empty')
-                        run_counter = 0
-                        data = []
-                        continue
                 else:
                     if verbose:
                         print('run', run)
@@ -81,5 +76,7 @@ def container_process(conf):
                         freq_data = mne.time_frequency.read_tfrs(freq_file)[0]
                         mne.set_log_level(verbose=old_level)
                         data.append(freq_data.data)
-                        run_counter = run_counter + 1
+                        processing_done = True
+
     print('\ttfr container completed')
+
