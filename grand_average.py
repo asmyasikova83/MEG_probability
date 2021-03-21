@@ -81,7 +81,8 @@ def grand_average_process(conf):
                     if BASELINE.all == 0:
                         if verbose:
                             print('Yes, BASELINE is dummy')
-                        # FIXME if run == conf.runs[-1] and processing_done: save_results
+                        if run == conf.runs[-1] and processing_done:
+                            container_results(evoked, evoked_ave, donor, out_file, verbose)
                         continue
                     if verbose:
                         print('\n\nDone with the BASELINE I!')
