@@ -1,7 +1,6 @@
 import mne, os, sys, numpy as np
 from config import conf
 import pathlib
-import subprocess
 
 def container_results(freq_data, data, donor, out_file, verbose):
     new_evoked = donor.copy()
@@ -52,13 +51,15 @@ def container_process(conf):
                     if verbose:
                         print('This file is being processed: ', path_events)
                     file_exists = True
+
+                    freq_file = conf.path_tfr + data_path.format(subject, run, spec, frequency, stimulus, kind[i], train)
+                    old_level = mne.set_log_level(verbose='ERROR', return_old_level=True)
+                    freq_data = mne.time_frequency.read_tfrs(freq_file)[0]
+                    mne.set_log_level(verbose=old_level)
+                    data.append(freq_data.data)
+
                 if run == conf.runs[-1]:
                     if file_exists:
-                        freq_file = conf.path_tfr + data_path.format(subject, run, spec, frequency, stimulus, kind[i], train)
-                        old_level = mne.set_log_level(verbose='ERROR', return_old_level=True)
-                        freq_data = mne.time_frequency.read_tfrs(freq_file)[0]
-                        mne.set_log_level(verbose=old_level)
-                        data.append(freq_data.data)
                         processing_done = True
                     if processing_done:
                         container_results(freq_data, data, donor, out_file, verbose)
@@ -67,11 +68,6 @@ def container_process(conf):
                             print('For this subj all runs are empty')
                 else:
                     if file_exists:
-                        freq_file = conf.path_tfr + data_path.format(subject, run, spec, frequency, stimulus, kind[i], train)
-                        old_level = mne.set_log_level(verbose='ERROR', return_old_level=True)
-                        freq_data = mne.time_frequency.read_tfrs(freq_file)[0]
-                        mne.set_log_level(verbose=old_level)
-                        data.append(freq_data.data)
                         processing_done = True
 
     print('\ttfr container completed')
