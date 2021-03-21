@@ -152,15 +152,13 @@ def reshape_epochs(conf, raw_data, events, picks):
     N_chans, N_times, N_events = epochs_ar.shape
     return N_chans, N_times, N_events, epochs_ar
 
-def create_mne_epochs_evoked(conf, kind, subject, run, CORRECTED_DATA, events_of_interest, plot, raw, picks):
-    #create an Epoch object from data array using info from raw_file, downsample it, creates and returns evoked
-    #data in shape (n_epochs, n_channels, n_times)
-    period_start = conf.period_start
-    period_end = conf.period_end
-    stim = conf.stim
+def create_mne_epochs_evoked(conf, CORRECTED_DATA, events_of_interest, plot, raw, picks):
+    '''
+    create an Epoch object from data array using info from raw_file, downsample it, creates and returns evoked
+    data in shape (n_epochs, n_channels, n_times)
+    '''
     verbose = conf.verbose
 
-    epochs_data = CORRECTED_DATA
     # create info for the Epoch object
     info = raw.info
     meg_indices = mne.pick_types(info, meg='grad')
@@ -168,9 +166,8 @@ def create_mne_epochs_evoked(conf, kind, subject, run, CORRECTED_DATA, events_of
     if verbose:
         print('CORR DATA shape', CORRECTED_DATA.shape)
         print(events_of_interest)
-
     epochs = mne.EpochsArray(CORRECTED_DATA, info=reduced_info, events=events_of_interest,
-        tmin=period_start, baseline=None, event_id=sorted(list(set([e[2] for e in events_of_interest]))), verbose='ERROR')
+        tmin=conf.period_start, baseline=None, event_id=sorted(list(set([e[2] for e in events_of_interest]))), verbose='ERROR')
 
     # downsample to 250 Hz
     epochs_of_interest = epochs.copy().resample(250, npad='auto')
@@ -192,6 +189,7 @@ def create_mne_epochs_evoked(conf, kind, subject, run, CORRECTED_DATA, events_of
         evoked.plot_topomap(ch_type='mag', title='mag (original)', time_unit='s')
         plt.show()
         exit()
+
     return epochs_of_interest, evoked
 
 def plot_epochs_with_without_BASELINE(events_of_interest, epochs_of_interest_w_BASELINE, raw_data, picks):

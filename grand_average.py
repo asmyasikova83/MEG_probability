@@ -93,7 +93,7 @@ def grand_average_process(conf):
                         print('\n\nDone with the CORRECTED!')
 
                     plot_created_epochs_evoked = False
-                    epochs_of_interest, evoked = create_mne_epochs_evoked(conf, KIND, subject, run, CORRECTED_DATA,
+                    epochs_of_interest, evoked = create_mne_epochs_evoked(conf, CORRECTED_DATA,
                         events_of_interest, plot_created_epochs_evoked, raw_data, picks)
                     evoked_ave.append(evoked.data)
 

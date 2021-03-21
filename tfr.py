@@ -52,7 +52,7 @@ def tfr_process(conf):
                     if verbose:
                         print('\n\nDone with the CORRECTED!')
                     plot_created_epochs_evoked = False
-                    epochs_of_interest, evoked = create_mne_epochs_evoked(conf, KIND, subject, run, CORRECTED_DATA,
+                    epochs_of_interest, evoked = create_mne_epochs_evoked(conf, CORRECTED_DATA,
                             events_of_interest, plot_created_epochs_evoked, raw_data, picks)
                     # for time frequency analysis we need baseline II (power correction)
                     freq_show = correct_baseline_power(conf, epochs_of_interest, b_line, KIND, conf.b_line_manually, subject, run, conf.plot_spectrogram)
