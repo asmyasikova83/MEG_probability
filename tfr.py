@@ -1,7 +1,7 @@
 import mne, os
 import numpy as np
 import matplotlib.pyplot as plt
-from baseline_correction import retrieve_events_for_baseline
+from baseline_correction import retrieve_events
 from baseline_correction import create_mne_epochs_evoked
 from baseline_correction import compute_baseline_substraction_and_power
 from baseline_correction import correct_baseline_substraction
@@ -40,8 +40,12 @@ def tfr_process(conf):
                     raw_data = raw_data.filter(1., None, fir_design='firwin')
                     picks = mne.pick_types(raw_data.info, meg = 'grad')
 
-                    KIND = kind[i]
-                    events_with_cross, events_of_interest = retrieve_events_for_baseline(conf, raw_data, path_events, KIND, subject, run, picks)
+                    events_of_interest = retrieve_events(conf, raw_data, path_events, i, False)
+                    if conf.baseline == 'fixation_cross_norisks':
+                        path_events_with_cross = f'{conf.path_mio}/mio_out_norisk/{subject}_run{run}_mio_corrected_norisk.txt'
+                    else:
+                        path_events_with_cross = path_events
+                    events_with_cross = retrieve_events(conf, raw_data, path_events_with_cross, i, True)
                     if verbose:
                         print('\n\nDone with the events!')
 
@@ -62,6 +66,7 @@ def tfr_process(conf):
                             events_of_interest, plot_created_epochs_evoked, raw_data, picks)
 
                     # for time frequency analysis we need baseline II (power correction)
+                    KIND = kind[i]
                     freq_show = correct_baseline_power(conf, epochs_of_interest, b_line, KIND, conf.b_line_manually, subject, run, conf.plot_spectrogram)
                     if verbose:
                         print('\n\nDone with the BASELINE II!')

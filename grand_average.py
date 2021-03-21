@@ -64,9 +64,7 @@ def grand_average_process(conf):
                     raw_data = raw_data.filter(None, 50, fir_design='firwin')
                     #remove slow drifts
                     raw_data = raw_data.filter(1., None, fir_design='firwin')
-
                     picks = mne.pick_types(raw_data.info, meg = 'grad')
-                    KIND = kind[i]
 
                     events_of_interest = retrieve_events(conf, raw_data, path_events, i, False)
                     if conf.baseline == 'fixation_cross_norisks':
