@@ -1,6 +1,7 @@
 import os
 import numpy as np
 import mne
+from pathlib import Path
 
 def correct_response(event):
     return event[2] == 40 or event[2] == 41 or event[2] == 46 or event[2] == 47
@@ -56,7 +57,8 @@ class conf():
         self.check_num_sens = False
         self.legend = ['norisk', 'risk']
         self.verbose = verbose
-        self.path_home = '/home/asmyasnikova83/'
+        #self.path_home = '/home/asmyasnikova83/'
+        self.path_home = str(Path.home()) + '/'
         self.fpath_raw = '/net/server/data/Archive/prob_learn/vtretyakova/ICA_cleaned/{}/run{}_{}_raw_ica.fif'
         prefix_out = self.path_home + work_dir
         if not os.path.exists(prefix_out) or not os.path.isdir(prefix_out):
