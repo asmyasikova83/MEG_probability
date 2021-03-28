@@ -27,7 +27,6 @@ def container_process(conf):
     print('\trun tfr container...')
     path_home = conf.path_home
     kind = conf.kind
-    stimulus = conf.stimulus
     train = conf.train
     frequency = conf.frequency
     spec = conf.spec
@@ -35,22 +34,22 @@ def container_process(conf):
     verbose = conf.verbose
 
     donor = mne.Evoked(f'{path_home}donor-ave.fif', verbose = 'ERROR')
-    fpath_events = conf.path_mio + '/mio_out_{0}/{1}_run{2}_mio_corrected_{3}{4}{5}.txt'
+    fpath_events = conf.path_mio + '/mio_out_{}/{}_run{}_mio_corrected_{}{}.txt'
 
     #get rid of runs, leave frequency data for pos and neg feedback for time course plotting 
     for i in range(len(kind)):
         for subject in conf.subjects:
             data = []
             processing_done = False
-            out_file = conf.path_container + "{0}_{1}{2}{3}_{4}{5}-ave.fif".format(subject, spec, stimulus, kind[i], frequency, train)
+            out_file = conf.path_container + "{}_{}{}_{}{}-ave.fif".format(subject, spec, kind[i], frequency, train)
             for run in conf.runs:
                 print('\t\t', kind[i], run, subject)
-                path_events = fpath_events.format(kind[i], subject, run, stimulus, kind[i], train)
+                path_events = fpath_events.format(kind[i], subject, run, kind[i], train)
                 if pathlib.Path(path_events).exists():
                     if verbose:
                         print('This file is being processed: ', path_events)
 
-                    freq_file = conf.path_tfr + data_path.format(subject, run, spec, frequency, stimulus, kind[i], train)
+                    freq_file = conf.path_tfr + data_path.format(subject, run, spec, frequency, kind[i], train)
                     old_level = mne.set_log_level(verbose='ERROR', return_old_level=True)
                     freq_data = mne.time_frequency.read_tfrs(freq_file)[0]
                     mne.set_log_level(verbose=old_level)

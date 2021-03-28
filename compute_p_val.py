@@ -16,7 +16,6 @@ def compute_p_val(conf, subjects, kind, train, frequency, check_num_sens):
     #coordinates and channel names from matlab files - the files are here https://github.com/niherus/MNE_TFR_ToolBox/tree/master/VISUALISATION
     grand_average = conf.grand_average
     subjects = conf.subjects
-    stimulus = conf.stimulus
     random_comp = conf.random_comp
     spec = conf.spec
     verbose = conf.verbose
@@ -27,17 +26,17 @@ def compute_p_val(conf, subjects, kind, train, frequency, check_num_sens):
     for ind, subj in enumerate(subjects):
         print('\t\t', subj)
         if grand_average == False:
-            rf1 = conf.path_container + "{0}_{1}{2}{3}_{4}{5}-ave.fif".format(subj, spec, stimulus, kind[0], frequency, train)
+            rf1 = conf.path_container + "{}_{}{}_{}{}-ave.fif".format(subj, spec, kind[0], frequency, train)
         else:
-            rf1 = conf.path_GA + "{0}_{1}{2}{3}_{4}_grand_ave.fif".format(subj, spec, stimulus, kind[0], train)
+            rf1 = conf.path_GA + "{}_{}{}_{}_grand_ave.fif".format(subj, spec, kind[0], train)
         if verbose:
             print(rf1)
         file1 = pathlib.Path(rf1)
         if grand_average == False:
-            rf2 = conf.path_container + "{0}_{1}{2}{3}_{4}{5}-ave.fif".format(subj, spec, stimulus, kind[1], frequency, train)
+            rf2 = conf.path_container + "{}_{}{}_{}{}-ave.fif".format(subj, spec, kind[1], frequency, train)
         else:
             assert(grand_average == True)
-            rf2 = conf.path_GA + "{0}_{1}{2}{3}_{4}_grand_ave.fif".format(subj, spec, stimulus, kind[1], train)
+            rf2 = conf.path_GA + "{}_{}{}_{}_grand_ave.fif".format(subj, spec, kind[1], train)
         file2 = pathlib.Path(rf2)
         if file1.exists() and file2.exists():
             if verbose:
@@ -67,9 +66,9 @@ def compute_p_val(conf, subjects, kind, train, frequency, check_num_sens):
         #print('rsubjects1', rsubjects1)
     for ind, subj in enumerate(subjects1):
         if grand_average == False:
-            rf = conf.path_container + "{0}_{1}{2}{3}_{4}{5}-ave.fif".format(subj, spec, stimulus, kind[0], frequency, train)
+            rf = conf.path_container + "{}_{}{}_{}{}-ave.fif".format(subj, spec, kind[0], frequency, train)
         else:
-            rf = conf.path_GA + "{0}_{1}{2}{3}_{4}_grand_ave.fif".format(subj, spec, stimulus, kind[0], train)
+            rf = conf.path_GA + "{}_{}{}_{}_grand_ave.fif".format(subj, spec, kind[0], train)
         if verbose:
             print(rf)
         file = pathlib.Path(rf)
@@ -80,13 +79,13 @@ def compute_p_val(conf, subjects, kind, train, frequency, check_num_sens):
                 #first 'condition'
                 print('kind[0]', kind[0])
             if grand_average == False:
-                temp1 = mne.Evoked(conf.path_container + "{0}_{1}{2}{3}_{4}{5}-ave.fif".format(subj, spec, stimulus, kind[0], frequency, train),
+                temp1 = mne.Evoked(conf.path_container + "{}_{}{}_{}{}-ave.fif".format(subj, spec, kind[0], frequency, train),
                         verbose = 'ERROR')
                 temp1 = temp1.pick_types("grad")
                 if verbose:
                     print('data shape', temp1.data.shape)
             else:
-                temp1 = mne.Evoked(conf.path_GA + "{0}_{1}{2}{3}_{4}_grand_ave.fif".format(subj, spec, stimulus, kind[0], train), verbose = 'ERROR')
+                temp1 = mne.Evoked(conf.path_GA + "{}_{}{}_{}_grand_ave.fif".format(subj, spec, kind[0], train), verbose = 'ERROR')
 
             #planars
             if random_comp:
@@ -117,13 +116,13 @@ def compute_p_val(conf, subjects, kind, train, frequency, check_num_sens):
             if verbose:
                 print('kind[1]', kind[1])
             if grand_average == False:
-                temp2 = mne.Evoked(conf.path_container + "{0}_{1}{2}{3}_{4}{5}-ave.fif".format(subj, spec, stimulus, kind[1], frequency, train),
+                temp2 = mne.Evoked(conf.path_container + "{}_{}{}_{}{}-ave.fif".format(subj, spec, kind[1], frequency, train),
                         verbose = 'ERROR')
                 temp2 = temp2.pick_types("grad")
                 if verbose:
                     print('data 2 shape', temp2.data.shape)
             else:
-                temp2 = mne.Evoked(conf.path_GA + "{0}_{1}{2}{3}_{4}_grand_ave.fif".format(subj, spec, stimulus, kind[1], train), verbose = 'ERROR')
+                temp2 = mne.Evoked(conf.path_GA + "{}_{}{}_{}_grand_ave.fif".format(subj, spec, kind[1], train), verbose = 'ERROR')
             if random_comp:
                 #not for ERP todo for stat_over_runs
                 contr[i, int(random_class_two[i]), :204, :] = temp2.data

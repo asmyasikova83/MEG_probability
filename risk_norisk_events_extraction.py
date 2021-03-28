@@ -17,16 +17,15 @@ def detect_trained(events):
 def save_events(norisk, risk, prerisk, postrisk, conf, subject, run):
     verbose = conf.verbose 
     path_events = conf.path_events
-    stimulus = conf.stimulus
     train = conf.train
-    fpath_events_risk = path_events + '{}_run{}_events_{}risk{}.txt'
-    fpath_events_norisk = path_events + '{}_run{}_events_{}norisk{}.txt'
-    fpath_events_prerisk = path_events + '{}_run{}_events_{}prerisk{}.txt'
-    fpath_events_postrisk = path_events + '{}_run{}_events_{}postrisk{}.txt'
-    events_norisk  = open(fpath_events_norisk.format(subject, run, stimulus, train), "w")
-    events_risk = open(fpath_events_risk.format(subject, run, stimulus, train), "w")
-    events_prerisk = open(fpath_events_prerisk.format(subject, run, stimulus, train), "w")
-    events_postrisk = open(fpath_events_postrisk.format(subject, run, stimulus, train), "w")
+    fpath_events_risk = path_events + '{}_run{}_events_risk{}.txt'
+    fpath_events_norisk = path_events + '{}_run{}_events_norisk{}.txt'
+    fpath_events_prerisk = path_events + '{}_run{}_events_prerisk{}.txt'
+    fpath_events_postrisk = path_events + '{}_run{}_events_postrisk{}.txt'
+    events_norisk  = open(fpath_events_norisk.format(subject, run, train), "w")
+    events_risk = open(fpath_events_risk.format(subject, run, train), "w")
+    events_prerisk = open(fpath_events_prerisk.format(subject, run, train), "w")
+    events_postrisk = open(fpath_events_postrisk.format(subject, run, train), "w")
     if verbose:
         print('events norisk', norisk)
         print('events risk', risk)
@@ -70,14 +69,12 @@ def risk_norisk_events(conf):
                     print('Did not find trained!')
                 continue
 
-            res = []
             risk = []
             norisk = []
             prerisk = []
             postrisk = []
             for i in range(begin, end-8):
 
-                # do not process double responses
                 if response(events[i + 4]) and response(events[i + 5]):
                     continue
 

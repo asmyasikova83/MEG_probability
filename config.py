@@ -30,8 +30,6 @@ class conf():
         #kind = ['norisk', 'risk'] #'positive', 'negative', 'prerisk', 'risk', 'postrisk', 'norisk_fb_positive','norisk_fb_negative', 'fb_negative_norisk'
         self.kind = kind
 
-        #if stimulus data. set 'stimulus_', if response, set ''. If stimulus, don't forget to set stim at True!!
-        self.stimulus = ''
         #settings for averaging over stimulus and over response
         self.stim = False
         self.response = True
@@ -109,10 +107,9 @@ class conf():
             #do not use built-in baseline correction
             self.b_line_manually = True
             self.baseline == 'fixation_cross_norisks'
-            self.data_path = '{0}_run{1}{2}_{3}_{4}{5}{6}_int_50ms-tfr.h5'
+            self.data_path = '{}_run{}{}_{}_{}{}_int_50ms-tfr.h5'
             self.period_start = -1.750
             #if self.baseline == 'fixation_cross_general':
-            #self.data_path = '{0}TFR_av/{2}_run{3}{4}_{5}_{6}{7}{8}_int_50ms-tfr.h5'
             #self.tfr_path_dir = '{0}TFR_av/{1}/'
             self.period_end = 2.350
             self.time = np.arange(-1.400, 2.002, 0.004)

@@ -32,12 +32,11 @@ def grand_average_process(conf):
     print('\trun ERF...')
     kind = conf.kind
     path_home = conf.path_home
-    stimulus = conf.stimulus
     train = conf.train
     spec = conf.spec
     verbose = conf.verbose
     fpath_raw = conf.fpath_raw
-    fpath_events = conf.path_mio + '/mio_out_{0}/{1}_run{2}_mio_corrected_{3}{4}{5}.txt'
+    fpath_events = conf.path_mio + '/mio_out_{}/{}_run{}_mio_corrected_{}{}.txt'
     donor = mne.Evoked(f'{path_home}donor-ave.fif', verbose='ERROR')
 
     for i in range(len(kind)):
@@ -47,7 +46,7 @@ def grand_average_process(conf):
             for run in conf.runs:
                 print('\t\t', kind[i], subject, run)
 
-                path_events = fpath_events.format(kind[i], subject, run, stimulus, kind[i], train)
+                path_events = fpath_events.format(kind[i], subject, run, kind[i], train)
                 if verbose:
                     print('path_events', path_events)
                 if conf.baseline == 'fixation_cross_norisks':
@@ -57,7 +56,7 @@ def grand_average_process(conf):
                 if pathlib.Path(path_events).exists() and os.stat(path_events).st_size != 0 and \
                     pathlib.Path(path_events_with_cross).exists() and os.stat(path_events_with_cross).st_size != 0:
 
-                    out_file = conf.path_GA + "/{0}_{1}{2}{3}_{4}_grand_ave.fif".format(subject, spec, stimulus, kind[i], train)
+                    out_file = conf.path_GA + "/{}_{}{}_{}_grand_ave.fif".format(subject, spec, kind[i], train)
 
                     raw_file = fpath_raw.format(subject, run, subject)
                     if verbose:
@@ -111,7 +110,7 @@ import matplotlib.pyplot as plt
 for subject in subjects:
     sdata = []
     #change kind[0] to kind[1] to get another output.png
-    out_file = prefix_out + folder + "/{0}_{1}{2}{3}_{4}{5}-grand_ave.fif".format(subject, spec, stimulus, kind[0], frequency, train)
+    out_file = prefix_out + folder + "/{}_{}{}_{}{}-grand_ave.fif".format(subject, spec, kind[0], frequency, train)
     print(out_file)
     file = pathlib.Path(out_file)
     if file.exists():

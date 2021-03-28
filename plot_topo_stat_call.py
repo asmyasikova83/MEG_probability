@@ -159,9 +159,9 @@ def topo_stat(conf):
     add_str_html(html_name, '<html>')
     add_str_html(html_name, '<body>')
     if grand_average:
-        add_str_html(html_name, '<p style="font-size:20px;"><b> %s, %s, %s, trained, %s, %s, %d subjects </b></p>' % (legend[0] + '_vs_' + legend[1], conf.ERF, conf.stimulus, baseline, conf.zero_point, len(subjects1)))
+        add_str_html(html_name, '<p style="font-size:20px;"><b> %s, %s, trained, %s, %s, %d subjects </b></p>' % (legend[0] + '_vs_' + legend[1], conf.ERF, baseline, conf.zero_point, len(subjects1)))
     else:
-        add_str_html(html_name, '<p style="font-size:20px;"><b> %s, %s, %s, trained, %s, %s, %d subjects </b></p>' % (legend[0] + '_vs_' + legend[1], frequency, conf.stimulus, baseline, conf.zero_point, len(subjects1)))
+        add_str_html(html_name, '<p style="font-size:20px;"><b> %s, %s, trained, %s, %s, %d subjects </b></p>' % (legend[0] + '_vs_' + legend[1], frequency, baseline, conf.zero_point, len(subjects1)))
 
     add_str_html(html_name, '<p style="font-size:20px;"><b> boolean fdr  = 1  marked </b></p>' )
     add_str_html(html_name, '<table>')

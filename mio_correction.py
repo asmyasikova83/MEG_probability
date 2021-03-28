@@ -32,13 +32,12 @@ def call_clean_events(conf, subj, run, kind_idx, fpath_events, fpath_mio_out):
     extract cleaned events (txt) and save raw events by extracted index
     '''
     verbose = conf.verbose
-    stimulus = conf.stimulus
     train = conf.train
     kind = conf.kind
 
     raw_data = mne.io.Raw(conf.fpath_raw.format(subj, run, subj), preload=True, verbose='ERROR').filter(l_freq=70, h_freq=None)
 
-    events = np.loadtxt(fpath_events.format(subj, run, stimulus, kind[kind_idx], train), dtype=int)
+    events = np.loadtxt(fpath_events.format(subj, run, kind[kind_idx], train), dtype=int)
     # (3,) -> (1,3)
     if events.shape == (3,):
         events = events[np.newaxis, :]
@@ -57,7 +56,7 @@ def call_clean_events(conf, subj, run, kind_idx, fpath_events, fpath_mio_out):
         if verbose:
             print(cleaned)
 
-        mio_corrected_events_file = open(fpath_mio_out.format(kind[kind_idx], subj, run, stimulus, kind[kind_idx], train), "w")
+        mio_corrected_events_file = open(fpath_mio_out.format(kind[kind_idx], subj, run, kind[kind_idx], train), "w")
         np.savetxt(mio_corrected_events_file, cleaned, fmt="%d")
         mio_corrected_events_file.close()
     else:
@@ -70,19 +69,18 @@ def mio_correction(conf):
     '''
     print('\trun mio_extraction...')
     kind = conf.kind
-    stimulus = conf.stimulus
     train = conf.train
     verbose = conf.verbose
     for i in range(len(kind)):
-        fpath_events = conf.path_events + '{0}_run{1}_events_{2}{3}{4}.txt'
-        fpath_mio_out = conf.path_mio + 'mio_out_{0}/{1}_run{2}_mio_corrected_{3}{4}{5}.txt'
+        fpath_events = conf.path_events + '{}_run{}_events_{}{}.txt'
+        fpath_mio_out = conf.path_mio + 'mio_out_{}/{}_run{}_mio_corrected_{}{}.txt'
         fpath_mio_dir = conf.path_mio + 'mio_out_{}/'
         os.makedirs(fpath_mio_dir.format(kind[i]), exist_ok = True)
 
         for run in conf.runs:
             for subject in conf.subjects:
                 print('\t\t', kind[i], run, subject)
-                rf = fpath_events.format(subject, run, stimulus, kind[i], train)
+                rf = fpath_events.format(subject, run, kind[i], train)
                 if verbose:
                     print(rf)
                 if pathlib.Path(rf).exists() and os.stat(rf).st_size != 0:

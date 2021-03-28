@@ -13,11 +13,10 @@ import pathlib
 def tfr_process(conf):
     print('\trun tfr...')
     kind = conf.kind
-    stimulus = conf.stimulus
     train = conf.train
     verbose = conf.verbose
     fpath_raw = conf.fpath_raw
-    fpath_events = f'{conf.path_mio}/' + 'mio_out_{0}/{1}_run{2}_mio_corrected_{3}{4}{5}.txt'
+    fpath_events = f'{conf.path_mio}/' + 'mio_out_{}/{}_run{}_mio_corrected_{}{}.txt'
     freq_path = conf.data_path
     data = []
     
@@ -26,7 +25,7 @@ def tfr_process(conf):
             for subject in conf.subjects:
                 print('\t\t', kind[i], run, subject)
 
-                path_events = fpath_events.format(kind[i],subject, run, stimulus, kind[i], train)
+                path_events = fpath_events.format(kind[i],subject, run, kind[i], train)
                 if conf.baseline == 'fixation_cross_norisks':
                     path_events_with_cross = f'{conf.path_mio}/mio_out_norisk/{subject}_run{run}_mio_corrected_norisk.txt'
                 else:
@@ -67,7 +66,7 @@ def tfr_process(conf):
                             events_of_interest, plot_created_epochs_evoked, raw_data, picks)
 
                     # for time frequency analysis we need baseline II (power correction)
-                    data_path = conf.data_path.format(subject, run, conf.spec, conf.frequency, stimulus, kind[i], train)
+                    data_path = conf.data_path.format(subject, run, conf.spec, conf.frequency, kind[i], train)
                     freq_show = correct_baseline_power_and_save(conf, epochs_of_interest, b_line, data_path, conf.b_line_manually, conf.plot_spectrogram)
                     if verbose:
                         print('\n\nDone with the BASELINE II!')
