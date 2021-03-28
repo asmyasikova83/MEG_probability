@@ -14,7 +14,7 @@ def detect_trained(events):
              correct_counter = 0
     return end
 
-def save_events(norisk, risk, prerisk, postrisk, conf, subject, run):
+def save_events(norisk, risk, prerisk, postrisk, stimulus_risk, stimulus_norisk, conf, subject, run):
     verbose = conf.verbose 
     path_events = conf.path_events
     train = conf.train
@@ -22,23 +22,33 @@ def save_events(norisk, risk, prerisk, postrisk, conf, subject, run):
     fpath_events_norisk = path_events + '{}_run{}_events_norisk{}.txt'
     fpath_events_prerisk = path_events + '{}_run{}_events_prerisk{}.txt'
     fpath_events_postrisk = path_events + '{}_run{}_events_postrisk{}.txt'
+    fpath_events_stimulus_risk = path_events + '{}_run{}_events_stimulus_risk{}.txt'
+    fpath_events_stimulus_norisk = path_events + '{}_run{}_events_stimulus_norisk{}.txt'
     events_norisk  = open(fpath_events_norisk.format(subject, run, train), "w")
     events_risk = open(fpath_events_risk.format(subject, run, train), "w")
     events_prerisk = open(fpath_events_prerisk.format(subject, run, train), "w")
     events_postrisk = open(fpath_events_postrisk.format(subject, run, train), "w")
+    events_stimulus_risk = open(fpath_events_stimulus_risk.format(subject, run, train), "w")
+    events_stimulus_norisk = open(fpath_events_stimulus_norisk.format(subject, run, train), "w")
     if verbose:
         print('events norisk', norisk)
         print('events risk', risk)
         print('events prerisk', prerisk)
         print('events postrisk', postrisk)
+        print('events stimulus risk', stimulus_risk)
+        print('events stimulus norisk', stimulus_norisk)
     np.savetxt(events_risk, risk, fmt = "%d")
     np.savetxt(events_norisk, norisk, fmt = "%d")
     np.savetxt(events_prerisk, prerisk, fmt = "%d")
     np.savetxt(events_postrisk, postrisk, fmt = "%d")
+    np.savetxt(events_stimulus_risk, stimulus_risk, fmt = "%d")
+    np.savetxt(events_stimulus_norisk, stimulus_norisk, fmt = "%d")
     events_norisk.close()
     events_risk.close()
     events_prerisk.close()
     events_postrisk.close()
+    events_stimulus_risk.close()
+    events_stimulus_norisk.close()
     if verbose:
         print('Saved!')
 
@@ -65,7 +75,8 @@ def risk_norisk_events(conf):
             answer_counter = sum([1 for i in range(begin, end) if correct_response(events[i]) or incorrect_response(events[i])])
             if answer_counter == 0 or correct_counter/answer_counter <= 0.66:
                 if verbose:
-                    print(answer_counter, correct_counter/answer_counter)
+                    if answer_count != 0:
+                        print(answer_counter, correct_counter/answer_counter)
                     print('Did not find trained!')
                 continue
 
@@ -73,6 +84,8 @@ def risk_norisk_events(conf):
             norisk = []
             prerisk = []
             postrisk = []
+            stimulus_risk = []
+            stimulus_norisk = []
             for i in range(begin, end-8):
 
                 if response(events[i + 4]) and response(events[i + 5]):
@@ -81,8 +94,12 @@ def risk_norisk_events(conf):
                 if correct_response(events[i]) and correct_response(events[i + 8]):
                     if incorrect_response(events[i + 4]):
                         risk.append(events[i + 4])
+                        if events[i + 3][2] == 11:
+                            stimulus_risk.append(events[i + 3])
                     if correct_response(events[i + 4]):
                         norisk.append(events[i + 4])
+                        if events[i + 3][2] == 11:
+                            stimulus_norisk.append(events[i + 3])
 
                 if correct_response(events[i + 4]):
                     if correct_response(events[i]) and incorrect_response(events[i + 8]):
@@ -90,6 +107,6 @@ def risk_norisk_events(conf):
                     if incorrect_response(events[i]) and correct_response(events[i + 8]):
                         postrisk.append(events[i + 4])
  
-            save_events(norisk, risk, prerisk, postrisk, conf, subject, run)
+            save_events(norisk, risk, prerisk, postrisk, stimulus_risk, stimulus_norisk, conf, subject, run)
     print('\trisk_norisk_events completed')
 
