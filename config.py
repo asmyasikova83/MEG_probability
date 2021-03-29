@@ -34,8 +34,10 @@ class conf():
         self.stim = False
         self.response = True
         assert self.stim and not self.response or self.response and not self.stim
+
         #setting for legends
         self.zero_point = 'averaged_over_response'
+
         #type of analysis
         #if trained set train = '', in nontrained, set train = '_no_train'
         self.train = ''
@@ -53,9 +55,12 @@ class conf():
         self.freqs = np.arange(L_freq, H_freq+1, f_step)
         self.random_comp = False
         self.check_num_sens = False
-        self.legend = ['norisk', 'risk']
+
+        assert len(self.kind) >= 2
+        self.legend = [kind[0], kind[1]]
+
         self.verbose = verbose
-        #self.path_home = '/home/asmyasnikova83/'
+
         self.path_home = str(Path.home()) + '/'
         self.fpath_raw = '/net/server/data/Archive/prob_learn/vtretyakova/ICA_cleaned/{}/run{}_{}_raw_ica.fif'
         prefix_out = self.path_home + work_dir
