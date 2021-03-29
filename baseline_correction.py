@@ -117,19 +117,14 @@ def plot_epochs_with_without_BASELINE(events_of_interest, epochs_of_interest_w_B
     plt.show()
     exit()
 
-def compute_baseline_substraction_and_power(conf, raw_data, events_with_cross, events_of_interest, picks):
+def compute_baseline_substraction(conf, raw_data, events_with_cross, events_of_interest, picks):
     '''
     average each epoch with fixation cross followed by the events of interest
     substract this average from the relevant epoch of interest
     prepare data for numerical calculations for events_with_cross
     '''
-    period_start = conf.period_start
-    period_end = conf.period_end
-    baseline_interval_start_power = conf.baseline_interval_start_power
-    baseline_interval_end_power = conf.baseline_interval_end_power
     baseline_interval_start_sub = conf.baseline_interval_start_sub
     baseline_interval_end_sub = conf.baseline_interval_end_sub
-    freqs = conf.freqs
 
     N_chans, N_times, N_events, epochs_ar = reshape_epochs(conf, raw_data, events_with_cross, picks)
     N_chan_interests, N_times_interest, N_events_interest, epochs_ar_interest = reshape_epochs(conf, raw_data, events_of_interest, picks)
@@ -152,6 +147,15 @@ def compute_baseline_substraction_and_power(conf, raw_data, events_with_cross, e
     # We need to operate on further data as of (204,2001), so we need to transpose BASELINE as of (2001,25)
     BASELINE = BASELINE.transpose()
 
+    return BASELINE
+
+def compute_baseline_power(conf, raw_data, events_with_cross, picks):
+    period_start = conf.period_start
+    period_end = conf.period_end
+    baseline_interval_start_power = conf.baseline_interval_start_power
+    baseline_interval_end_power = conf.baseline_interval_end_power
+    freqs = conf.freqs
+
     #compute baseline II for power correction: mean  picks = picks!
     epochs_with_cross = mne.Epochs(raw_data, events_with_cross, event_id = None, tmin = period_start,
                         tmax = period_end, baseline = None, picks=picks, preload = True, verbose = 'ERROR')
@@ -167,7 +171,7 @@ def compute_baseline_substraction_and_power(conf, raw_data, events_with_cross, e
     b_line  = freq_show_baseline.data.mean(axis=-1)
 
     #return array of (N_chan, N_events) with averaged value over the baseline time interval
-    return BASELINE, b_line
+    return b_line
 
 def correct_baseline_substraction(conf, BASELINE, events_of_interest, raw_data, picks):
 

@@ -52,7 +52,6 @@ class conf():
 
         self.baseline_interval_start_sub = -350
         self.baseline_interval_end_sub = -50
-        self.freqs = np.arange(L_freq, H_freq+1, f_step)
         self.random_comp = False
         self.check_num_sens = False
 
@@ -107,7 +106,6 @@ class conf():
             self.path_fdr = prefix_out + fdr_dir + tfr_dir
             self.path_fdr_pdf = prefix_out + fdr_pdf_dir + tfr_dir
 
-            self.frequency = frequency
             self.grand_average = False
             #do not use built-in baseline correction
             self.b_line_manually = True
@@ -119,7 +117,12 @@ class conf():
             self.period_end = 2.350
             self.time = np.arange(-1.400, 2.002, 0.004)
             self.times_to_plot = np.arange(-1.4, 2.0, 0.2)
-            if frequency == 'theta':
+
+            self.frequency = frequency
+            if self.frequency == 'theta':
+                self.L_freq = 4
+                self.H_freq = 8
+                self.f_step = 1
                 self.p_mul = 0.5
                 self.p_mul_topo = 0.2
                 if kind[0] == 'prerisk':
@@ -140,31 +143,46 @@ class conf():
                 else:
                     print('The options in the theta range are over')
                     assert 0
-            elif frequency == 'alpha':
+            elif self.frequency == 'alpha':
+                self.L_freq = 8
+                self.H_freq = 14
+                self.f_step = 1
                 self.p_mul = 1.0
                 self.p_mul_topo = 0.6
                 self.p_mul_topo_contrast= 0.2
                 self.p_mul_topo_fdr_contrast = 0.2
-            elif frequency == 'beta':
+            elif self.frequency == 'beta':
+                self.L_freq = 16
+                self.H_freq = 30
+                self.f_step = 2
                 self.p_mul = 1.0
                 self.p_mul_topo = 0.5
                 self.p_mul_topo_contrast = 0.1
                 self.p_mul_topo_fdr_contrast = 0.1
-            elif frequency == 'gamma':
-                self.p_mul = 0.4 #gamma
+            elif self.frequency == 'gamma':
+                self.L_freq = 30
+                self.H_freq = 50
+                self.f_step = 2
+                self.p_mul = 0.4
                 self.p_mul_topo = 0.15
                 self.p_mul_topo_contrast = 0.05
                 self.p_mul_topo_fdr_contrast = 0.05
+            elif self.frequency == 'delta':
+                self.L_freq = 2
+                self.H_freq = 4
+                self.f_step = 1
+                self.p_mul = 0.6
+                self.p_mul_topo = 0.3
+                self.p_mul_topo_contrast = 0.2
+                self.p_mul_topo_fdr_contrast = 0.2
             else:
                 print('freq range is over')
                 assert 0
+            self.freqs = np.arange(self.L_freq, self.H_freq+1, self.f_step)
+
         else:
              print('mode range is over')
              assert 0
-
-L_freq = 4
-H_freq = 8
-f_step = 1
 
 #settings for topomap plotting
 topomap_plotting = True

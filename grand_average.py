@@ -2,7 +2,7 @@ import mne, os
 import numpy as np
 from baseline_correction import retrieve_events
 from baseline_correction import create_mne_epochs_evoked
-from baseline_correction import compute_baseline_substraction_and_power
+from baseline_correction import compute_baseline_substraction
 from baseline_correction import correct_baseline_substraction
 from config import conf
 import pathlib
@@ -77,7 +77,7 @@ def grand_average_process(conf):
                         print(events_with_cross)
                         print(events_of_interest)
 
-                    BASELINE, b_line = compute_baseline_substraction_and_power(conf, raw_data, events_with_cross, events_of_interest, picks)
+                    BASELINE = compute_baseline_substraction(conf, raw_data, events_with_cross, events_of_interest, picks)
                     if BASELINE.all == 0:
                         if verbose:
                             print('Yes, BASELINE is dummy')

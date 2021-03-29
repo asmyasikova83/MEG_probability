@@ -3,7 +3,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 from baseline_correction import retrieve_events
 from baseline_correction import create_mne_epochs_evoked
-from baseline_correction import compute_baseline_substraction_and_power
+from baseline_correction import compute_baseline_substraction
+from baseline_correction import compute_baseline_power
 from baseline_correction import correct_baseline_substraction
 from baseline_correction import correct_baseline_power_and_save
 from baseline_correction import topomap_one
@@ -49,7 +50,8 @@ def tfr_process(conf):
                     if verbose:
                         print('\n\nDone with the events!')
 
-                    BASELINE, b_line = compute_baseline_substraction_and_power(conf, raw_data, events_with_cross, events_of_interest, picks)
+                    BASELINE = compute_baseline_substraction(conf, raw_data, events_with_cross, events_of_interest, picks)
+                    b_line = compute_baseline_power(conf, raw_data, events_with_cross, picks)
                     if verbose:
                         print('\n\nDone with the BASELINE I!')
                     if BASELINE.all== 0:
