@@ -13,7 +13,7 @@ def response(event):
     return correct_response(event) or incorrect_response(event)
 
 class conf():
-    def __init__(self, mode, kind, subjects=None, runs=None, frequency=None, work_dir='WORK/', verbose=False):
+    def __init__(self, mode, kind, subjects=None, runs=None, frequency=None, stim=False, response=True, work_dir='WORK/', verbose=False):
         # FIXME P042
         default_subj_list = [
         'P000','P001','P002','P003','P004','P005','P006','P007','P008','P009',
@@ -31,12 +31,10 @@ class conf():
         self.kind = kind
 
         #settings for averaging over stimulus and over response
-        self.stim = False
-        self.response = True
-        assert self.stim and not self.response or self.response and not self.stim
-
+        self.stim = stim
+        self.response = not self.stim
         #setting for legends
-        self.zero_point = 'averaged_over_response'
+        self.zero_point = 'averaged_over_stimulus' if self.stim else 'averaged_over_response'
 
         #type of analysis
         #if trained set train = '', in nontrained, set train = '_no_train'
