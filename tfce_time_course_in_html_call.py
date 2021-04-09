@@ -68,7 +68,7 @@ def tfce_process(conf):
 
     pos = io.loadmat(f'{path_home}pos_store.mat')['pos']
     chan_labels = to_str_ar(io.loadmat(f'{path_home}channel_labels.mat')['chanlabels'])
-    dict_col = { 'risk': 'salmon', 'norisk': 'olivedrab', 'prerisk': 'mediumpurple' , 'postrisk':'darkturquoise','risk_fb_negative':'crimson','risk_fb_positive':'cyan', 'norisk_fb_negative':'red','norisk_fb_positive':'blue', 'fb_positive_risk':'cyan', 'fb_negative_risk':'red', 'fb_positive_norisk':'salmon',  'fb_negative_norisk':'crimson' }
+    dict_col = { 'risk': 'salmon', 'norisk': 'olivedrab', 'prerisk': 'mediumpurple' , 'postrisk':'darkturquoise','prerisk_fb_negative':'crimson','prerisk_fb_positive':'cyan','risk_fb_negative':'crimson','risk_fb_positive':'cyan', 'postrisk_fb_negative':'crimson','postrisk_fb_positive':'cyan','norisk_fb_negative':'red','norisk_fb_positive':'blue', 'fb_positive_risk':'cyan', 'fb_negative_risk':'red', 'fb_positive_norisk':'salmon',  'fb_negative_norisk':'crimson' }
 
     #working with combined planars
     for i in range(102):       

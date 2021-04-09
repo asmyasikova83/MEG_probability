@@ -1,6 +1,6 @@
 import mne
 import numpy as np
-from config import conf, correct_response, incorrect_response, response
+from config import conf, correct_response, incorrect_response, response, positive_feedback, negative_feedback
 
 def detect_trained(events):
     end = len(events)
@@ -14,22 +14,49 @@ def detect_trained(events):
              correct_counter = 0
     return end
 
-def save_events(norisk, risk, prerisk, postrisk, stimulus_risk, stimulus_norisk, conf, subject, run):
+def save_events(norisk, risk, prerisk, postrisk,
+                stimulus_risk, stimulus_norisk,
+                prerisk_fb_positive, prerisk_fb_negative,
+                risk_fb_positive, risk_fb_negative,
+                norisk_fb_positive, norisk_fb_negative,
+                postrisk_fb_positive, postrisk_fb_negative,
+                conf, subject, run):
     verbose = conf.verbose 
     path_events = conf.path_events
     train = conf.train
+
     fpath_events_risk = path_events + '{}_run{}_events_risk{}.txt'
     fpath_events_norisk = path_events + '{}_run{}_events_norisk{}.txt'
     fpath_events_prerisk = path_events + '{}_run{}_events_prerisk{}.txt'
     fpath_events_postrisk = path_events + '{}_run{}_events_postrisk{}.txt'
     fpath_events_stimulus_risk = path_events + '{}_run{}_events_stimulus_risk{}.txt'
     fpath_events_stimulus_norisk = path_events + '{}_run{}_events_stimulus_norisk{}.txt'
+    fpath_events_prerisk_fb_positive = path_events + '{}_run{}_events_prerisk_fb_positive{}.txt'
+    fpath_events_prerisk_fb_negative = path_events + '{}_run{}_events_prerisk_fb_negative{}.txt'
+    fpath_events_postrisk_fb_positive = path_events + '{}_run{}_events_postrisk_fb_positive{}.txt'
+    fpath_events_postrisk_fb_negative = path_events + '{}_run{}_events_postrisk_fb_negative{}.txt'
+    fpath_events_risk_fb_positive = path_events + '{}_run{}_events_risk_fb_positive{}.txt'
+    fpath_events_risk_fb_negative = path_events + '{}_run{}_events_risk_fb_negative{}.txt'
+    fpath_events_norisk_fb_positive = path_events + '{}_run{}_events_norisk_fb_positive{}.txt'
+    fpath_events_norisk_fb_negative =  path_events + '{}_run{}_events_norisk_fb_negative{}.txt'
+
     events_norisk  = open(fpath_events_norisk.format(subject, run, train), "w")
     events_risk = open(fpath_events_risk.format(subject, run, train), "w")
     events_prerisk = open(fpath_events_prerisk.format(subject, run, train), "w")
     events_postrisk = open(fpath_events_postrisk.format(subject, run, train), "w")
     events_stimulus_risk = open(fpath_events_stimulus_risk.format(subject, run, train), "w")
     events_stimulus_norisk = open(fpath_events_stimulus_norisk.format(subject, run, train), "w")
+    events_prerisk_fb_positive  = open(fpath_events_prerisk_fb_positive.format(subject, run, train), "w")
+    events_prerisk_fb_negative  = open(fpath_events_prerisk_fb_negative.format(subject, run, train), "w")
+    events_risk_fb_positive  = open(fpath_events_risk_fb_positive.format(subject, run, train), "w")
+    events_risk_fb_negative  = open(fpath_events_risk_fb_negative.format(subject, run, train), "w")
+    events_prerisk_fb_positive  = open(fpath_events_prerisk_fb_positive.format(subject, run, train), "w")
+    events_prerisk_fb_negative  = open(fpath_events_prerisk_fb_negative.format(subject, run, train), "w")
+    events_postrisk_fb_positive  = open(fpath_events_postrisk_fb_positive.format(subject, run, train), "w")
+    events_postrisk_fb_negative  = open(fpath_events_postrisk_fb_negative.format(subject, run, train), "w")
+    events_norisk_fb_positive  = open(fpath_events_norisk_fb_positive.format(subject, run, train), "w")
+    events_norisk_fb_negative  = open(fpath_events_norisk_fb_negative.format(subject, run, train), "w")
+
     if verbose:
         print('events norisk', norisk)
         print('events risk', risk)
@@ -37,18 +64,39 @@ def save_events(norisk, risk, prerisk, postrisk, stimulus_risk, stimulus_norisk,
         print('events postrisk', postrisk)
         print('events stimulus risk', stimulus_risk)
         print('events stimulus norisk', stimulus_norisk)
+        print('events risk_fb_positive', risk_fb_positive)
+        print('events risk_fb_negative', risk_fb_negative)
+
     np.savetxt(events_risk, risk, fmt = "%d")
     np.savetxt(events_norisk, norisk, fmt = "%d")
     np.savetxt(events_prerisk, prerisk, fmt = "%d")
     np.savetxt(events_postrisk, postrisk, fmt = "%d")
     np.savetxt(events_stimulus_risk, stimulus_risk, fmt = "%d")
     np.savetxt(events_stimulus_norisk, stimulus_norisk, fmt = "%d")
+    np.savetxt(events_prerisk_fb_positive, prerisk_fb_positive, fmt = "%d")
+    np.savetxt(events_postrisk_fb_negative, postrisk_fb_negative, fmt = "%d")
+    np.savetxt(events_postrisk_fb_positive, postrisk_fb_positive, fmt = "%d")
+    np.savetxt(events_prerisk_fb_negative, prerisk_fb_negative, fmt = "%d")
+    np.savetxt(events_risk_fb_positive, risk_fb_positive, fmt = "%d")
+    np.savetxt(events_risk_fb_negative, risk_fb_negative, fmt = "%d")
+    np.savetxt(events_norisk_fb_positive, norisk_fb_positive, fmt = "%d")
+    np.savetxt(events_norisk_fb_negative, norisk_fb_negative, fmt = "%d")
+
     events_norisk.close()
     events_risk.close()
     events_prerisk.close()
     events_postrisk.close()
     events_stimulus_risk.close()
     events_stimulus_norisk.close()
+    events_risk_fb_positive.close()
+    events_risk_fb_negative.close()
+    events_prerisk_fb_positive.close()
+    events_prerisk_fb_negative.close()
+    events_postrisk_fb_positive.close()
+    events_postrisk_fb_negative.close()
+    events_norisk_fb_positive.close()
+    events_norisk_fb_negative.close()
+
     if verbose:
         print('Saved!')
 
@@ -75,7 +123,7 @@ def risk_norisk_events(conf):
             answer_counter = sum([1 for i in range(begin, end) if correct_response(events[i]) or incorrect_response(events[i])])
             if answer_counter == 0 or correct_counter/answer_counter <= 0.66:
                 if verbose:
-                    if answer_count != 0:
+                    if answer_counter != 0:
                         print(answer_counter, correct_counter/answer_counter)
                     print('Did not find trained!')
                 continue
@@ -86,6 +134,15 @@ def risk_norisk_events(conf):
             postrisk = []
             stimulus_risk = []
             stimulus_norisk = []
+            risk_fb_positive = []
+            risk_fb_negative = []
+            prerisk_fb_positive = []
+            prerisk_fb_negative = []
+            postrisk_fb_positive = []
+            postrisk_fb_negative = []
+            norisk_fb_positive = []
+            norisk_fb_negative = []
+
             for i in range(begin, end-8):
 
                 if response(events[i + 4]) and response(events[i + 5]):
@@ -96,17 +153,40 @@ def risk_norisk_events(conf):
                         risk.append(events[i + 4])
                         if events[i + 3][2] == 11:
                             stimulus_risk.append(events[i + 3])
+                        if positive_feedback(events[i + 5]):
+                            risk_fb_positive.append(events[i + 4])
+                        if negative_feedback(events[i + 5]):
+                            risk_fb_negative.append(events[i + 4])
                     if correct_response(events[i + 4]):
                         norisk.append(events[i + 4])
                         if events[i + 3][2] == 11:
                             stimulus_norisk.append(events[i + 3])
+                        if positive_feedback(events[i + 5]):
+                            norisk_fb_positive.append(events[i + 4])
+                        if negative_feedback(events[i + 5]):
+                            norisk_fb_negative.append(events[i + 4])
 
                 if correct_response(events[i + 4]):
                     if correct_response(events[i]) and incorrect_response(events[i + 8]):
                         prerisk.append(events[i + 4])
+                        if positive_feedback(events[i + 5]):
+                            prerisk_fb_positive.append(events[i + 4])
+                        if negative_feedback(events[i + 5]):
+                            prerisk_fb_negative.append(events[i + 4])
                     if incorrect_response(events[i]) and correct_response(events[i + 8]):
                         postrisk.append(events[i + 4])
+                        if positive_feedback(events[i + 5]):
+                            postrisk_fb_positive.append(events[i + 4])
+                        if negative_feedback(events[i + 5]):
+                            postrisk_fb_negative.append(events[i + 4])
  
-            save_events(norisk, risk, prerisk, postrisk, stimulus_risk, stimulus_norisk, conf, subject, run)
+            save_events(norisk, risk, prerisk, postrisk,
+                        stimulus_risk, stimulus_norisk,
+                        prerisk_fb_positive, prerisk_fb_negative,
+                        risk_fb_positive, risk_fb_negative,
+                        norisk_fb_positive, norisk_fb_negative,
+                        postrisk_fb_positive, postrisk_fb_negative,
+                        conf, subject, run)
+
     print('\trisk_norisk_events completed')
 

@@ -12,6 +12,12 @@ def incorrect_response(event):
 def response(event):
     return correct_response(event) or incorrect_response(event)
 
+def positive_feedback(event):
+    return event[2] == 50 or event[2] == 51
+
+def negative_feedback(event):
+    return event[2] == 52 or event[2] == 53
+
 class conf():
     def __init__(self, mode, kind, subjects=None, runs=None, frequency=None, stim=False, response=True, work_dir='WORK/', verbose=False):
         # FIXME P042
