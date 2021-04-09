@@ -22,7 +22,6 @@ def make_fdr_pdf(conf):
     pdf_file = html_name.split("/")[-1].split('.')[0]
     if verbose:
         print('pdf_file', pdf_file)
-        print('s' % html_name)
     pdfkit.from_file('%s' % html_name, conf.path_fdr_pdf + '%s.pdf' % pdf_file, configuration = config, options=options)
     if verbose:
         print('\tAll printed')
