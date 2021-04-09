@@ -135,7 +135,7 @@ class conf():
                 elif kind[0] == 'norisk_fb_positive':
                     self.p_mul_topo_contrast = 0.1
                     self.p_mul_topo_fdr_contrast = 0.1
-                elif kind[0] == 'fb_positive_norisk' or grand_average == False and kind[0] == 'fb_negative_norisk':
+                elif kind[0] == 'fb_positive_norisk' or kind[0] == 'fb_negative_norisk':
                     self.p_mul_topo_contrast = 0.1
                     self.p_mul_topo_fdr_contrast = 0.1
                 else:
