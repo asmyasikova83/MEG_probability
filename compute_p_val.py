@@ -86,7 +86,7 @@ def compute_p_val(conf, subjects, kind, train, frequency, check_num_sens):
                     print('data shape', temp1.data.shape)
             else:
                 temp1 = mne.Evoked(conf.path_GA + "{}_{}{}_{}_grand_ave.fif".format(subj, spec, kind[0], train), verbose = 'ERROR')
-                temp1 = temp1.flter(None, 20, fir_design='firwin').pick_types("grad")
+                temp1 = temp1.filter(None, 20, fir_design='firwin').pick_types("grad")
 
             #planars
             if random_comp:
@@ -124,7 +124,7 @@ def compute_p_val(conf, subjects, kind, train, frequency, check_num_sens):
                     print('data 2 shape', temp2.data.shape)
             else:
                 temp2 = mne.Evoked(conf.path_GA + "{}_{}{}_{}_grand_ave.fif".format(subj, spec, kind[1], train), verbose = 'ERROR')
-                temp2 = temp2.flter(None, 20, fir_design='firwin').pick_types("grad")
+                temp2 = temp2.filter(None, 20, fir_design='firwin').pick_types("grad")
 
             if random_comp:
                 #not for ERP todo for stat_over_runs
