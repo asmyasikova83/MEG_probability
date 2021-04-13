@@ -48,6 +48,9 @@ def tfce_process(conf):
         frequency = None
     else:
         frequency = conf.frequency
+    if conf.plot_spectrogram:
+        print('Spectrograms are ready, cannot continue')
+        return 0
     comp1_mean, comp2_mean, contr, temp1, temp2, p_val, binary, subjects1 = compute_p_val(conf, conf.subjects, kind, train, frequency, conf.check_num_sens)
     df1 = contr[:, 0, 204:, :]
     df2 = contr[:, 1, 204:, :]

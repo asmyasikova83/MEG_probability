@@ -205,6 +205,7 @@ def correct_baseline_power_and_save(conf, epochs_of_interest, b_line, data_path,
 
     freqs = conf.freqs
     verbose = conf.verbose
+    plot_spectrogram = conf.plot_spectrogram
 
     freq_show = mne.time_frequency.tfr_multitaper(epochs_of_interest, freqs = freqs, n_cycles =  freqs//2, 
             use_fft = False, return_itc = False, verbose = 'ERROR')
@@ -234,7 +235,7 @@ def correct_baseline_power_and_save(conf, epochs_of_interest, b_line, data_path,
                 print('before b_line', freq_show.data.shape)
                 print('b_line shape', b_line.shape)
             #spread b_line over N_times = 876
-            b_line = np.repeat(b_line[:, :, np.newaxis], 876, axis=2)
+            b_line = np.repeat(b_line[:, :, np.newaxis], conf.time.shape[0], axis=2)
             if verbose:
                 print('b_line rep', b_line.shape)
             freq_show.data = np.log10(freq_show.data/b_line)

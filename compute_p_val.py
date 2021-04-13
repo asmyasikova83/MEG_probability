@@ -25,9 +25,13 @@ def compute_p_val(conf, subjects, kind, train, frequency, check_num_sens):
     subjects1 = []
     for ind, subj in enumerate(subjects):
         print('\t\t', subj)
-        if grand_average == False:
+        if grand_average == False and not conf.plot_spectrogram:
             rf1 = conf.path_container + "{}_{}{}_{}{}-ave.fif".format(subj, spec, kind[0], frequency, train)
+        elif grand_average == False and conf.plot_spectrogram:
+            print('Spectrograms are ready, cannot continue')
+            return 0
         else:
+            assert grand_average == True
             rf1 = conf.path_GA + "{}_{}{}_{}_grand_ave.fif".format(subj, spec, kind[0], train)
         if verbose:
             print(rf1)
@@ -79,6 +83,7 @@ def compute_p_val(conf, subjects, kind, train, frequency, check_num_sens):
                 #first 'condition'
                 print('kind[0]', kind[0])
             if grand_average == False:
+                print(conf.path_container + "{}_{}{}_{}{}-ave.fif".format(subj, spec, kind[0], frequency, train))
                 temp1 = mne.Evoked(conf.path_container + "{}_{}{}_{}{}-ave.fif".format(subj, spec, kind[0], frequency, train),
                         verbose = 'ERROR')
                 temp1 = temp1.pick_types("grad")
