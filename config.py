@@ -114,6 +114,8 @@ class conf():
             #do not use built-in baseline correction
             self.b_line_manually = True
             self.baseline == 'fixation_cross_norisks'
+            self.single_trial = True
+            self.data_path_single_trial = '{}_run{}{}_{}_{}{}-ave.fif'
             self.data_path = '{}_run{}{}_{}_{}{}_int_50ms-tfr.h5'
             self.period_start = -1.750
             #if self.baseline == 'fixation_cross_general':

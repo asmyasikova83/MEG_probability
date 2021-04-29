@@ -4,6 +4,7 @@ import numpy.matlib
 import matplotlib.pyplot as plt
 from config import conf, response
 from mne.time_frequency import tfr_morlet, psd_multitaper
+from make_evoked_freq_data_container import container_results
 
 def find_event(event, events):
     for e in events:
@@ -155,21 +156,41 @@ def compute_baseline_power(conf, raw_data, events_with_cross, picks):
     baseline_interval_start_power = conf.baseline_interval_start_power
     baseline_interval_end_power = conf.baseline_interval_end_power
     freqs = conf.freqs
-
+    single_trial = conf.single_trial
+    print('events with cross shape', len(events_with_cross))
     #compute baseline II for power correction: mean  picks = picks!
     epochs_with_cross = mne.Epochs(raw_data, events_with_cross, event_id = None, tmin = period_start,
                         tmax = period_end, baseline = None, picks=picks, preload = True, verbose = 'ERROR')
 
     #epochs_with_cross = epochs_with_cross.pick(picks="meg")
     epochs_with_cross = epochs_with_cross.copy().resample(250, npad='auto')
-    freq_show_baseline = mne.time_frequency.tfr_multitaper(epochs_with_cross, freqs = freqs, n_cycles = freqs//2, use_fft = False,
-                                                           return_itc = False, verbose = 'ERROR').crop(tmin= baseline_interval_start_power-0.350, 
-                                                                   tmax=baseline_interval_end_power+0.350, include_tmax=True)
-
+    if single_trial:
+    #no averaging in single trial
+        freq_show_baseline = mne.time_frequency.tfr_multitaper(epochs_with_cross, freqs = freqs, n_cycles = freqs//2, use_fft = False,
+                                                           return_itc = False,average = False,
+                                                           verbose = 'ERROR').crop(tmin= baseline_interval_start_power-0.350,
+                                                           tmax=baseline_interval_end_power+0.350, include_tmax=True)
+    else:
+        freq_show_baseline = mne.time_frequency.tfr_multitaper(epochs_with_cross, freqs = freqs, n_cycles = freqs//2, use_fft = False,
+                                                           return_itc = False, verbose = 'ERROR').crop(tmin= baseline_interval_start_power-0.350,
+                                                           tmax=baseline_interval_end_power+0.350, include_tmax=True)
     #remove artifacts
     freq_show_baseline = freq_show_baseline.crop(tmin=-0.350, tmax=-0.050, include_tmax=True)
-    b_line  = freq_show_baseline.data.mean(axis=-1)
-
+    if single_trial:
+        #add up all values according to the frequency axis
+        b_line_raw = freq_show_baseline.data.sum(axis=-2)
+        print('bline shape dd up all values according to the frequency axis', b_line_raw.shape)
+	# Для бейзлайна меняем оси местами, на первом месте число каналов
+        b_line_raw = np.swapaxes(b_line_raw, 0, 1)
+        # выстраиваем в ряд бейзлайны для каждого из 28 эвентов, как будто они происходили один за другим
+        a, b, c = b_line_raw.shape
+        b_line_raw = b_line_raw.reshape(a, b * c)
+        print('baseline shape for single trials', b_line_raw.shape)
+        b = b_line_raw.mean(axis=-1)
+        b_line = b[:, np.newaxis, np.newaxis]
+        print('b_line last', b_line.shape)
+    else:
+        b_line  = freq_show_baseline.data.mean(axis=-1)
     #return array of (N_chan, N_events) with averaged value over the baseline time interval
     return b_line
 
@@ -206,10 +227,14 @@ def correct_baseline_power_and_save(conf, epochs_of_interest, b_line, data_path,
     freqs = conf.freqs
     verbose = conf.verbose
     plot_spectrogram = conf.plot_spectrogram
+    single_trial = conf.single_trial
 
-    freq_show = mne.time_frequency.tfr_multitaper(epochs_of_interest, freqs = freqs, n_cycles =  freqs//2, 
+    if single_trial:
+        freq_show = mne.time_frequency.tfr_multitaper(epochs_of_interest, freqs = freqs, n_cycles =  freqs//2,
+            use_fft = False, return_itc = False, average=False, verbose = 'ERROR')
+    else:
+        freq_show = mne.time_frequency.tfr_multitaper(epochs_of_interest, freqs = freqs, n_cycles =  freqs//2,
             use_fft = False, return_itc = False, verbose = 'ERROR')
-
     #remove artifacts
     freq_show = freq_show.crop(tmin=conf.period_start+0.350, tmax=conf.period_end-0.350, include_tmax=True)
 
@@ -221,9 +246,17 @@ def correct_baseline_power_and_save(conf, epochs_of_interest, b_line, data_path,
     else:
         if verbose:
             print('b_line with sum')
-        temp = freq_show.data.sum(axis=1)
-        freq_show.freqs  = np.array([5])
-        freq_show.data = temp.reshape(temp.shape[0],1,temp.shape[1])
+        if single_trial:
+            temp = freq_show.data.sum(axis=2)
+            print('data shape in single trial after summation of tapers', temp.shape)
+            freq_show.freqs  = np.array([5])
+            data = np.swapaxes(temp, 0, 1)
+            freq_show.data = np.swapaxes(data, 1, 2)
+            print('data shape in single trial after swapping', freq_show.data.shape)
+        else:
+            temp = freq_show.data.sum(axis=1)
+            freq_show.freqs  = np.array([5])
+            freq_show.data = temp.reshape(temp.shape[0],1,temp.shape[1])
 
     # now fred dim == 1
     #b_line mean (306, 2) ->freq data sum (306, 875)->b_line sum reshape (306, 1)->
@@ -242,12 +275,36 @@ def correct_baseline_power_and_save(conf, epochs_of_interest, b_line, data_path,
         else:
             if verbose:
                 print('b_line with sum')
-            b_line = b_line.sum(axis=1).reshape(temp.shape[0],1)
-            freq_show.data = np.log10(freq_show.data/b_line[:, np.newaxis])
+            if single_trial:
+                print('bline single trial shape after swapping', b_line.shape)
+                #Вычитаем бейзлайн из данных и приводим оси к изначальному порядку
+                data = np.log10(data/b_line)
+                data = np.swapaxes(data, 1, 2)
+                data = np.swapaxes(data, 2, 1)
+                data = np.swapaxes(data, 1, 0)
+                freq_show.data = data
+                #freq_show.data = freq_show.data[:, :, np.newaxis, :]
+                print('freq data after b_lining', freq_show.data.shape)
+                #averaging over epochs
+                freq_show.data = data.mean(axis = 0)
+                freq_show.data = freq_show.data[np.newaxis, :, np.newaxis, :]
+                print('freq data after averaging: single trial', freq_show.data.shape)
+            else:
+                b_line = b_line.sum(axis=1).reshape(temp.shape[0],1)
+                freq_show.data = np.log10(freq_show.data/b_line[:, np.newaxis])
+                print('frew show data shape no single trial', freq_show.data.shape)
     else:
         freq_show.apply_baseline(baseline=(-0.5,-0.1), mode="logratio")
 
     # save
+    #if single_trial:
+        #path_home = '/home/asmyasnikova83/'
+        #out_file = conf.path_container + data_path
+        #print('out file', out_file)
+        #donor = mne.Evoked(f'{conf.path_home}donor-ave.fif', verbose = 'ERROR')
+        #container_results(plot_spectrogram, single_trial, freq_show, freq_show.data, donor, out_file, verbose)
+    #else:
+    print(conf.path_tfr + data_path)
     freq_show.save(conf.path_tfr + data_path, overwrite=True)
     if verbose:
         print(data_path)

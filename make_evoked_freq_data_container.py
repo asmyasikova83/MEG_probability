@@ -2,7 +2,7 @@ import mne, os, sys, numpy as np
 from config import conf
 import pathlib
 
-def container_results(plot_spectrogram, freq_data, data, donor, out_file, verbose):
+def container_results(plot_spectrogram, single_trial, freq_data, data, donor, out_file, verbose):
     new_evoked = donor.copy()
     new_evoked.info = freq_data.info
     new_evoked.nave = 98  #all
@@ -12,10 +12,17 @@ def container_results(plot_spectrogram, freq_data, data, donor, out_file, verbos
     new_evoked.last = new_evoked.times.shape[0] - 1
     new_evoked.comment = freq_data.comment
     fq_data = np.asarray(data)
+    if single_trial:
+    #    print('No averaging over runs')
+    #else:
+    #mean across runs and remove all redundant axis
+        print('shape fq data', fq_data.shape)
+        fq_data = fq_data.mean(axis=0).mean(axis=0).mean(axis=1)
+        print('shape fq data after averaging, no redundant axis', fq_data.shape)
+    else:
+        fq_data = fq_data.mean(axis=0).mean(axis=1)
     if verbose:
         print('fq_data shape', fq_data.shape)
-    #mean across runs
-    fq_data = fq_data.mean(axis=0).mean(axis=1)
     if plot_spectrogram:
         freq_data.save(out_file, overwrite=True)
     else:
@@ -39,6 +46,7 @@ def container_process(conf):
     donor = mne.Evoked(f'{path_home}donor-ave.fif', verbose = 'ERROR')
     fpath_events = conf.path_mio + '/mio_out_{}/{}_run{}_mio_corrected_{}{}.txt'
     plot_spectrogram = conf.plot_spectrogram
+    single_trial = conf.single_trial
 
     #get rid of runs, leave frequency data for pos and neg feedback for time course plotting 
     for i in range(len(kind)):
@@ -65,7 +73,7 @@ def container_process(conf):
                     processing_done = True
 
                 if run == conf.runs[-1] and processing_done:
-                    container_results(plot_spectrogram, freq_data, data, donor, out_file, verbose)
+                    container_results(plot_spectrogram, single_trial, freq_data, data, donor, out_file, verbose)
 
     if plot_spectrogram:
         sdata = []
