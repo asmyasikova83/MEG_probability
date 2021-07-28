@@ -2,7 +2,22 @@ import mne
 import os
 import os.path as op
 import numpy as np
-from function import fixation_cross_events, read_events
+from function import make_beta_signal
+
+from function import make_fix_cross_signal
+from function import make_response_signal
+from function import make_fix_cross_signal_baseline
+from function import make_response_signal_baseline
+
+L_freq = 4
+H_freq = 8
+f_step = 1
+
+period_start = -1.750
+period_end = 2.750
+
+baseline = (-0.35, -0.05)
+
 
 
 subjects = []
@@ -15,39 +30,28 @@ for i in range(0,63):
    
 
 rounds = [1, 2, 3, 4, 5, 6]
-
-
-trial_type = ['risk']
-#trial_type = ['norisk']
+trial_type = ['norisk', 'risk']
 
 feedback = ['positive', 'negative']
-os.makedirs('/net/server/data/Archive/prob_learn/asmyasnikova83/theta_4_8_FIX_CROSS/events_fix_cross', exist_ok = True)
 
-data_path_raw = '/net/server/data/home/inside/Events_probability/Events_clean'
-raw_name = '{0}_run{1}_events_clean.txt'
-data_path_events = '/net/server/data/Archive/prob_learn/vtretyakova/Nikita_mio_cleaned/events_by_cond_mio_corrected'
-name_events = '{0}_run{1}_{2}_fb_cur_{3}.txt' 
-
+data_path = '/net/server/data/Archive/prob_learn/vtretyakova/ICA_cleaned'
+os.makedirs('/net/server/data/Archive/prob_learn/asmyasnikova83/theta_4_8_FIX_CROSS/theta_4_8_epo_FIX_CROSS', exist_ok = True)
+os.makedirs('/net/server/data/Archive/prob_learn/asmyasnikova83/theta_4_8_FIX_CROSS/theta_4_8_epo_RESPONSE', exist_ok = True)
+os.makedirs('/net/server/data/Archive/prob_learn/asmyasnikova83/theta_4_8_FIX_CROSS/theta_4_8_epo_FIX_CROSS_BASELINE', exist_ok = True)
+os.makedirs('/net/server/data/Archive/prob_learn/asmyasnikova83/theta_4_8_FIX_CROSS/theta_4_8_epo_RESPONSE_BASELINE', exist_ok = True)
 for subj in subjects:
     for r in rounds:
-    
-        for t in trial_type:
-            for fb in feedback:
-                
-                try:
-                    event_fixation_cross_norisk = fixation_cross_events(t, data_path_raw, raw_name, data_path_events, name_events, subj, r, fb)
-                    event_fixation_cross_risk = fixation_cross_events(t, data_path_raw, raw_name, data_path_events, name_events, subj, r, fb)
-                    event_fixation_cross_prerisk = fixation_cross_events(t, data_path_raw, raw_name, data_path_events, name_events, subj, r, fb)
-                    event_fixation_cross_postrisk = fixation_cross_events(t, data_path_raw, raw_name, data_path_events, name_events, subj, r, fb)
-                    np.savetxt('/net/server/data/Archive/prob_learn/asmyasnikova83/theta_4_8_FIX_CROSS/events_fix_cross/{0}_run{1}_{2}_fb_cur_{3}_fix_cross.txt'.format(subj, r, t, fb), 
-                               event_fixation_cross_risk, fmt="%s")
-                    np.savetxt('/net/server/data/Archive/prob_learn/asmyasnikova83/theta_4_8_FIX_CROSS/events_fix_cross/{0}_run{1}_{2}_fb_cur_{3}_fix_cross.txt'.format(subj, r, t, fb), 
-                               event_fixation_cross_prerisk, fmt="%s")
-                    np.savetxt('/net/server/data/Archive/prob_learn/asmyasnikova83/theta_4_8_FIX_CROSS/events_fix_cross/{0}_run{1}_{2}_fb_cur_{3}_fix_cross.txt'.format(subj, r, t, fb), 
-                               event_fixation_cross_postrisk, fmt="%s")
-                except OSError:
-                   print('This file not exist')
-                    
+        for cond in trial_type:
+            try:
+                epochs_tfr_fix_cross = make_fix_cross_signal(subj, r, cond, data_path, L_freq, H_freq, f_step, period_start, period_end, baseline)
+                epochs_tfr_response = make_response_signal(subj, r, cond, data_path, L_freq, H_freq, f_step, period_start, period_end, baseline)
+                epochs_tfr_fix_cross_baseline = make_fix_cross_signal_baseline(subj, r, cond, data_path, L_freq, H_freq, f_step, period_start, period_end, baseline)
+                epochs_tfr_response_baseline = make_response_signal_baseline(subj, r, cond, data_path, L_freq, H_freq, f_step, period_start, period_end, baseline)
+                epochs_tfr_fix_cross.save('/net/server/data/Archive/prob_learn/asmyasnikova83/theta_4_8_FIX_CROSS/theta_4_8_epo_FIX_CROSS/{0}_run{1}_{2}_fb_cur_theta_4_8-epo.fif'.format(subj, r, cond), overwrite=True)
+                epochs_tfr_response.save('/net/server/data/Archive/prob_learn/asmyasnikova83/theta_4_8_FIX_CROSS/theta_4_8_epo_RESPONSE/{0}_run{1}_{2}_fb_cur_theta_4_8-epo.fif'.format(subj, r, cond), overwrite=True)
+                epochs_tfr_fix_cross_baseline.save('/net/server/data/Archive/prob_learn/asmyasnikova83/theta_4_8_FIX_CROSS/theta_4_8_epo_FIX_CROSS_BASELINE/{0}_run{1}_{2}_fb_cur_theta_4_8-epo.fif'.format(subj, r, cond), overwrite=True)
+                epochs_tfr_response_baseline.save('/net/server/data/Archive/prob_learn/asmyasnikova83/theta_4_8_FIX_CROSS/theta_4_8_epo_RESPONSE_BASELINE/{0}_run{1}_{2}_fb_cur_theta_4_8-epo.fif'.format(subj, r, cond), overwrite=True)
+            except (OSError):
+               print('This file not exist')
 
-                    
-                    
+
