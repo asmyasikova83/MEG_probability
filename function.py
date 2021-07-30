@@ -148,7 +148,7 @@ def make_fix_cross_signal_baseline(subj, r, cond, data_path, L_freq, H_freq, f_s
                                 return_itc = False, average=False).crop(tmin=baseline[0], tmax=baseline[1], include_tmax=True) #frequency of baseline
 	    
     #add up all values according to the frequency axis
-    b_line = freq_show_baseline.data.sum(axis=-2)
+    #b_line = freq_show_baseline.data.sum(axis=-2)
     # Для бейзлайна меняем оси местами, на первом месте число каналов
     b_line = np.swapaxes(b_line, 0, 1)
     # выстраиваем в ряд бейзлайныbeta_16_30_epo_comb_planar для каждого из эвентов, как будто они происходили один за другим
