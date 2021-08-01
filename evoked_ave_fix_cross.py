@@ -6,8 +6,6 @@ import pandas as pd
 from config import *
 
 
-print(fr)
-print(feedb)
 
 subjects = []
 for i in range(0,63):
@@ -68,7 +66,7 @@ for f in file_dir:
         
             if data_in_rounds_mean.size != 0:
                 print('data_in_rounds_mean.size', data_in_rounds_mean.size)
-                fix_cross_evoked = mne.Evoked(data_in_rounds_mean, info = temp.info, tmin = -0.350)
+                fix_cross_evoked = mne.EvokedArray(data_in_rounds_mean, info = temp.info, tmin = -0.350)
                 # сохраняем данные, усредненные внутри испытуемого. Шаг усредения 3, это усреднение между испытуемыми делается при рисовании топомапов
                 fix_cross_evoked.save('/net/server/data/Archive/prob_learn/asmyasnikova83/theta_4_8_FIX_CROSS/{0}/ave/{1}_{2}_evoked_{3}_resp.fif'.format(f, subj, t, fr))
             else:
