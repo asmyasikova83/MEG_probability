@@ -7,7 +7,11 @@ from function import nocolor_topomaps_line
 
 #we will mark significant channels
 template_for_channels = True
-central_cluster = True
+
+all_channels = True
+frontal_cluster = False
+fronto_central_cluster = False
+central_cluster = False
 occipital_cluster = False
 n = 1 # количество говов в ряду
 #set time for plotting
@@ -25,9 +29,24 @@ temp = nocolor_topomaps_line(n, temp, times_array, template_for_channels)
 data_path = '/net/server/data/Archive/prob_learn/vtretyakova/ICA_cleaned/P061/run4_P061_raw_ica.fif'
 raw = mne.io.read_raw_fif(data_path)
 
-
+if all_channels:
+    fig = temp.plot_sensors(title = 'Beta (12-20 hz),1800 ms', show_names=['MEG0222','MEG0232', 'MEG0322', 'MEG0332', "MEG0342", "MEG0422", "MEG0432", "MEG0442", "MEG0612", "MEG0632", "MEG0712",
+                                                                           "MEG0742", "MEG1012", "MEG1422", "MEG1512", "MEG1522", "MEG1532", "MEG1542", "MEG1622", "MEG1632", "MEG1642", "MEG1712",
+                                                                           "MEG1722", "MEG1732", "MEG1742", "MEG1812", "MEG1822", "MEG1832", "MEG1842", "MEG1912", "MEG1922", "MEG2012", "MEG2112",
+                                                                           "MEG2142", "MEG2232", "MEG2422", "MEG2512"], show=False)
+   
+#if all_channels:
+#    fig = temp.plot_sensors(title = 'beta (12-20 hz) at 1800 ms', show_names=['meg0142','meg0422','meg0432','meg0512','meg0542','meg0612','meg0642','meg0712','meg0732','meg0742','meg1522','meg1532','meg1542',
+#'meg1622', 'meg1632','meg1722', 'meg1812','meg1822','meg1832', 'meg1842', 'meg1912', 'meg2012', 'meg2022', 'meg2042', 'meg2142' ],  show=false)
 if central_cluster:
     fig = temp.plot_sensors(title = 'Central Cluster', show_names=['MEG0432', 'MEG0732', 'MEG0742', 'MEG1632', 'MEG1822', 'MEG1842'], show=False)
+if frontal_cluster:
+    fig = temp.plot_sensors(title = 'Frontal_cluster', show_names=  ['MEG0532', 'MEG0822', 'MEG1012', 'MEG0522', 'MEG0812' ], show=False)
+if central_cluster:
+    fig = temp.plot_sensors(title = 'Central Cluster', show_names=['MEG0432', 'MEG0732', 'MEG0742', 'MEG1632', 'MEG1822', 'MEG1842'], show=False)
+if fronto_central_cluster:
+    fig = temp.plot_sensors(title = 'Fronto-central Cluster', show_names=['MEG1042', 'MEG0722', 'MEG0712', 'MEG0612', 'MEG0622', 'MEG0642', 'MEG1012', 'MEG1022',  'MEG1032', 'MEG1112', 'MEG0632', 'MEG1142',
+                           'MEG0432',  'MEG0422'], show=False)
 if occipital_cluster:
     fig = temp.plot_sensors(title = 'Occipital Cluster', show_names = ['MEG1742', 'MEG1932', 'MEG2112', 'MEG2132'], show=False)
 
