@@ -22,10 +22,17 @@ if fr.split('_')[0] == 'beta':
     L_freq = 16
     H_freq = 31
     f_step = 2
-
-cond1 = 'norisk'
-cond2 = 'risk'
-planars = ['planar1', 'planar2', 'combined_planars']
+#TODO issues with poster for IN feedback
+poster = False
+cond1 = 'risk_fb_negative'
+cond2 = 'risk_fb_positive'
+parameter1 = cond1
+parameter2 = cond2
+parameter3 = 'negative'
+parameter4 = 'positive'
+#TODO in plot_topomaps_line_LMEM
+#planars = ['planar1', 'planar2', 'combined_planars']
+planars = ['comb_planar']
 
 path = f'/net/server/data/Archive/prob_learn/asmyasnikova83/low_{fr}_CORR/timecourses/'
 path_pdf = path + 'output' +  '/all_pdf/'
