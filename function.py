@@ -6,6 +6,7 @@ import pandas as pd
 from scipy import stats
 import copy
 import statsmodels.stats.multitest as mul
+import matplotlib.pyplot as plt
 
 ###############################################################################################
 ######## File with events was made by Nikita, you need this function for reading it ###########
@@ -86,7 +87,7 @@ def fixation_cross_events(trial_type, data_path_raw, raw_name, data_path_events,
 
 ###########################################################################
 ###### Функция для получения эпохированных tfr сингл трайлс ###############
-def make_fix_cross_signal(subj, r, cond, data_path, L_freq, H_freq, f_step, period_start, period_end, baseline):
+def make_fix_cross_signal(subj, r, fb, cond, data_path, L_freq, H_freq, f_step, period_start, period_end, baseline):
     #compute power for ti interval before fix cross    
     freqs = np.arange(L_freq, H_freq, f_step)
     # download marks of positive feedback
@@ -96,6 +97,12 @@ def make_fix_cross_signal(subj, r, cond, data_path, L_freq, H_freq, f_step, peri
     if cond == 'risk':      
         events_pos = np.loadtxt("/net/server/data/Archive/prob_learn/asmyasnikova83/theta_4_8_FIX_CROSS/events_fix_cross/{0}_run{1}_risk_fb_cur_positive_fix_cross.txt".format(subj, r), dtype='int') 
         events_neg = np.loadtxt("/net/server/data/Archive/prob_learn/asmyasnikova83/theta_4_8_FIX_CROSS/events_fix_cross/{0}_run{1}_risk_fb_cur_negative_fix_cross.txt".format(subj, r), dtype='int')
+    if cond == 'prerisk':      
+        events_pos = np.loadtxt("/net/server/data/Archive/prob_learn/asmyasnikova83/theta_4_8_FIX_CROSS/events_fix_cross/{0}_run{1}_prerisk_fb_cur_positive_fix_cross.txt".format(subj, r), dtype='int') 
+        events_neg = np.loadtxt("/net/server/data/Archive/prob_learn/asmyasnikova83/theta_4_8_FIX_CROSS/events_fix_cross/{0}_run{1}_prerisk_fb_cur_negative_fix_cross.txt".format(subj, r), dtype='int')
+    if cond == 'postrisk':      
+        events_pos = np.loadtxt("/net/server/data/Archive/prob_learn/asmyasnikova83/theta_4_8_FIX_CROSS/events_fix_cross/{0}_run{1}_postrisk_fb_cur_positive_fix_cross.txt".format(subj, r), dtype='int') 
+        events_neg = np.loadtxt("/net/server/data/Archive/prob_learn/asmyasnikova83/theta_4_8_FIX_CROSS/events_fix_cross/{0}_run{1}_postrisk_fb_cur_negative_fix_cross.txt".format(subj, r), dtype='int')
     # если только одна метка, т.е. одна эпоха, то выдается ошибка, поэтому приводим shape к виду (N,3)
     if events_pos.shape == (3,):
         events_pos = events_pos.reshape(1,3)
@@ -149,44 +156,71 @@ def make_fix_cross_signal_baseline(subj, r, cond, data_path, L_freq, H_freq, f_s
 	    
     #add up all values according to the frequency axis
     #b_line = freq_show_baseline.data.sum(axis=-2)
+    b_line = freq_show_baseline.data
     # Для бейзлайна меняем оси местами, на первом месте число каналов
     b_line = np.swapaxes(b_line, 0, 1)
+    #b_line = np.swapaxes(b_line, 3, 2) #for check
     # выстраиваем в ряд бейзлайныbeta_16_30_epo_comb_planar для каждого из эвентов, как будто они происходили один за другим
     a, b, c = b_line.shape
     b_line = b_line.reshape(a, b * c)
+    #a, b, c, d  = b_line.shape
+    #b_line = b_line.reshape(a, b * c, d)
+    #print(b_line.shape)
     ####### ДЛЯ ДАННЫХ ##############
     if cond == 'norisk':
         events = events_norisk
-    if cond == 'risk':
-        events_pos = np.loadtxt("/net/server/data/Archive/prob_learn/asmyasnikova83/theta_4_8_FIX_CROSS/events_fix_cross/{0}_run{1}_risk_fb_cur_positive_fix_cross.txt".format(subj, r), dtype='int') 
-        events_neg = np.loadtxt("/net/server/data/Archive/prob_learn/asmyasnikova83/theta_4_8_FIX_CROSS/events_fix_cross/{0}_run{1}_risk_fb_cur_negative_fix_cross.txt".format(subj, r), dtype='int')
-        # если только одна метка, т.е. одна эпоха, то выдается ошибка, поэтому приводим shape к виду (N,3)
-        if events_pos.shape == (3,):
-            events_pos = events_pos.reshape(1,3)
-        # если только одна метка, т.е. одна эпоха, то выдается ошибка, поэтому приводим shape к виду (N,3)
-        if events_neg.shape == (3,):
-            events_neg = events_neg.reshape(1,3) 
-        #объединяем негативные и позитивные фидбеки для получения общего бейзлайна по ним, и сортируем массив, чтобы времена меток шли в порядке возрастания    
-        events = np.vstack([events_pos, events_neg])
-        events = np.sort(events, axis = 0)
+    if cond != 'norisk':
+        if fb == 'positive':
+            events_pos = np.loadtxt("/net/server/data/Archive/prob_learn/asmyasnikova83/theta_4_8_FIX_CROSS/events_fix_cross/{0}_run{1}_{2}_fb_cur_positive_fix_cross.txt".format(subj, r, cond), dtype='int') 
+            # если только одна метка, т.е. одна эпоха, то выдается ошибка, поэтому приводим shape к виду (N,3)
+            if events_pos.shape == (3,):
+                events = events_pos.reshape(1,3)
+            print('fb', fb)
+            print('cond', cond)
+            exit()
+        if fb == 'negative':
+            events_neg = np.loadtxt("/net/server/data/Archive/prob_learn/asmyasnikova83/theta_4_8_FIX_CROSS/events_fix_cross/{0}_run{1}_{2}_fb_cur_negative_fix_cross.txt".format(subj, r, cond), dtype='int')
+            # если только одна метка, т.е. одна эпоха, то выдается ошибка, поэтому приводим shape к виду (N,3)
+            if events_neg.shape == (3,):
+                events = events_neg.reshape(1,3) 
+            print('fb', fb)
+            print('cond', cond)
+            exit(
+            exit())
+    #объединяем негативные и позитивные фидбеки для получения общего бейзлайна по ним, и сортируем массив, чтобы времена меток шли в порядке возрастания    
+    #events = np.vstack([events_pos, events_neg])
+    #events = np.sort(events, axis = 0)
     epochs = mne.Epochs(raw_data, events, event_id = None, tmin = -1.0, tmax = 1.0, 
 		                baseline = None, picks = picks, preload = True)
     epochs.resample(300) 
     freq_show = mne.time_frequency.tfr_multitaper(epochs, freqs = freqs, n_cycles = freqs//2, use_fft = False, 
                                 return_itc = False, average=False).crop(tmin=baseline[0], tmax=baseline[1], include_tmax=True)
+    print('FREQ SHOW data sh', freq_show.data.shape )
     temp = freq_show.data.sum(axis=2)
 	####### Для данных так же меняем оси местами
     data = np.swapaxes(temp, 0, 1)
+    #temp = freq_show.data
+    #data = np.swapaxes(temp, 0, 1)
+    #data = np.swapaxes(data, 3, 2) #for check
+    print('DATA SHAPE', data.shape)
     data = np.swapaxes(data, 1, 2)
+    print('DATA SHAPE2', data.shape)
 	# Усредняем бейзлайн по всем точкам, получаем одно число (которое будем вычитать из data для каждого канала)
-    b = b_line.mean(axis=-1)
+    b = b_line.mean(axis=-1) #no need in check where we do the summation after b_lining)
+    print('B_LINE SHAPe', b_line.shape)
+    #b = b_line.mean(axis=-2)# do if check sum
+    print('B_LINE SHAPe', b_line.shape)
+    #b_line_new_shape = b[:, np.newaxis, np.newaxis, :] #leave the tapers
     b_line_new_shape = b[:, np.newaxis, np.newaxis]
     #Вычитаем бейзлайн из данных и приводим оси к изначальному порядку
     data = 10*np.log10(data/b_line_new_shape) # 10* - для перевода в дБ
+    print('data shape after b_lining', data.shape)
     data = np.swapaxes(data, 1, 2)
     data = np.swapaxes(data, 0, 1)
     freq_show.data = data
-    freq_show.data = freq_show.data[:, :, np.newaxis, :]
+    #freq_show.data = freq_show.data[:, :, np.newaxis, :] #keep consistent with the previous workflow
+    #freq_show.data = freq_show.data.sum(axis = -1) #sum over freq tapers
+    print('data shapeafter', freq_show.data.shape)
     #33 is an arbitrary number. We have to set some frequency if we want to save the file
     freq_show.freqs = np.array([33])
     #getting rid of the frequency axis	
@@ -326,7 +360,15 @@ def make_beta_signal(subj, r, cond, fb, data_path, L_freq, H_freq, f_step, perio
     events = np.sort(events, axis = 0) 
     
     #events, which we need
-    events_response = np.loadtxt('/net/server/data/Archive/prob_learn/vtretyakova/Nikita_mio_cleaned/events_by_cond_mio_corrected/{0}_run{1}_{2}_fb_cur_{3}.txt'.format(subj, r, cond, fb), dtype='int')
+    fix_cross = False
+    if fix_cross:
+        print('in fix cross')
+        print('cond', cond)
+        print('/net/server/data/Archive/prob_learn/asmyasnikova83/theta_4_8_FIX_CROSS/events_fix_cross/{0}_run{1}_{2}_fb_cur_{3}_fix_cross.txt'.format(subj, r, cond, fb))
+        events_response = np.loadtxt('/net/server/data/Archive/prob_learn/asmyasnikova83/theta_4_8_FIX_CROSS/events_fix_cross/{0}_run{1}_{2}_fb_cur_{3}_fix_cross.txt'.format(subj, r, cond, fb), dtype='int') 
+        print('eve response',  events_response)
+    else:
+        events_response = np.loadtxt('/net/server/data/Archive/prob_learn/vtretyakova/Nikita_mio_cleaned/events_by_cond_mio_corrected/{0}_run{1}_{2}_fb_cur_{3}.txt'.format(subj, r, cond, fb), dtype='int')
     #vents_response = np.loadtxt('/net/server/data/Archive/prob_learn/asmyasnikova83/PREV_FB/PREV_FB_events/{0}_run{1}_{2}_fb_{3}.txt'.format(subj, r, cond, fb), dtype='int')
     # если только одна метка, т.е. одна эпоха, то выдается ошибка, поэтому приводи shape к виду (N,3)
     if events_response.shape == (3,):
@@ -337,15 +379,15 @@ def make_beta_signal(subj, r, cond, fb, data_path, L_freq, H_freq, f_step, perio
 
     raw_data = mne.io.Raw(raw_fname, preload=True)
         
-    
-    picks = mne.pick_types(raw_data.info, meg = True, eog = True)
+    picks = mne.pick_types(raw_data.info, meg = True, eog = True, emg = True)
 		    
 	   	    
     #epochs for baseline
     # baseline = None, чтобы не вычитался дефолтный бейзлайн
     epochs = mne.Epochs(raw_data, events, event_id = None, tmin = -1.0, tmax = 1.0, baseline = None, picks = picks, preload = True)
     epochs.resample(300)
-
+    print('Epochs', epochs)
+    #average False
     freq_show_baseline = mne.time_frequency.tfr_multitaper(epochs, freqs = freqs, n_cycles = freqs//2, use_fft = False, return_itc = False, average=False).crop(tmin=baseline[0], tmax=baseline[1], include_tmax=True) #frequency of baseline
 	    
         #add up all values according to the frequency axis
@@ -363,12 +405,12 @@ def make_beta_signal(subj, r, cond, fb, data_path, L_freq, H_freq, f_step, perio
 	####### ДЛЯ ДАННЫХ ##############
     # baseline = None, чтобы не вычитался дефолтный бейзлайн
     epochs = mne.Epochs(raw_data, events_response, event_id = None, tmin = period_start, 
-		                tmax = period_end, baseline = None, picks = picks, preload = True)
-		       
+		                tmax = period_end, baseline=None, picks = picks, preload = True)
+    print('epochs', epochs)		       
     epochs.resample(300) 
-
+    
     freq_show = mne.time_frequency.tfr_multitaper(epochs, freqs = freqs, n_cycles = freqs//2, use_fft = False, return_itc = False, average=False)
-
+    #average = False
     temp = freq_show.data.sum(axis=2)
     #print('DATA BEFORE BASELIINE', temp)
     #exit()	    
@@ -395,11 +437,13 @@ def make_beta_signal(subj, r, cond, fb, data_path, L_freq, H_freq, f_step, perio
     freq_show.freqs = np.array([33])
         
     #getting rid of the frequency axis	
-    freq_show.data = freq_show.data.mean(axis=2) 
+    freq_show.data = freq_show.data.mean(axis=2)
+    print('freq show shape', freq_show.data.shape)   
+    #epochs_tfr = mne.EpochsArray(freq_show.data, freq_show.info, tmin = period_start, events = events_response)
         
-    epochs_tfr = mne.EpochsArray(freq_show.data, freq_show.info, tmin = period_start, events = events_response)
-        
-    return (epochs_tfr)   
+    #return (epochs_tfr)
+    
+    return freq_show
 
 
 ##########################################################################################        
@@ -442,7 +486,6 @@ def combine_planar_Epoches_TFR(EpochsTFR, tmin):
     ep_TFR_planar2.pick_types(meg='planar2')
     #grad_RMS = np.power((np.power(evk_planar1.data, 2) + np.power(evk_planar2.data, 2)), 1/2)
     combine = ep_TFR_planar1.get_data() + ep_TFR_planar2.get_data()
-    print(combine)
     ep_TFR_combined = mne.EpochsArray(combine, ep_TFR_planar1.info, tmin = tmin, events = EpochsTFR.events)
 
     return ep_TFR_combined #возвращает эпохи, которые можно сохранить .fif в файл
@@ -619,25 +662,33 @@ def make_fix_cross_df(fix_cross_norisk, resp_norisk, fix_cross_bslne_norisk, res
 ############################ FUNCTION FOR TTEST ############################
 ######################### парный ttest #########################################
 
-def ttest_pair(data_path, subjects, parameter1, parameter2, planar, n): # n - количество временных отчетов
-	contr = np.zeros((len(subjects), 2, 102, n))
+def ttest_pair(data_path, subjects, fr, parameter1, parameter2, parameter3, parameter4, planar, n): # n - количество временных отчетов
+    contr = np.zeros((len(subjects), 2, 102, n))
 
-	for ind, subj in enumerate(subjects):
-		temp1 = mne.Evoked(op.join(data_path, '{0}_{1}_evoked_beta_16_30_resp_{2}.fif'.format(subj, parameter1, planar)))
-		temp2 = mne.Evoked(op.join(data_path, '{0}_{1}_evoked_beta_16_30_resp_{2}.fif'.format(subj, parameter2, planar)))
+    for ind, subj in enumerate(subjects):
+        if  parameter3 == 'negative':
+            #TODO
+            data_path = '/net/server/data/Archive/prob_learn/asmyasnikova83/low_beta_12_20_CORR/ave_comb_planar_feedback/'
+            temp1 = mne.Evoked(op.join(data_path, '{0}_risk_evoked_{1}_{2}_resp_{3}.fif'.format(subj,  parameter3, fr, planar)))
+            temp2 = mne.Evoked(op.join(data_path, '{0}_risk_evoked_{1}_{2}_resp_{3}.fif'.format(subj,  parameter4, fr, planar)))
+            #emp1 = mne.Evoked(op.join(data_path, '{0}_{1}_evoked_{2}_evoked_{3}_resp_{4}.fif'.format(subj, parameter1,  parameter3, fr, planar)))
+            #emp2 = mne.Evoked(op.join(data_path, '{0}_{1}_{2}_evoked_{3}_resp_{4}.fif'.format(subj, parameter1,  parameter4, fr, planar)))
+        if parameter3 == None:
+            #no feedbacl contrast inside trial type
+            temp1 = mne.Evoked(op.join(data_path, '{0}_{1}_evoked_{2}_resp_{3}.fif'.format(subj, parameter1, fr, planar)))
+            temp2 = mne.Evoked(op.join(data_path, '{0}_{1}_evoked_{2}_resp_{3}.fif'.format(subj, parameter2, fr, planar)))
+
+        contr[ind, 0, :, :] = temp1.data
+        contr[ind, 1, :, :] = temp2.data
 		
+        comp1 = contr[:, 0, :, :]
+        comp2 = contr[:, 1, :, :]
+        t_stat, p_val = stats.ttest_rel(comp2, comp1, axis=0)
 
-		contr[ind, 0, :, :] = temp1.data
-		contr[ind, 1, :, :] = temp2.data
-		
-	comp1 = contr[:, 0, :, :]
-	comp2 = contr[:, 1, :, :]
-	t_stat, p_val = stats.ttest_rel(comp2, comp1, axis=0)
-
-	comp1_mean = comp1.mean(axis=0)
-	comp2_mean = comp2.mean(axis=0)
+        comp1_mean = comp1.mean(axis=0)
+        comp2_mean = comp2.mean(axis=0)
 	
-	return t_stat, p_val, comp1_mean, comp2_mean
+        return t_stat, p_val, comp1_mean, comp2_mean
 
 #############################################################################
 ##################### непарный ttest #######################################	
@@ -658,7 +709,75 @@ def ttest_vs_zero(data_path, subjects, parameter1, planar, n): # n - колич�
 
 ##############################################################################################
 #################################### FDR CORRECTION ########################################
+def compute_p_val(subjects, cond1, cond2, time):
+    #do ttests for subjects and compute p-values P062_risk_evoked_positive_beta_12_20_resp_comb_planar.fif
+    print('TIME shape', time.shape[0])
+    contr = np.zeros((len(subjects), 2, 102, int(time.shape[0])))
+    for ind, subj in enumerate(subjects):
+        f_name_negative = f'/net/server/data/Archive/prob_learn/asmyasnikova83/low_beta_12_20_CORR/ave_comb_planar/{subj}_risk_evoked_beta_12_20_resp_comb_planar.fif'
+        #f_name_negative = f'/net/server/data/Archive/prob_learn/asmyasnikova83/low_beta_12_20_CORR/ave_comb_planar_feedback/{subj}_risk_evoked_negative_beta_12_20_resp_comb_planar.fif'
+        f_name_positive = f'/net/server/data/Archive/prob_learn/asmyasnikova83/low_beta_12_20_CORR/ave_comb_planar/{subj}_norisk_evoked_beta_12_20_resp_comb_planar.fif'
+        temp1 = mne.Evoked(f_name_positive, verbose = 'ERROR').pick_types("grad")
+        temp2 = mne.Evoked(f_name_negative, verbose = 'ERROR').pick_types("grad")
+        print(temp1.data.shape)
+        contr[ind, 0, :, :] = temp1.data
+        contr[ind, 1, :, :] = temp2.data
+        comp1 = contr[:, 0, :, :]
+        comp2 = contr[:, 1, :, :]
+        #p_val over subjects
+        t_stat, p_val = stats.ttest_rel(comp1, comp2, axis=0)    
+        #average the  data over subjects
+        comp1_mean = comp1.mean(axis=0)
+        comp2_mean = comp2.mean(axis=0)
+        print('COMP1', comp1.shape[2])
+    return comp1_mean, comp2_mean, p_val
+     
+def plot_stat_comparison(path, feedb, fr, comp1, comp2, p_mul_min, p_mul_max, p_val, p_fdr, time, title='demo_title', folder='comparison',
+                         comp1_label='comp1', comp2_label='comp2'):
+    assert(comp1.shape[0] == comp2.shape[0] == time.shape[0])
+    print('COMP1 shape', comp1.shape)
+    print('TIME shape', time.shape)
+    os.makedirs(path+'output/'+ f'{comp1_label}_vs_{comp2_label}/', exist_ok = True)
+    plt.figure()
+    plt.rcParams['axes.facecolor'] = 'none'
+    plt.xlim(time[0], time[-1])
+    plt.xticks(np.arange(-1.4,2.4,0.5))
+    plt.ylim(p_mul_min, p_mul_max)
+    plt.plot([0, 0.001], [-50, 50], color='k', linewidth=3, linestyle='--', zorder=1)
+    plt.plot([-50, 50], [0, 0.001], color='k', linewidth=3, linestyle='--', zorder=1)
+    plt.plot([1, 1.001], [-50, 50], color='k', linewidth=3, linestyle='--', zorder=1)
+    plt.plot(time, comp1, color='b', linewidth=3, label=comp1_label)
+    plt.plot(time, comp2, color='r', linewidth=3, label=comp2_label)
+    plt.fill_between(time, y1 = p_mul_min, y2 = p_mul_max, where = (p_fdr < 0.05), facecolor = 'm', alpha = 0.46, step = 'pre')
+    plt.fill_between(time, y1 = p_mul_min, y2 = p_mul_max, where = ((p_val < 0.05) * (p_fdr > 0.05)), facecolor = 'g', alpha = 0.46, step = 'pre')
+    # plt.fill_between(time, y1 = p_mul_max, y2 = p_mul_min, where = ((time>-0.350)*(time<-0.050)), facecolor = 'm', alpha = 0.46, step = 'pre')
+    plt.tick_params(labelsize = 20)
 
+    plt.legend(loc='upper right', fontsize = 20)
+    plt.title(title, fontsize = 40)
+    plt.savefig(path+'output/'+ f'{comp1_label}_vs_{comp2_label}/'+title + '.png', transparent=True)
+    plt.close()
+
+def to_str_ar(ch_l):
+    temp = []
+    for i in ch_l:
+        temp.append(i[0][0])
+    return temp
+
+def clear_html(filename):
+    with open(filename, 'w') as f:
+        f.write('')
+
+def add_str_html(filename, text):
+    with open(filename, 'a') as f:
+        f.write(text + '\n')
+
+def add_pic_time_course_html(filename, pic, pic_folder, pos_n, size):
+    x = size[0]
+    y = size[1]
+    print('in: add_pic_time_course_html', pic)
+    add_str_html(filename, '<IMG STYLE="position:absolute; TOP: %spx; LEFT: %spx; WIDTH: %spx; HEIGHT: %spx" SRC=" %s" />'%(round(y*(1-pos_n[1])*15,3), round(pos_n[0]*x*15,3), x, y, pic_folder+'/'+ pic))
+        
 ############ space FDR for each sensor independently ######################################
 def space_fdr(p_val_n):
     #print(p_val_n.shape)
@@ -753,9 +872,12 @@ n = 17 # количество говов в ряду
 # задаем временные точнки, в которых будем строить головы, затем мы присвоим их для донора (template)
 times_array = np.array([-0.8, -0.6, -0.4, -0.2, 0, 0.2, 0.4, 0.6, 0.8, 1.0, 1.2, 1.4, 1.6, 1.8, 2.0, 2.2, 2.4])
 
-def nocolor_topomaps_line (n, temp, times_array ):
+def nocolor_topomaps_line (n, temp, times_array, template ):
   
-    df = np.zeros((102, 17))
+    if template:
+        df = np.zeros((102, n))
+    else:
+        df = np.zeros((102, 17))
     temp.data = df
 
     # задаем временные точки в которые мы будем строить головы
