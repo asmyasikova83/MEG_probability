@@ -6,7 +6,7 @@ from config import cond1, cond2, planars, path, path_pdf
 config = pdfkit.configuration(wkhtmltopdf='/usr/bin/wkhtmltopdf')
 
 options = {
-    'page-size':'A3',
+    'page-size':'A1',
     'orientation':'Landscape',
     'zoom':1.0,
     'no-outline':None,
