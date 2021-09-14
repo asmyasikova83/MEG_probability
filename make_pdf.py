@@ -1,6 +1,6 @@
 import os
 import pdfkit
-from config import cond1, cond2, planars, path, path_pdf
+from config import parameter3, cond1, cond2, planars, path, path_pdf
 
 
 config = pdfkit.configuration(wkhtmltopdf='/usr/bin/wkhtmltopdf')
@@ -13,6 +13,10 @@ options = {
     'quiet':''
  }
 
+if parameter3 == 'negative':
+    name = cond1
+    cond1 = name + '_negative'
+    cond2 = name + '_positive'       
 for planar in planars:
     html_name =  path + 'output/' + 'pic_compose_%s_%s_vs_%s_%s.html' % (planar, f'{cond1}', f'{cond2}', 'all')
     pdf_file = html_name.split("/")[-1].split('.')[0]
