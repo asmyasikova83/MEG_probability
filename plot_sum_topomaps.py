@@ -27,7 +27,7 @@ temp = mne.Evoked("/net/server/data/Archive/prob_learn/vtretyakova/Nikita_mio_cl
 n = temp.data.shape[1] # количество временных отчетов для combaened planars - temp.data.shape = (102 x n), где 102 - количество планаров, а n - число временных отчетов
 ########################### norisk vs risk ##############################
 for p in planars:
-    risk_mean, norisk_mean, prerisk_mean = extract_and_av_cond_data(data_path, subjects, fr,  n)
+    risk_mean, norisk_mean, prerisk_mean, postrisk_mean, p1_val, p2_val, p3_val, p4_val  = extract_and_av_cond_data(data_path, subjects, fr,  n)
        #df = pd.read_csv('/net/server/data/Archive/prob_learn/asmyasnikova83/{0}/p_val_low_{1}/p_vals_fb_cur_Tukey_by_trial_type_MEG.csv'.format(feedb, fr)) #TODO: fb_cur remove
     
     ########################### p value #############################
@@ -35,8 +35,8 @@ for p in planars:
 
     # number of heads in line and the number of intervals into which we divided (see amount of tables with p_value in intervals)
     # считаем разницу бета и добавляем к шаблону (донору)
-    temp.data = risk_mean +  norisk_mean + prerisk_mean
-
+    temp.data = risk_mean +  norisk_mean + prerisk_mean + postrisk_mean
+    #temp.data = norisk_mean
     # время в которое будет строиться топомапы
     times = np.array([-0.8, -0.6, -0.4, -0.2, 0, 0.2, 0.4, 0.6, 0.8, 1.0, 1.2, 1.4, 1.6, 1.8, 2.0, 2.2, 2.4])
         # интервалы усредения
@@ -57,8 +57,13 @@ for p in planars:
     plotting_LMEM = mne.EvokedArray(data_for_plotting, info = temp.info)
     plotting_LMEM.times = times
 
-    title = ('prerisk + risk + norisk, %s'%p)
-    fig = plotting_LMEM.plot_topomap(times = time_to_plot, ch_type='planar1', scalings = 1, units = 'dB', show = False, vmin = -6.0, vmax = 6.0, time_unit='s', title = title, colorbar = True, extrapolate = "local")
+    #title = ('prerisk + risk + norisk, %s'%p)
+    title = ('prerisk + risk + norisk + postrisk, %s'%p)
+    pval_full_fdr =  full_fdr(p2_val)
+    binary_full = p_val_binary(pval_full_fdr, treshold = 0.05)
+    fig = plotting_LMEM.plot_topomap(times = time_to_plot, ch_type='planar1', scalings = 1, units = 'dB', show = False, vmin = -1.2, vmax = 1.2, time_unit='s', title = title, colorbar = True, extrapolate = "local", mask = np.bool_(binary_full), mask_params = dict(marker='o',            markerfacecolor='white', markeredgecolor='k', linewidth=0, markersize=7, markeredgewidth=2))
+
+    #fig = plotting_LMEM.plot_topomap(times = time_to_plot, ch_type='planar1', scalings = 1, units = 'dB', show = False, vmin = -6.0, vmax = 6.0, time_unit='s', title = title, colorbar = True, extrapolate = "local")
 
     os.makedirs(f'/net/server/data/Archive/prob_learn/asmyasnikova83/topomaps/' , exist_ok = True)
-    fig.savefig(f'/net/server/data/Archive/prob_learn/asmyasnikova83/topomaps/sum_cond.jpeg', dpi = 300)
+    fig.savefig(f'/net/server/data/Archive/prob_learn/asmyasnikova83/topomaps/sum_pic.jpeg', dpi = 900)

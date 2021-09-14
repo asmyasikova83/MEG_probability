@@ -662,7 +662,7 @@ def make_fix_cross_df(fix_cross_norisk, resp_norisk, fix_cross_bslne_norisk, res
 ############################ FUNCTION FOR TTEST ############################
 ######################### парный ttest #########################################
 def extract_and_av_cond_data(data_path, subjects, fr,  n): # n - количество временных отчетов
-    contr = np.zeros((len(subjects), 3, 102, n))
+    contr = np.zeros((len(subjects), 4, 102, n))
 
     for ind, subj in enumerate(subjects):
        # temp1 = mne.Evoked(op.join(data_path, '{0}_{1}_evoked_beta_16_30_resp_{2}.fif'.format(subj, parameter1, planar)))
@@ -671,28 +671,38 @@ def extract_and_av_cond_data(data_path, subjects, fr,  n): # n - количес�
         temp1 = mne.Evoked(op.join(data_path, '{0}_risk_evoked_{1}_trf_no_log_division_resp_comb_planar.fif'.format(subj, fr)))
         temp2 = mne.Evoked(op.join(data_path, '{0}_norisk_evoked_{1}_trf_no_log_division_resp_comb_planar.fif'.format(subj, fr)))
         temp3 = mne.Evoked(op.join(data_path, '{0}_prerisk_evoked_{1}_trf_no_log_division_resp_comb_planar.fif'.format(subj, fr)))
-        
+        temp4 = mne.Evoked(op.join(data_path, '{0}_postrisk_evoked_{1}_trf_no_log_division_resp_comb_planar.fif'.format(subj, fr)))
+        print('temp data' , temp1.data)
         contr[ind, 0, :, :] = temp1.data
         contr[ind, 1, :, :] = temp2.data
         contr[ind, 2, :, :] = temp3.data
+        contr[ind, 3, :, :] = temp4.data
 		
     comp1 = contr[:, 0, :, :]
     comp2 = contr[:, 1, :, :]
     comp3 = contr[:, 2, :, :]
+    comp4 = contr[:, 3, :, :]
 
+    t1_stat, p1_val = stats.ttest_1samp(comp1, 0, axis=0)
+    t2_stat, p2_val = stats.ttest_1samp(comp2, 0, axis=0)
+    t3_stat, p3_val = stats.ttest_1samp(comp3, 0, axis=0)
+    t4_stat, p4_val = stats.ttest_1samp(comp4, 0, axis=0)
+    print('comp2 ' , comp1)
+    print('PVAL ' , p1_val )
+    exit()
     comp1_mean = comp1.mean(axis=0)
     comp2_mean = comp2.mean(axis=0)
     comp3_mean = comp3.mean(axis=0)
-    return comp1_mean, comp2_mean, comp3_mean
+    comp4_mean = comp4.mean(axis=0)
+    return comp1_mean, comp2_mean, comp3_mean, comp4_mean, p1_val, p2_val, p3_val, p4_val
 
-def ttest_pair(data_path, subjects, parameter1, parameter2, planar, n): # n - количество временных отчетов
+def ttest_pair_bk(data_path, subjects, parameter1, parameter2, planar, n): # n - количество временных отчетов
     contr = np.zeros((len(subjects), 2, 102, n))
 
     for ind, subj in enumerate(subjects):
        # temp1 = mne.Evoked(op.join(data_path, '{0}_{1}_evoked_beta_16_30_resp_{2}.fif'.format(subj, parameter1, planar)))
        # temp2 = mne.Evoked(op.join(data_path, '{0}_{1}_evoked_beta_16_30_resp_{2}.fif'.format(subj, parameter2, planar)))
-        fr = 'beta_12_20'	
-        data_path = '/net/server/data/Archive/prob_learn/asmyasnikova83/low_beta_12_20_CORR//beta_12_20_ave_comb_planar/'
+        #data_path = '/net/server/data/Archive/prob_learn/asmyasnikova83/low_beta_12_20_CORR//beta_12_20_ave_comb_planar/'
         temp1 = mne.Evoked(op.join(data_path, '{0}_{1}_evoked_{2}_resp_{3}.fif'.format(subj, parameter1, fr, planar)))
         temp2 = mne.Evoked(op.join(data_path, '{0}_{1}_evoked_{2}_resp_{3}.fif'.format(subj, parameter2, fr, planar)))
         
@@ -707,35 +717,33 @@ def ttest_pair(data_path, subjects, parameter1, parameter2, planar, n): # n - к
     comp2_mean = comp2.mean(axis=0)
     return t_stat, p_val, comp1_mean, comp2_mean
 
-def ttest_pair_bk(data_path, subjects, fr, parameter1, parameter2, parameter3, parameter4, planar, n): # n - количество временных отчетов
+def ttest_pair(data_path, subjects, fr, parameter1, parameter2, parameter3, parameter4, planar, n): # n - количество временных отчетов
     contr = np.zeros((len(subjects), 2, 102, n))
 
     for ind, subj in enumerate(subjects):
         if  parameter3 == 'negative':
             #TODO
-            data_path = '/net/server/data/Archive/prob_learn/asmyasnikova83/low_beta_12_20_CORR/ave_comb_planar_feedback/'
-            temp1 = mne.Evoked(op.join(data_path, '{0}_risk_evoked_{1}_{2}_resp_{3}.fif'.format(subj,  parameter3, fr, planar)))
-            temp2 = mne.Evoked(op.join(data_path, '{0}_risk_evoked_{1}_{2}_resp_{3}.fif'.format(subj,  parameter4, fr, planar)))
+            data_path = f'/net/server/data/Archive/prob_learn/asmyasnikova83/beta/{fr}_fb_ave_comb_planar/'
+            temp1 = mne.Evoked(op.join(data_path, '{0}_risk_evoked_{1}_{2}_resp_{3}.fif'.format(subj, fr,  parameter3, planar)))
+            temp2 = mne.Evoked(op.join(data_path, '{0}_risk_evoked_{1}_{2}_resp_{3}.fif'.format(subj, fr, parameter4, planar)))
             #emp1 = mne.Evoked(op.join(data_path, '{0}_{1}_evoked_{2}_evoked_{3}_resp_{4}.fif'.format(subj, parameter1,  parameter3, fr, planar)))
             #emp2 = mne.Evoked(op.join(data_path, '{0}_{1}_{2}_evoked_{3}_resp_{4}.fif'.format(subj, parameter1,  parameter4, fr, planar)))
         if parameter3 == None:
             print(parameter1)
-            data_path = '/net/server/data/Archive/prob_learn/asmyasnikova83/low_beta_12_20_CORR//beta_12_20_ave_comb_planar/'
+            print('data path', data_path)
             #data_path = '/net/server/data/Archive/prob_learn/asmyasnikova83/CUR_FB/low_beta_12_20_ave_comb_planar/'
             #no feedbacl contrast inside trial type
-            temp1 = mne.Evoked(op.join(data_path, '{0}_{1}_evoked_{2}_resp_{3}.fif'.format(subj, parameter1, fr, planar)))
-            temp2 = mne.Evoked(op.join(data_path, '{0}_{1}_evoked_{2}_resp_{3}.fif'.format(subj, parameter2, fr, planar)))
+            print('parameter1', parameter1)
+            print('parameter2', parameter2)
+            temp1 = mne.Evoked(op.join(data_path, '{0}_{1}_evoked_{2}_trf_no_log_division_resp_{3}.fif'.format(subj, parameter1, fr, planar)))
+            temp2 = mne.Evoked(op.join(data_path, '{0}_{1}_evoked_{2}_trf_no_log_division_resp_{3}.fif'.format(subj, parameter2, fr, planar)))
 
         contr[ind, 0, :, :] = temp1.data
         contr[ind, 1, :, :] = temp2.data
 		
     comp1 = contr[:, 0, :, :]
     comp2 = contr[:, 1, :, :]
-    print('COMP1', comp1)
-    print('COMP2', comp2)
     t_stat, p_val = stats.ttest_rel(comp2, comp1, axis=0)
-    print('p_val', p_val)
-    exit()
 
     comp1_mean = comp1.mean(axis=0)
     comp2_mean = comp2.mean(axis=0)
@@ -769,24 +777,27 @@ def ttest_vs_zero(data_path, subjects, fr, parameter1, parameter3, planar, n): #
 
 ##############################################################################################
 #################################### FDR CORRECTION ########################################
-def compute_p_val(subjects, cond1, cond2, time):
+def compute_p_val(subjects, cond1, cond2, parameter3, parameter4, fr, time):
     #do ttests for subjects and compute p-values P062_risk_evoked_positive_beta_12_20_resp_comb_planar.fif
     print('TIME shape', time.shape[0])
     contr = np.zeros((len(subjects), 2, 102, int(time.shape[0])))
     print('cond1', cond1)
     print('cond2', cond2)
     for ind, subj in enumerate(subjects):
-        cond1_fname = f'/net/server/data/Archive/prob_learn/vtretyakova/Nikita_mio_cleaned/beta_16_30_trf_no_log_division/beta_16_30_trf_no_log_division_second_bl_comb_planar/{subj}_{cond1}_evoked_beta_16_30_trf_no_log_division_resp_comb_planar.fif'
-        cond2_fname = f'/net/server/data/Archive/prob_learn/vtretyakova/Nikita_mio_cleaned/beta_16_30_trf_no_log_division/beta_16_30_trf_no_log_division_second_bl_comb_planar/{subj}_{cond2}_evoked_beta_16_30_trf_no_log_division_resp_comb_planar.fif'
+        if parameter3 == None:
+            cond1_fname = f'/net/server/data/Archive/prob_learn/vtretyakova/Nikita_mio_cleaned/beta_16_30_trf_no_log_division/beta_16_30_trf_no_log_division_second_bl_comb_planar/{subj}_{cond1}_evoked_beta_16_30_trf_no_log_division_resp_comb_planar.fif'
+            cond2_fname = f'/net/server/data/Archive/prob_learn/vtretyakova/Nikita_mio_cleaned/beta_16_30_trf_no_log_division/beta_16_30_trf_no_log_division_second_bl_comb_planar/{subj}_{cond2}_evoked_beta_16_30_trf_no_log_division_resp_comb_planar.fif'
+        if parameter3 == 'negative':
+            cond1_fname = f'/net/server/data/Archive/prob_learn/asmyasnikova83/beta/beta_16_30_fb_ave_comb_planar/{subj}_{cond1}_evoked_{fr}_{parameter3}_resp_comb_planar.fif'
+            cond2_fname = f'/net/server/data/Archive/prob_learn/asmyasnikova83/beta/beta_16_30_fb_ave_comb_planar/{subj}_{cond1}_evoked_{fr}_{parameter4}_resp_comb_planar.fif'
+            print(cond1_fname)
+            print(cond2_fname)
         temp1 = mne.Evoked(cond1_fname, verbose = 'ERROR').pick_types("grad")
         temp2 = mne.Evoked(cond2_fname, verbose = 'ERROR').pick_types("grad")
         contr[ind, 0, :, :] = temp1.data
         contr[ind, 1, :, :] = temp2.data
     comp1 = contr[:, 0, :, :]
     comp2 = contr[:, 1, :, :]
-    print('comp1', comp1)
-    print('comp1 shape', comp1.shape)
-    print('comp2', comp2)
     #p_val over subjects
     t_stat, p_val = stats.ttest_rel(comp1, comp2, axis=0)
 
@@ -796,7 +807,7 @@ def compute_p_val(subjects, cond1, cond2, time):
     comp2_mean = comp2.mean(axis=0)
     return comp1_mean, comp2_mean, p_val
      
-def plot_stat_comparison(path, feedb, fr, comp1, comp2, p_mul_min, p_mul_max, p_val, p_fdr, time, title='demo_title', folder='comparison',
+def plot_stat_comparison(path, feedb, fr, comp1, comp2, p_mul_min, p_mul_max, p_val, p_fdr, parameter3, time, title='demo_title', folder='comparison',
                          comp1_label='comp1', comp2_label='comp2'):
     assert(comp1.shape[0] == comp2.shape[0] == time.shape[0])
     print('COMP1 shape', comp1.shape)
@@ -810,8 +821,12 @@ def plot_stat_comparison(path, feedb, fr, comp1, comp2, p_mul_min, p_mul_max, p_
     plt.plot([0, 0.001], [-50, 50], color='k', linewidth=3, linestyle='--', zorder=1)
     plt.plot([-50, 50], [0, 0.001], color='k', linewidth=3, linestyle='--', zorder=1)
     plt.plot([1, 1.001], [-50, 50], color='k', linewidth=3, linestyle='--', zorder=1)
-    plt.plot(time, comp1, color='b', linewidth=3, label=comp1_label)
-    plt.plot(time, comp2, color='r', linewidth=3, label=comp2_label)
+    if parameter3 == None:
+        plt.plot(time, comp1, color='b', linewidth=3, label=comp1_label)
+        plt.plot(time, comp2, color='r', linewidth=3, label=comp2_label)
+    if parameter3 == 'negative':
+        plt.plot(time, comp1, color='r', linewidth=3, label=comp1_label)
+        plt.plot(time, comp2, color='b', linewidth=3, label=comp2_label)
     plt.fill_between(time, y1 = p_mul_min, y2 = p_mul_max, where = (p_fdr < 0.05), facecolor = 'm', alpha = 0.46, step = 'pre')
     plt.fill_between(time, y1 = p_mul_min, y2 = p_mul_max, where = ((p_val < 0.05) * (p_fdr > 0.05)), facecolor = 'g', alpha = 0.46, step = 'pre')
     # plt.fill_between(time, y1 = p_mul_max, y2 = p_mul_min, where = ((time>-0.350)*(time<-0.050)), facecolor = 'm', alpha = 0.46, step = 'pre')
