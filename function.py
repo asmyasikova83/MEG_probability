@@ -33,7 +33,7 @@ def read_events(filename):
 ######## Функция для поиска меток фиксационного креста (по ним ищется baseline)######
 
 def fixation_cross_events(trial_type, data_path_raw, raw_name, data_path_events, name_events, subj, r, fb):
-    
+    print(trial_type)
     # для чтения файлов с events используйте либо np.loadtxt либо read_events либо read_events_N
     no_risk = np.loadtxt(op.join(data_path_events, name_events.format(subj, r, trial_type, fb)), dtype='int')
     #no_risk = read_events(op.join(data_path_events, name_events.format(subj, r)))
@@ -81,28 +81,26 @@ def fixation_cross_events(trial_type, data_path_raw, raw_name, data_path_events,
             event_fixation_cross_norisk.append(i)
                     
     event_fixation_cross_norisk = np.array(event_fixation_cross_norisk)
-    print(event_fixation_cross_norisk)
      
     return(event_fixation_cross_norisk)
 
 ###########################################################################
 ###### Функция для получения эпохированных tfr сингл трайлс ###############
 def make_fix_cross_signal(subj, r, fb, cond, data_path, L_freq, H_freq, f_step, period_start, period_end, baseline):
-    #compute power for ti interval before fix cross    
     freqs = np.arange(L_freq, H_freq, f_step)
     # download marks of positive feedback
     if cond == 'norisk':      
         events_pos = np.loadtxt("/net/server/data/Archive/prob_learn/vtretyakova/Nikita_mio_cleaned/fix_cross_mio_corr/{0}_run{1}_norisk_fb_cur_positive_fix_cross.txt".format(subj, r), dtype='int') 
         events_neg = np.loadtxt("/net/server/data/Archive/prob_learn/vtretyakova/Nikita_mio_cleaned/fix_cross_mio_corr/{0}_run{1}_norisk_fb_cur_negative_fix_cross.txt".format(subj, r), dtype='int')
     if cond == 'risk':      
-        events_pos = np.loadtxt("/net/server/data/Archive/prob_learn/asmyasnikova83/theta_4_8_FIX_CROSS/events_fix_cross/{0}_run{1}_risk_fb_cur_positive_fix_cross.txt".format(subj, r), dtype='int') 
-        events_neg = np.loadtxt("/net/server/data/Archive/prob_learn/asmyasnikova83/theta_4_8_FIX_CROSS/events_fix_cross/{0}_run{1}_risk_fb_cur_negative_fix_cross.txt".format(subj, r), dtype='int')
+        events_pos = np.loadtxt("/net/server/data/Archive/prob_learn/asmyasnikova83/probability/events_fix_cross/{0}_run{1}_risk_fb_cur_positive_fix_cross.txt".format(subj, r), dtype='int') 
+        events_neg = np.loadtxt("/net/server/data/Archive/prob_learn/asmyasnikova83/probability/events_fix_cross/{0}_run{1}_risk_fb_cur_negative_fix_cross.txt".format(subj, r), dtype='int')
     if cond == 'prerisk':      
-        events_pos = np.loadtxt("/net/server/data/Archive/prob_learn/asmyasnikova83/theta_4_8_FIX_CROSS/events_fix_cross/{0}_run{1}_prerisk_fb_cur_positive_fix_cross.txt".format(subj, r), dtype='int') 
-        events_neg = np.loadtxt("/net/server/data/Archive/prob_learn/asmyasnikova83/theta_4_8_FIX_CROSS/events_fix_cross/{0}_run{1}_prerisk_fb_cur_negative_fix_cross.txt".format(subj, r), dtype='int')
+        events_pos = np.loadtxt("/net/server/data/Archive/prob_learn/asmyasnikova83/probability/events_fix_cross/{0}_run{1}_prerisk_fb_cur_positive_fix_cross.txt".format(subj, r), dtype='int') 
+        events_neg = np.loadtxt("/net/server/data/Archive/prob_learn/asmyasnikova83/probability/events_fix_cross/{0}_run{1}_prerisk_fb_cur_negative_fix_cross.txt".format(subj, r), dtype='int')
     if cond == 'postrisk':      
-        events_pos = np.loadtxt("/net/server/data/Archive/prob_learn/asmyasnikova83/theta_4_8_FIX_CROSS/events_fix_cross/{0}_run{1}_postrisk_fb_cur_positive_fix_cross.txt".format(subj, r), dtype='int') 
-        events_neg = np.loadtxt("/net/server/data/Archive/prob_learn/asmyasnikova83/theta_4_8_FIX_CROSS/events_fix_cross/{0}_run{1}_postrisk_fb_cur_negative_fix_cross.txt".format(subj, r), dtype='int')
+        events_pos = np.loadtxt("/net/server/data/Archive/prob_learn/asmyasnikova83/probability/events_fix_cross/{0}_run{1}_postrisk_fb_cur_positive_fix_cross.txt".format(subj, r), dtype='int') 
+        events_neg = np.loadtxt("/net/server/data/Archive/prob_learn/asmyasnikova83/probability/events_fix_cross/{0}_run{1}_postrisk_fb_cur_negative_fix_cross.txt".format(subj, r), dtype='int')
     # если только одна метка, т.е. одна эпоха, то выдается ошибка, поэтому приводим shape к виду (N,3)
     if events_pos.shape == (3,):
         events_pos = events_pos.reshape(1,3)
@@ -672,7 +670,10 @@ def extract_and_av_cond_data(data_path, subjects, fr,  n): # n - количес�
         temp2 = mne.Evoked(op.join(data_path, '{0}_norisk_evoked_{1}_trf_no_log_division_resp_comb_planar.fif'.format(subj, fr)))
         temp3 = mne.Evoked(op.join(data_path, '{0}_prerisk_evoked_{1}_trf_no_log_division_resp_comb_planar.fif'.format(subj, fr)))
         temp4 = mne.Evoked(op.join(data_path, '{0}_postrisk_evoked_{1}_trf_no_log_division_resp_comb_planar.fif'.format(subj, fr)))
-        print('temp data' , temp1.data)
+       # temp1 = mne.Evoked(op.join(data_path, '{0}_risk_evoked_beta_16_30_trf_early_log_resp_comb_planar.fif'.format(subj, fr)))
+       # temp2 = mne.Evoked(op.join(data_path, '{0}_norisk_evoked_beta_16_30_trf_early_log_resp_comb_planar.fif'.format(subj, fr)))
+       # temp3 = mne.Evoked(op.join(data_path, '{0}_prerisk_evoked_beta_16_30_trf_early_log_resp_comb_planar.fif'.format(subj, fr)))
+       # temp4 = mne.Evoked(op.join(data_path, '{0}_postrisk_evoked_beta_16_30_trf_early_log_resp_comb_planar.fif'.format(subj, fr)))
         contr[ind, 0, :, :] = temp1.data
         contr[ind, 1, :, :] = temp2.data
         contr[ind, 2, :, :] = temp3.data
@@ -687,9 +688,6 @@ def extract_and_av_cond_data(data_path, subjects, fr,  n): # n - количес�
     t2_stat, p2_val = stats.ttest_1samp(comp2, 0, axis=0)
     t3_stat, p3_val = stats.ttest_1samp(comp3, 0, axis=0)
     t4_stat, p4_val = stats.ttest_1samp(comp4, 0, axis=0)
-    print('comp2 ' , comp1)
-    print('PVAL ' , p1_val )
-    exit()
     comp1_mean = comp1.mean(axis=0)
     comp2_mean = comp2.mean(axis=0)
     comp3_mean = comp3.mean(axis=0)
@@ -723,11 +721,11 @@ def ttest_pair(data_path, subjects, fr, parameter1, parameter2, parameter3, para
     for ind, subj in enumerate(subjects):
         if  parameter3 == 'negative':
             #TODO
-            data_path = f'/net/server/data/Archive/prob_learn/asmyasnikova83/beta/{fr}_fb_ave_comb_planar/'
-            temp1 = mne.Evoked(op.join(data_path, '{0}_risk_evoked_{1}_{2}_resp_{3}.fif'.format(subj, fr,  parameter3, planar)))
-            temp2 = mne.Evoked(op.join(data_path, '{0}_risk_evoked_{1}_{2}_resp_{3}.fif'.format(subj, fr, parameter4, planar)))
-            #emp1 = mne.Evoked(op.join(data_path, '{0}_{1}_evoked_{2}_evoked_{3}_resp_{4}.fif'.format(subj, parameter1,  parameter3, fr, planar)))
-            #emp2 = mne.Evoked(op.join(data_path, '{0}_{1}_{2}_evoked_{3}_resp_{4}.fif'.format(subj, parameter1,  parameter4, fr, planar)))
+            print('parameter1', parameter1)
+            data_path = '/net/server/data/Archive/prob_learn/asmyasnikova83/beta/beta_16_30_fb_ave_comb_planar/'
+            #P062_risk_evoked_beta_16_30_positive_resp_comb_planar.fif
+            temp1 = mne.Evoked(op.join(data_path, '{0}_{1}_evoked_{2}_{3}_resp_{4}.fif'.format(subj, parameter1, fr,  parameter3, planar)))
+            temp2 = mne.Evoked(op.join(data_path, '{0}_{1}_evoked_{2}_{3}_resp_{4}.fif'.format(subj, parameter1, fr, parameter4, planar)))
         if parameter3 == None:
             print(parameter1)
             print('data path', data_path)
@@ -737,6 +735,8 @@ def ttest_pair(data_path, subjects, fr, parameter1, parameter2, parameter3, para
             print('parameter2', parameter2)
             temp1 = mne.Evoked(op.join(data_path, '{0}_{1}_evoked_{2}_trf_no_log_division_resp_{3}.fif'.format(subj, parameter1, fr, planar)))
             temp2 = mne.Evoked(op.join(data_path, '{0}_{1}_evoked_{2}_trf_no_log_division_resp_{3}.fif'.format(subj, parameter2, fr, planar)))
+            #temp1 = mne.Evoked(op.join(data_path, '{0}_{1}_evoked_{2}_beta_16_30_trf_early_log_resp_{3}.fif'.format(subj, parameter1, fr, planar)))
+            #temp2 = mne.Evoked(op.join(data_path, '{0}_{1}_evoked_{2}_beta_16_30_trf_early_log_resp_{3}.fif'.format(subj, parameter2, fr, planar)))
 
         contr[ind, 0, :, :] = temp1.data
         contr[ind, 1, :, :] = temp2.data
@@ -752,21 +752,11 @@ def ttest_pair(data_path, subjects, fr, parameter1, parameter2, parameter3, para
 
 #############################################################################
 ##################### непарный ttest #######################################	
-def ttest_vs_zero(data_path, subjects, fr, parameter1, parameter3, planar, n): # n - количество временных отчетов
+def ttest_vs_zero(data_path, subjects, fr, parameter1, planar, n): # n - количество временных отчетов
     contr = np.zeros((len(subjects), 1, 102, n))
-    print('parameter1', parameter1) 
-    print('parameter3', parameter3)
     for ind, subj in enumerate(subjects):
-        if  parameter3 == 'negative':
-            data_path = '/net/server/data/Archive/prob_learn/asmyasnikova83/low_beta_12_20_CORR/ave_comb_planar_feedback/'
-            temp1 = mne.Evoked(op.join(data_path, '{0}_norisk_evoked_{1}_{2}_resp_{3}.fif'.format(subj,  parameter3, fr, planar)))
-        if parameter3 == None:     
-            data_path = '/net/server/data/Archive/prob_learn/asmyasnikova83/low_beta_12_20_CORR//beta_12_20_ave_comb_planar/'
-            temp1 = mne.Evoked(op.join(data_path, '{0}_{1}_evoked_{2}_resp_{3}.fif'.format(subj,  parameter1, fr, planar)))
-           # temp1 = mne.Evoked(op.join(data_path, '{0}_{1}_evoked_{2}_resp.fif'.format(subj,  parameter1, fr)))
-		
+        temp1 = mne.Evoked(op.join(data_path, '{0}_{1}_evoked_beta_16_30_trf_no_log_division_resp_{2}.fif'.format(subj,  parameter1, planar)))
         contr[ind, 0, :, :] = temp1.data[:, :]
-				
     comp1 = contr[:, 0, :, :]
     print('comp1', comp1)
     t_stat, p_val = stats.ttest_1samp(comp1, 0, axis=0)
@@ -777,16 +767,15 @@ def ttest_vs_zero(data_path, subjects, fr, parameter1, parameter3, planar, n): #
 
 ##############################################################################################
 #################################### FDR CORRECTION ########################################
-def compute_p_val(subjects, cond1, cond2, parameter3, parameter4, fr, time):
+def compute_p_val(data_path, subjects, cond1, cond2, parameter3, parameter4, fr, time):
     #do ttests for subjects and compute p-values P062_risk_evoked_positive_beta_12_20_resp_comb_planar.fif
     print('TIME shape', time.shape[0])
     contr = np.zeros((len(subjects), 2, 102, int(time.shape[0])))
-    print('cond1', cond1)
-    print('cond2', cond2)
     for ind, subj in enumerate(subjects):
         if parameter3 == None:
-            cond1_fname = f'/net/server/data/Archive/prob_learn/vtretyakova/Nikita_mio_cleaned/beta_16_30_trf_no_log_division/beta_16_30_trf_no_log_division_second_bl_comb_planar/{subj}_{cond1}_evoked_beta_16_30_trf_no_log_division_resp_comb_planar.fif'
-            cond2_fname = f'/net/server/data/Archive/prob_learn/vtretyakova/Nikita_mio_cleaned/beta_16_30_trf_no_log_division/beta_16_30_trf_no_log_division_second_bl_comb_planar/{subj}_{cond2}_evoked_beta_16_30_trf_no_log_division_resp_comb_planar.fif'
+            #cond1_fname = f'/net/server/data/Archive/prob_learn/vtretyakova/Nikita_mio_cleaned/beta_16_30_trf_no_log_division/beta_16_30_trf_no_log_division_second_bl_comb_planar/{subj}_{cond1}_evoked_beta_16_30_trf_no_log_division_resp_comb_planar.fif'
+            cond1_fname = data_path + f'{subj}_{cond1}_evoked_beta_16_30_trf_no_log_division_resp_comb_planar.fif'
+            cond2_fname = data_path +  f'/{subj}_{cond2}_evoked_beta_16_30_trf_no_log_division_resp_comb_planar.fif'
         if parameter3 == 'negative':
             cond1_fname = f'/net/server/data/Archive/prob_learn/asmyasnikova83/beta/beta_16_30_fb_ave_comb_planar/{subj}_{cond1}_evoked_{fr}_{parameter3}_resp_comb_planar.fif'
             cond2_fname = f'/net/server/data/Archive/prob_learn/asmyasnikova83/beta/beta_16_30_fb_ave_comb_planar/{subj}_{cond1}_evoked_{fr}_{parameter4}_resp_comb_planar.fif'
@@ -801,7 +790,6 @@ def compute_p_val(subjects, cond1, cond2, parameter3, parameter4, fr, time):
     #p_val over subjects
     t_stat, p_val = stats.ttest_rel(comp1, comp2, axis=0)
 
-    print('tstat shape', t_stat.shape)    
     #average the  data over subjects
     comp1_mean = comp1.mean(axis=0)
     comp2_mean = comp2.mean(axis=0)
@@ -820,10 +808,10 @@ def plot_stat_comparison(path, feedb, fr, comp1, comp2, p_mul_min, p_mul_max, p_
     plt.ylim(p_mul_min, p_mul_max)
     plt.plot([0, 0.001], [-50, 50], color='k', linewidth=3, linestyle='--', zorder=1)
     plt.plot([-50, 50], [0, 0.001], color='k', linewidth=3, linestyle='--', zorder=1)
-    plt.plot([1, 1.001], [-50, 50], color='k', linewidth=3, linestyle='--', zorder=1)
+    #plt.plot([1, 1.001], [-50, 50], color='k', linewidth=3, linestyle='--', zorder=1)
     if parameter3 == None:
-        plt.plot(time, comp1, color='b', linewidth=3, label=comp1_label)
-        plt.plot(time, comp2, color='r', linewidth=3, label=comp2_label)
+        plt.plot(time, comp1, color='r', linewidth=3, label=comp1_label)
+        plt.plot(time, comp2, color='b', linewidth=3, label=comp2_label)
     if parameter3 == 'negative':
         plt.plot(time, comp1, color='r', linewidth=3, label=comp1_label)
         plt.plot(time, comp2, color='b', linewidth=3, label=comp2_label)
