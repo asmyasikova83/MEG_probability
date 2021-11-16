@@ -19,19 +19,25 @@ options = {
     'quiet':''
 }
 
+freq_range = 'beta_16_30_trf_no_log_division'
+
 print('cond1', cond1)
 print('cond2', cond2)
 # загружаем комбайн планары, усредненные внутри каждого испытуемого
 #data_path = '/net/server/data/Archive/prob_learn/asmyasnikova83/{0}/{1}_ave_comb_planar'.format(feedb, fr)
 if parameter3  == None:
-    data_path = '/net/server/data/Archive/prob_learn/vtretyakova/Nikita_mio_cleaned/beta_16_30_trf_no_log_division/beta_16_30_trf_no_log_division_second_bl_comb_planar'
+    #data_path = '/net/server/data/Archive/prob_learn/vtretyakova/Nikita_mio_cleaned/beta_16_30_trf_no_log_division/beta_16_30_trf_no_log_division_second_bl_comb_planar'
+    # if pretrial
+    #data_path = '/net/server/data/Archive/prob_learn/asmyasnikova83/probability/beta_16_30_trf_early_log/beta_16_30_trf_early_log_ave_comb_planar/'
+    data_path = '/net/server/data/Archive/prob_learn/asmyasnikova83/probability/stim/{0}/{0}_ave_comb_planar/'.format(freq_range)
 if parameter3  == 'negative':
     data_path = '/net/server/data/Archive/prob_learn/asmyasnikova83/beta/beta_16_30_fb_ave_comb_planar'
   
 ###################### при построении topomaps берем только тех испытуемых, у которых есть все категории условий ####################
 ### extract subjects with all conditions:fb+trial_type ####
 #out_path='/net/server/data/Archive/prob_learn/asmyasnikova83/{0}/{1}_epo/'.format(feedb, fr) #path to epochs
-out_path = f'/net/server/data/Archive/prob_learn/vtretyakova/Nikita_mio_cleaned/beta_16_30_trf_no_log_division/beta_16_30_trf_no_log_division_second_bl_epo/'#TODO
+#out_path = f'/net/server/data/Archive/prob_learn/vtretyakova/Nikita_mio_cleaned/beta_16_30_trf_no_log_division/beta_16_30_trf_no_log_division_second_bl_epo/'#TODO
+out_path = '/net/server/data/Archive/prob_learn/asmyasnikova83/probability/stim/{0}/{0}_second_bl_epo'.format(freq_range)
 f = os.listdir(out_path) # Делает список всех файлов, которые храняться в папке
 
 
@@ -50,7 +56,8 @@ os.makedirs(path + 'output/', exist_ok=True)
 
 for p in planars:
     #extract data and ttest
-    comp1_mean, comp2_mean, p_val = compute_p_val(subjects, cond1, cond2, parameter3, parameter4, fr, time)
+    print(data_path)
+    comp1_mean, comp2_mean, p_val = compute_p_val(data_path, subjects, cond1, cond2, parameter3, parameter4, fr, time)
     #scaling
     if comp1_mean.max()>comp2_mean.max():
         p_mul_max=comp1_mean.max()+ abs(comp1_mean.max()/10)
@@ -87,11 +94,11 @@ for p in planars:
         add_str_html(html_name, '<!DOCTYPE html>')
         add_str_html(html_name, '<html>')
         add_str_html(html_name, '<body>')
-        add_str_html(html_name, '<p style="font-size:32px;"><b> %s, averaged %s, %d subjects <span style="color:green;"> p_val < 0.05 </span> <span style="color:Magenta;">p_fdr < 0.05 </span> </b></p>' % (planar, fr, len(subjects)))
+        add_str_html(html_name, '<p style="font-size:32px;"><b>AVERAGED AT STIMULUS %s, averaged %s, %d subjects <span style="color:green;"> p_val < 0.05 </span> <span style="color:Magenta;">p_fdr < 0.05 </span> </b></p>' % (planar, fr, len(subjects)))
         if parameter3 == None:
-            add_str_html(html_name, '<p style="font-size:32px;"><b> <span style="color: blue;"> %s </span> vs <span style="color: red;"> %s </span> </b></p>' % (cond1, cond2))
+            add_str_html(html_name, '<p style="font-size:32px;"><b> <span style="color: red;"> %s </span> vs <span style="color: blue;"> %s </span> </b></p>' % (cond1, cond2))
         if parameter3 == 'negative':
-            add_str_html(html_name, '<p style="font-size:32px;"><b> <span style="color: blue;"> %s </span> vs <span style="color: red;"> %s </span> </b></p>' % (cond2, cond1))
+            add_str_html(html_name, '<p style="font-size:32px;"><b> <span style="color: red;"> %s </span> vs <span style="color: blue;"> %s </span> </b></p>' % (cond1, cond2))
         #placing the channel time courses and save the html
         ind = 2
         if ind == 2:
