@@ -1,6 +1,8 @@
+import os
+
 feedb = 'CUR_FB' #PREV_FB
 #fr = 'low_beta_12_20'
-fr = 'beta_12_20'
+fr = 'beta_16_30'
 
 if fr.split('_')[0] == 'delta':
     L_freq = 2
@@ -23,18 +25,27 @@ if fr.split('_')[0] == 'beta':
     H_freq = 31
     f_step = 2
 #TODO issues with poster for IN feedback
-poster = False
-cond1 = 'risk_fb_negative'
-cond2 = 'risk_fb_positive'
+poster = True
+response = True
+cond1 = 'postrisk'
+cond2 = 'norisk'
+#cond1 = 'risk'
+#cond2 = 'norisk'
 parameter1 = cond1
 parameter2 = cond2
-parameter3 = 'negative'
-parameter4 = 'positive'
+#parameter3 = 'negative'
+#parameter4 = 'positive'
+parameter3 = None
+parameter4 = None
 #TODO in plot_topomaps_line_LMEM
 #planars = ['planar1', 'planar2', 'combined_planars']
 planars = ['comb_planar']
 
-path = f'/net/server/data/Archive/prob_learn/asmyasnikova83/low_{fr}_CORR/timecourses/'
+#path = f'/net/server/data/Archive/prob_learn/asmyasnikova83/bline_nolog_div_{fr}/timecourses/'
+#path = f'/net/server/data/Archive/prob_learn/asmyasnikova83/beta/timecourses_early_log/'
+freq_range = 'beta_16_30_trf_no_log_division'
+path = '/net/server/data/Archive/prob_learn/asmyasnikova83/probability/stim/{0}/timecourses_aver/'.format(freq_range)
+os.makedirs(path, exist_ok = True)
 path_pdf = path + 'output' +  '/all_pdf/'
 
 subjects = []
@@ -70,10 +81,10 @@ if feedb == 'CUR_FB':
                  '_risk_fb_cur_negative',
                  '_postrisk_fb_cur_negative'
                  ]
-
+    #rm P023  45  57
     subjects = ['P001', 'P002', 'P004','P006', 'P007', 'P008', 'P011', 'P014', 'P015', 'P016', 'P017', 'P019',
                 'P021', 'P022', 'P023', 'P024', 'P025',  'P028', 'P029', 'P030', 'P031', 'P032',
-                'P033', 'P034', 'P035', 'P039', 'P040', 'P042', 'P043', 'P044', 'P045', 'P047',
+                'P033', 'P034', 'P035', 'P039', 'P040', 'P042', 'P043', 'P044',  'P045', 'P047',
                 'P048', 'P052', 'P053', 'P055', 'P057', 'P059', 'P060', 'P062']
 if feedb == 'PREV_FB':
     cond_list = ['_norisk_fb_prev_positive',

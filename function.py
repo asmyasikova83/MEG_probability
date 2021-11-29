@@ -722,7 +722,7 @@ def ttest_pair(data_path, subjects, fr, parameter1, parameter2, parameter3, para
         if  parameter3 == 'negative':
             #TODO
             print('parameter1', parameter1)
-            data_path = '/net/server/data/Archive/prob_learn/asmyasnikova83/beta/beta_16_30_fb_ave_comb_planar/'
+            #data_path = '/net/server/data/Archive/prob_learn/asmyasnikova83/beta/beta_16_30_fb_ave_comb_planar/'
             #P062_risk_evoked_beta_16_30_positive_resp_comb_planar.fif
             temp1 = mne.Evoked(op.join(data_path, '{0}_{1}_evoked_{2}_{3}_resp_{4}.fif'.format(subj, parameter1, fr,  parameter3, planar)))
             temp2 = mne.Evoked(op.join(data_path, '{0}_{1}_evoked_{2}_{3}_resp_{4}.fif'.format(subj, parameter1, fr, parameter4, planar)))
@@ -767,18 +767,23 @@ def ttest_vs_zero(data_path, subjects, fr, parameter1, planar, n): # n - кол�
 
 ##############################################################################################
 #################################### FDR CORRECTION ########################################
-def compute_p_val(data_path, subjects, cond1, cond2, parameter3, parameter4, fr, time):
+def compute_p_val(response,data_path, subjects, cond1, cond2, parameter3, parameter4, fr, time):
     #do ttests for subjects and compute p-values P062_risk_evoked_positive_beta_12_20_resp_comb_planar.fif
-    print('TIME shape', time.shape[0])
     contr = np.zeros((len(subjects), 2, 102, int(time.shape[0])))
     for ind, subj in enumerate(subjects):
         if parameter3 == None:
-            #cond1_fname = f'/net/server/data/Archive/prob_learn/vtretyakova/Nikita_mio_cleaned/beta_16_30_trf_no_log_division/beta_16_30_trf_no_log_division_second_bl_comb_planar/{subj}_{cond1}_evoked_beta_16_30_trf_no_log_division_resp_comb_planar.fif'
-            cond1_fname = data_path + f'{subj}_{cond1}_evoked_beta_16_30_trf_no_log_division_resp_comb_planar.fif'
-            cond2_fname = data_path +  f'/{subj}_{cond2}_evoked_beta_16_30_trf_no_log_division_resp_comb_planar.fif'
+            if response:
+            #response TODO
+                cond1_fname = data_path + f'{subj}_{cond1}_evoked_beta_16_30_trf_no_log_division_resp_comb_planar.fif'
+                cond2_fname = data_path + f'{subj}_{cond2}_evoked_beta_16_30_trf_no_log_division_resp_comb_planar.fif'
+            else:
+            #stimulus
+                cond1_fname = data_path + f'{subj}_{cond1}_evoked_beta_16_30_trf_no_log_division_resp_comb_planar.fif'
+                cond2_fname = data_path +  f'/{subj}_{cond2}_evoked_beta_16_30_trf_no_log_division_resp_comb_planar.fif'
+            print(cond1_fname)
         if parameter3 == 'negative':
-            cond1_fname = f'/net/server/data/Archive/prob_learn/asmyasnikova83/beta/beta_16_30_fb_ave_comb_planar/{subj}_{cond1}_evoked_{fr}_{parameter3}_resp_comb_planar.fif'
-            cond2_fname = f'/net/server/data/Archive/prob_learn/asmyasnikova83/beta/beta_16_30_fb_ave_comb_planar/{subj}_{cond1}_evoked_{fr}_{parameter4}_resp_comb_planar.fif'
+            cond1_fname = data_path + f'{subj}_{cond1}_evoked_{fr}_{parameter3}_resp_comb_planar.fif'
+            cond2_fname = data_path + f'{subj}_{cond1}_evoked_{fr}_{parameter4}_resp_comb_planar.fif'
             print(cond1_fname)
             print(cond2_fname)
         temp1 = mne.Evoked(cond1_fname, verbose = 'ERROR').pick_types("grad")
@@ -798,9 +803,8 @@ def compute_p_val(data_path, subjects, cond1, cond2, parameter3, parameter4, fr,
 def plot_stat_comparison(path, feedb, fr, comp1, comp2, p_mul_min, p_mul_max, p_val, p_fdr, parameter3, time, title='demo_title', folder='comparison',
                          comp1_label='comp1', comp2_label='comp2'):
     assert(comp1.shape[0] == comp2.shape[0] == time.shape[0])
-    print('COMP1 shape', comp1.shape)
-    print('TIME shape', time.shape)
     os.makedirs(path+'output/'+ f'{comp1_label}_vs_{comp2_label}/', exist_ok = True)
+    print(path)
     plt.figure()
     plt.rcParams['axes.facecolor'] = 'none'
     plt.xlim(time[0], time[-1])
@@ -808,7 +812,8 @@ def plot_stat_comparison(path, feedb, fr, comp1, comp2, p_mul_min, p_mul_max, p_
     plt.ylim(p_mul_min, p_mul_max)
     plt.plot([0, 0.001], [-50, 50], color='k', linewidth=3, linestyle='--', zorder=1)
     plt.plot([-50, 50], [0, 0.001], color='k', linewidth=3, linestyle='--', zorder=1)
-    #plt.plot([1, 1.001], [-50, 50], color='k', linewidth=3, linestyle='--', zorder=1)
+    #FB axis
+    plt.plot([1, 1.001], [-50, 50], color='k', linewidth=3, linestyle='--', zorder=1)
     if parameter3 == None:
         plt.plot(time, comp1, color='r', linewidth=3, label=comp1_label)
         plt.plot(time, comp2, color='b', linewidth=3, label=comp2_label)
@@ -820,7 +825,7 @@ def plot_stat_comparison(path, feedb, fr, comp1, comp2, p_mul_min, p_mul_max, p_
     # plt.fill_between(time, y1 = p_mul_max, y2 = p_mul_min, where = ((time>-0.350)*(time<-0.050)), facecolor = 'm', alpha = 0.46, step = 'pre')
     plt.tick_params(labelsize = 20)
 
-    plt.legend(loc='upper right', fontsize = 20)
+    #plt.legend(loc='lower left', fontsize = 25)
     plt.title(title, fontsize = 40)
     plt.savefig(path+'output/'+ f'{comp1_label}_vs_{comp2_label}/'+title + '.png', transparent=True)
     plt.close()
