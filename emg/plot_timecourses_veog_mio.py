@@ -24,10 +24,11 @@ for i in range(0,63):
 #subjects.remove('P049')
 #subjects.remove('P056')
 
-# donor
+# donor with known timing
 donor = mne.Evoked('/net/server/data/Archive/prob_learn/asmyasnikova83/mio/contrasts/beta_16_30_trf_early_log/beta_16_30_trf_early_log_ave_into_subj/P001_norisk_evoked_beta_16_30_trf_early_log_resp.fif')
 time_len = len(donor.times) # количество временных отчетов
 print(time_len)
+#these subjects have all conditions
 subjects = ['P001', 'P002', 'P004','P006', 'P007', 'P008', 'P011', 'P014', 'P015', 'P016', 'P017', 'P019',
 'P021', 'P022', 'P023', 'P024', 'P025',  'P028', 'P029', 'P030', 'P031', 'P032',
 'P033', 'P034', 'P035', 'P039', 'P040', 'P042', 'P043', 'P044',  'P045', 'P047',
@@ -35,7 +36,8 @@ subjects = ['P001', 'P002', 'P004','P006', 'P007', 'P008', 'P011', 'P014', 'P015
 
 freq_range = 'beta_16_30_trf_early_log'
 trial_type = ['postrisk', 'postrisk']
-fb = True
+# for separate fb
+fb = False
 
 contr = np.zeros((len(subjects), 2, 1, time_len))
 for ind, subj in enumerate(subjects):
@@ -52,19 +54,17 @@ for ind, subj in enumerate(subjects):
     contr[ind, 1, :, :] = evoked2.data
 comp1 = contr[:, 0, :, :]
 comp2 = contr[:, 1, :, :]
+
+#################### stat #####################################
 t_stat, p_val = stats.ttest_rel(comp2, comp1, axis=0)
 comp1_mean = comp1.mean(axis=0).mean(axis=0)
 comp2_mean = comp2.mean(axis=0).mean(axis=0)
-print(comp1_mean.shape)
-
-##################### timecourse ###############################
 rej,p_fdr = mne.stats.fdr_correction(p_val, alpha=0.05, method='indep')
 p_fdr = p_fdr.mean(axis=0)
 p_val = p_val.mean(axis=0)
+
+##################### timecourse ###############################
 time = donor.times
-print(time.shape)
-print(time[0])
-print(p_fdr.shape)
 if fb: 
     cond1 = trial_type[0] + '_neg'
     cond2 = trial_type[1] + '_pos'

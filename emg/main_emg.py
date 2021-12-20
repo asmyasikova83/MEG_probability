@@ -51,7 +51,7 @@ os.makedirs('/net/server/data/Archive/prob_learn/asmyasnikova83/mio/contrasts/{0
 lines = ["freq_range = {}".format(freq_range), description, "L_freq = {}".format(L_freq), "H_freq = {}, в питоне последнее число не учитывается, т.е. по факту частота (H_freq -1) ".format(H_freq), "f_step = {}".format(f_step), "time_bandwidth = {}".format(time_bandwidth), "period_start = {}".format(period_start), "period_end = {}".format(period_end), "baseline = {}".format(baseline)]
 
 
-with open("/net/server/data/Archive/prob_learn/vtretyakova/Nikita_mio_cleaned/{0}/{0}_epo/config.txt".format(freq_range), "w") as file:
+with open("net/server/data/Archive/prob_learn/asmyasnikova83/mio/contrasts/{0}/{0}_epo/config.txt".format(freq_range), "w") as file:
     for  line in lines:
         file.write(line + '\n')
 
