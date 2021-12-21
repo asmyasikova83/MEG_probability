@@ -436,7 +436,7 @@ def make_beta_signal_mio(subj, r, cond, fb, data_path, L_freq, H_freq, f_step, p
    
     #freq_show = mne.time_frequency.tfr_multitaper(epochs, freqs = freqs, n_cycles = n_cycles, time_bandwidth = time_bandwidth, use_fft = False, return_itc = False, average=False)
     #cut off the edges to remove artifacts   
-    freq_show =  mne.time_frequency.tfr_multitaper(epochs, freqs=freqs, n_cycles=n_cycles, use_fft=True, return_itc = False,average = False, picks= ['EMG064']).crop(tmin = -1.000, tmax = 2.000)
+    freq_show =  mne.time_frequency.tfr_multitaper(epochs, freqs=freqs, n_cycles=n_cycles, use_fft=True, return_itc = False,average = False, picks= ['EMG064']).crop(tmin = -1.000, tmax = 2.100)
     print(freq_show)
     print(freq_show.data.shape)
     temp = freq_show.data.sum(axis=2)
