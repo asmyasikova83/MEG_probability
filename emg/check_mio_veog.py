@@ -2,14 +2,14 @@ import mne
 import os
 import os.path as op
 import numpy as np
-from function import make_beta_signal
+from function_emg import make_beta_signal
 from mne.time_frequency import tfr_morlet
 from matplotlib import pyplot as plt
 
 from mne.time_frequency import tfr_morlet, psd_multitaper
 
-emg = True
-veog = False
+emg = False
+veog = True
 
 period_start = -1.750
 period_end = 2.750
@@ -60,10 +60,10 @@ for subj in subjects:
                     picks = mne.pick_types(raw_data.info, meg = True, eog = True, emg = True, misc = True)
                     epochs = mne.Epochs(raw_data, events_response, event_id = None, tmin = period_start, tmax = period_end, baseline=None, picks = picks, preload = True).resample(300)
                     if emg:
-                        freq_show =  mne.time_frequency.tfr_multitaper(epochs, freqs=freqs, n_cycles=n_cycles, use_fft=True, return_itc = False,average = True, picks= ['EMG064'], decim=3, n_jobs=1).crop(tmin = period_start+0.750, tmax = period_end-0.750)
+                        freq_show =  mne.time_frequency.tfr_multitaper(epochs, freqs=freqs, n_cycles=n_cycles, use_fft=False, return_itc = False,average = True, picks= ['EMG064'], decim=3, n_jobs=1).crop(tmin = period_start+0.750, tmax = period_end-0.750)
                         print(freq_show)
                     if veog:
-                        freq_show, itc = tfr_morlet(epochs, freqs=freqs, n_cycles=n_cycles, use_fft=True, return_itc=True,  picks= ['MISC301'], decim=3, n_jobs=1)
+                        freq_show =  mne.time_frequency.tfr_multitaper(epochs, freqs=freqs, n_cycles=n_cycles, use_fft=False, return_itc = False,average = True, picks= ['MISC301'], decim=3, n_jobs=1).crop(tmin = period_start+0.750, tmax = period_end-0.750)
                     power.append(freq_show)
                 except (OSError):
                     print('This file not exist')
@@ -73,7 +73,7 @@ print(freq_spec_data)
 #freq_spec_data = power
 if veog:
     title = 'VEOG TFR'
-    PM = freq_spec_data.plot(picks=['MISC301'], baseline=(-0.5, 0), mode = 'logratio', title=title) #EMG064 neck muscles
+    PM = freq_spec_data.plot(picks=['MISC301'], baseline=(-0.5, 0), mode = 'logratio', title=title) 
     os.chdir('/net/server/data/Archive/prob_learn/asmyasnikova83/veog/')
 if emg:
     title = 'Miogramm from EMG064'
