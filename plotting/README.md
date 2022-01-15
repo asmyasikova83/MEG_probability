@@ -12,4 +12,8 @@ plot_topomaps_aver_pair.py topomaps averaged over time intervals
 topo_ch_MEG_template.py - MEG template with a set of channels
 topo_ch_template.py -  template with green significant channels
 
+#TODO remove scripts: plot_topomaps_ttest_pair.py  plot_timecourse_aver.py
+
+
+
 
