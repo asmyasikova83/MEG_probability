@@ -47,7 +47,7 @@ for ind, subj in enumerate(subjects):
         evoked1= mne.Evoked('/net/server/data/Archive/prob_learn/asmyasnikova83/mio/contrasts/{0}/{0}_ave_into_subj/{1}_{2}_evoked_{0}_resp.fif'.format(freq_range, subj, trial_type[0]))
     print(evoked1)
     if fb:
-        evoked2= mne.Evoked('/net/server/data/Archive/prob_learn/asmyasnikova83/mio/contrasts/{0}/{0}_ave_into_subj_separ_fb/{1}_{2}_{0}_resp_fb_cur_positive.fif'.format(freq_range, subj, trial_type[1]))
+        evoked2= mne.Evoked('/net/server/data/Archive/prob_learn/asmyasnikova83/mio/contrasts/{0}/{0}_ave_into_subj_separ_fb/{1}_{2}_{0}_resp_fb_cur_positive.fif'.format(freq_range, subj, trial_type[0]))
     else:
         evoked2= mne.Evoked('/net/server/data/Archive/prob_learn/asmyasnikova83/mio/contrasts/{0}/{0}_ave_into_subj/{1}_{2}_evoked_{0}_resp.fif'.format(freq_range, subj, trial_type[1]))
     contr[ind, 0, :, :] = evoked1.data
