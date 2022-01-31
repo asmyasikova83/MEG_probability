@@ -26,3 +26,7 @@ Beta_fix_cross_feedback.R
 
 Beta__by_subjects.R - LMEM, but plotting for subjects separately
 Beta__by_subjects_in_one.R
+
+compare_usual_and_marginal_means_corr.R - draws emmeans and usual means of the choice types
+Beta_feedback_cur.R - draws choice types spit by current feedback sign , settings for the plots adjusted
+Beta_feedback_prev.R - draws choice types spit by prev feedback sign , settings for the plots adjusted
