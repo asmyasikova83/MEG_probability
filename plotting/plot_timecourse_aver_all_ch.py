@@ -8,7 +8,7 @@ import pandas as pd
 from scipy import stats
 import copy
 import statsmodels.stats.multitest as mul
-from function import space_fdr, full_fdr, p_val_binary, compute_p_val, plot_stat_comparison, to_str_ar, clear_html, add_str_html,  add_pic_time_course_html
+from function import resample_before_stat, space_fdr, full_fdr, p_val_binary, compute_p_val, plot_stat_comparison, to_str_ar, clear_html, add_str_html,  add_pic_time_course_html
 from config import *
 
 options = {
@@ -19,7 +19,10 @@ options = {
     'quiet':''
 }
 
-freq_range = 'beta_16_30_trf_no_log_division_stim'
+if response:
+    freq_range = 'beta_16_30_trf_no_log_division'
+else:
+    freq_range = 'beta_16_30_trf_no_log_division_stim'
 #freq_range = = 'beta_16_30_trf_early_log'
 
 print('cond1', cond1)
@@ -69,19 +72,24 @@ chan_labels = to_str_ar(io.loadmat(f'/net/server/data/Archive/prob_learn/asmyasn
 os.makedirs(path + 'output/', exist_ok=True)
 
 
-#set time boundaries and step if there is no donor
+#set time boundaries and step if there is no dono
+#resample
+print(donor)
 if donor:
     time = temp.times
     t = len(time)
+    t_min = time[0]
+    t_max = time[-1]
+    #Fit to donor
+    time, idx_array_extended = resample_before_stat(t_min, t_max)
 else:
-    t = 1051
-    time = np.arange(-1.4, 2.1+ 1.0/300, 1.0/300)
-
-print(t)
+    time, idx_array_extended = resample_before_stat(t_min, t_max)
+print(time)
+print(idx_array_extended)
 for p in planars:
     #extract data and ttest
     print(data_path)
-    comp1_mean, comp2_mean, p_val = compute_p_val(response, data_path, subjects, cond1, cond2, parameter3, parameter4, fr, time)
+    comp1_mean, comp2_mean, p_val = compute_p_val(response, data_path, subjects, cond1, cond2, parameter3, parameter4, fr, time,  t, idx_array_extended)
     #scaling
     if comp1_mean.max()>comp2_mean.max():
         p_mul_max=comp1_mean.max()+ abs(comp1_mean.max()/10)
@@ -92,33 +100,26 @@ for p in planars:
         p_mul_min=comp1_mean.min() - abs(comp1_mean.min()/10)
     else:
         p_mul_min=comp2_mean.min() - abs(comp2_mean.min()/10)
-
-    if cond1 == 'prerisk':
-        cond1_name = 'pre-LP'
-    if cond1 == 'risk':
-        cond1_name = 'LP'
-    if cond1 == 'postrisk':
-        cond1_name = 'post-HP'
-    if cond1 == 'norisk':
-        cond1_name = 'HP'
-    cond2_name = 'HP'
-    if parameter3 == 'negative':
-        name = cond1_name
-        cond1_name = name + '_negative'
-        cond2_name = name + '_positive'
     print('cond1_name', cond1_name)
     print('cond2_name', cond2_name)
     #average time course for   3 channels decision making , ch1 = 15, ch2 = 68, ch3 = 69
     #posterror ch1 = 8, ch2 = 16, ch3 = 19
     #feedback 26 60 69
     #set your times
-    p_val_aver = np.zeros(t)
-    comp1_mean_aver = np.zeros(t)
-    comp2_mean_aver = np.zeros(t)
+    le = len(idx_array_extended)
+    p_val_aver = np.zeros(le)
+    comp1_mean_aver = np.zeros(le)
+    comp2_mean_aver = np.zeros(le)
     print(p_val_aver.shape)
     counter = 0
     #significant channels in the intersect of decision and fb whole
-    cluster = [5, 6, 9, 10, 12, 13, 15, 22, 26, 37, 59, 60, 64, 66, 69, 70, 71, 74, 75, 76, 77, 78, 84, 86]
+    #cluster = [5, 6, 9, 10, 12, 13, 15, 22, 26, 37, 59, 60, 64, 66, 69, 70, 71, 74, 75, 76, 77, 78, 84, 86]
+    #significant sensors in anticipation of feedback
+    #cluster = [8, 9, 11, 16, 17, 18, 19]
+    #3 most significant in anticipation
+    cluster = [8, 16, 19]
+    #plot_timecourse_aver_all_ch.py5 best sensors in the intersect of decision and fb whole
+    #cluster = [15, 26, 59, 66, 69]
     #average p_vals and timecourses over all 102 channels 
     for i in range(0, len(cluster)):
         j = cluster[i]
@@ -133,7 +134,6 @@ for p in planars:
     print(comp1_mean_aver_fin)
     print(p_val_aver_fin)
     rej,p_fdr = mne.stats.fdr_correction(p_val_aver_fin, alpha=0.05, method='indep')
-    print(temp.times)
     if response:
         title = f'{cond1_name} vs {cond2_name}RES'
     else:

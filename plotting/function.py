@@ -9,27 +9,26 @@ import statsmodels.stats.multitest as mul
 import matplotlib.pyplot as plt
 
 ###############################################################################################
-######## File with events was made by Nikita, you need this function for reading it ###########
+######## Resample before doing stat #############
+def  resample_before_stat(t_min, t_max):
+    original_time = np.arange(-1.4, 2.1+1.0/300, 1.0/300)
+    correct_time = np.arange(-1.4, 2.1, 1.0/40)
+    ticks_array = np.zeros((len(correct_time)))
+    idx_array = np.zeros((len(correct_time)))
+    for i in range(len(correct_time)):
+        min_val = 1.0
+        for g in range(len(original_time)):
+            if abs(original_time[g] - correct_time[i]) < min_val:
+                min_val = abs(original_time[g] - correct_time[i])
+                min_ind = g
+        ticks_array[i] = original_time[min_ind]
+        idx_array[i] = min_ind
+    #add last element_array
+    ticks_array_extended = np.append(ticks_array, 2.1)
+    idx_array_extended = np.append(idx_array, 1050.0)
+    time = ticks_array_extended
+    return time, idx_array_extended
 
-def read_events_N(events_file):    
-    with open(events_file, "r") as f:
-        events_raw = np.fromstring(f.read().replace("[", "").replace("]", "").replace("'", ""), dtype=int, sep=" ")
-        h = events_raw.shape[0]
-        events_raw = events_raw.reshape((h//3, 3))
-        return events_raw
-
-###############################################################################################
-######## File with events was made by Lera, you need this function for reading it #############
-
-def read_events(filename):
-    with open(filename, "r") as f:
-        b = f.read().replace("[","").replace("]", "").replace("'", "")
-        b = b.split("\n")
-        b = list(map(str.split, b))
-        b = list(map(lambda x: list(map(int, x)), b))
-        return np.array(b[:])
-
-#####################################################################################
 ######## Функция для поиска меток фиксационного креста (по ним ищется baseline)######
 
 def fixation_cross_events(trial_type, data_path_raw, raw_name, data_path_events, name_events, subj, r, fb):
@@ -764,10 +763,14 @@ def ttest_vs_zero(data_path, subjects, fr, parameter1, planar, n): # n - кол�
 
 ##############################################################################################
 #################################### FDR CORRECTION ########################################
-def compute_p_val(response,data_path, subjects, cond1, cond2, parameter3, parameter4, fr, time):
+def compute_p_val(response,data_path, subjects, cond1, cond2, parameter3, parameter4, fr, time, t, idx_array):
     #do ttests for subjects and compute p-values P062_risk_evoked_positive_beta_12_20_resp_comb_planar.fif
-    contr = np.zeros((len(subjects), 2, 102, int(time.shape[0])))
-
+    #t = 1051
+    #contr = np.zeros((len(subjects), 2, 102, int(time.shape[0])))
+    contr = np.zeros((len(subjects), 2, 102, t))
+    print(time[0])
+    print(round(time[-1], 1))
+    print(time.shape)
     for ind, subj in enumerate(subjects):
         if parameter3 == None:
             if response:
@@ -789,12 +792,20 @@ def compute_p_val(response,data_path, subjects, cond1, cond2, parameter3, parame
             print(cond1_fname)
             print(cond2_fname)
         #here we remove the edges with artifacts
-        temp1 = mne.Evoked(cond1_fname, verbose = 'ERROR').pick_types("grad").crop(tmin = time[0], tmax = time[-1])
-        temp2 = mne.Evoked(cond2_fname, verbose = 'ERROR').pick_types("grad").crop(tmin = time[0], tmax = time[-1])
+        temp1 = mne.Evoked(cond1_fname, verbose = 'ERROR').pick_types("grad").crop(tmin = time[0], tmax = round(time[-1], 1))
+        temp2 = mne.Evoked(cond2_fname, verbose = 'ERROR').pick_types("grad").crop(tmin = time[0], tmax = round(time[-1], 1))
         contr[ind, 0, :, :] = temp1.data
         contr[ind, 1, :, :] = temp2.data
-    comp1 = contr[:, 0, :, :]
-    comp2 = contr[:, 1, :, :]
+    comp1_before = contr[:, 0, :, :]
+    comp2_before = contr[:, 1, :, :]
+    comp1 = np.zeros((len(subjects), 102, len(time)))
+    comp2 = np.zeros((len(subjects), 102, len(time)))
+    #use idx array to resample the data for further stat
+    for i, idx in enumerate(idx_array):
+        i = int(i)
+        idx = int(idx)
+        comp1[:, :, i] = comp1_before[:, :, idx]
+        comp2[:, :, i] = comp2_before[:, :, idx]
     #p_val over subjects
     t_stat, p_val = stats.ttest_rel(comp1, comp2, axis=0)
 
@@ -816,10 +827,10 @@ def plot_stat_comparison(response, path, comp1, comp2, p_mul_min, p_mul_max, p_v
     plt.ylim(p_mul_min, p_mul_max)
     #add axis for stimulus-locked data
     plt.plot([0, 0.001], [-50, 50], color='k', linewidth=3, linestyle='--', zorder=1)
+    plt.plot([-50, 50], [0, 0.001], color='k', linewidth=3, linestyle='--', zorder=1)
     if response:
         #add FB axis if response-locked data
-        plt.plot([-50, 50], [0, 0.001], color='k', linewidth=3, linestyle='--', zorder=1)
-    plt.plot([1, 1.001], [-50, 50], color='k', linewidth=3, linestyle='--', zorder=1)
+        plt.plot([1, 1.001], [-50, 50], color='k', linewidth=3, linestyle='--', zorder=1)
     if parameter3 == None:
         plt.plot(time, comp1, color='r', linewidth=3, label=comp1_label)
         plt.plot(time, comp2, color='b', linewidth=3, label=comp2_label)
