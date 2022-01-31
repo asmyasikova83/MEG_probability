@@ -70,9 +70,6 @@ subjects = ['P001', 'P002', 'P004','P006', 'P007', 'P008', 'P011', 'P014', 'P015
                 'P021', 'P022', 'P023', 'P024', 'P025',  'P028', 'P029', 'P030','P031',  'P032',
                 'P033', 'P034', 'P035', 'P039', 'P040', 'P042', 'P043', 'P044','P045',  'P047',
                 'P048', 'P052', 'P053', 'P055', 'P057', 'P059', 'P060', 'P062']
-    #rm P023  31 35 45 57 for risk TODO stim
-    #rm 35 for risk_pos TODD sti?
-    #rm 57 for prerisk sti
 #time points 
 t = 1051
 #tmin for corrected time course (cut off the beginning and the end of the timecourse)
