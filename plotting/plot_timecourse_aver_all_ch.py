@@ -117,9 +117,11 @@ for p in planars:
     #significant sensors in anticipation of feedback
     #cluster = [8, 9, 11, 16, 17, 18, 19]
     #3 most significant in anticipation
-    cluster = [8, 16, 19]
+    #cluster = [8, 16, 19]
     #plot_timecourse_aver_all_ch.py5 best sensors in the intersect of decision and fb whole
     #cluster = [15, 26, 59, 66, 69]
+    #pos-response (100-500 ms) cluster
+    #cluster = [70, 71, 73, 74, 75, 77, 86, 89]
     #average p_vals and timecourses over all 102 channels 
     for i in range(0, len(cluster)):
         j = cluster[i]
@@ -139,6 +141,8 @@ for p in planars:
     else:
         title = f'{cond1_name} vs {cond2_name}STI'
     print('title', title)
+    p_mul_min = -5.5
+    p_mul_max = 5.5
     plot_stat_comparison(response, path, comp1_mean_aver_fin, comp2_mean_aver_fin, p_mul_min, p_mul_max, p_val_aver_fin, p_fdr, parameter3, time, title = title,
             folder = "%s_vs_%s" % (cond1_name, cond2_name), comp1_label = cond1_name, comp2_label = cond2_name)
     print('\tAll printed')
