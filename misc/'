@@ -1,0 +1,30 @@
+import numpy as np
+from config import *
+
+path = '/net/server/data/Archive/prob_learn/vtretyakova/Nikita_mio_cleaned/events_by_cond_mio_corrected/'
+
+rounds = [1, 2, 3, 4, 5, 6]
+trial_type = ['norisk', 'prerisk', 'risk', 'postrisk']
+
+feedback = ['positive', 'negative']
+
+for cond in trial_type:
+    print('counter', counter)
+    counter = 0
+    for subj in subjects:
+        for r in rounds:
+            for fb in feedback:
+                try:
+                    print(subj)
+                    print(cond)
+                    print(r)
+                    events = np.loadtxt(path + f'{subj}_run{r}_{cond}_fb_cur_{fb}.txt', dtype = int)
+                    if events.shape == (3,):
+                        events = events.reshape(1,3)
+                    num_ev = len(events)
+                    print(num_ev)
+                    counter = counter + num_ev
+                    exit()
+                except (OSError):
+                    print('This file not exist')
+
