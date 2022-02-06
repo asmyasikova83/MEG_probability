@@ -38,6 +38,7 @@ for p in planars:
        #df = pd.read_csv('/net/server/data/Archive/prob_learn/asmyasnikova83/beta/p_vals_factor_significance_MEG.csv')
        df = pd.read_csv('/net/server/data/Archive/prob_learn/asmyasnikova83/beta/p_vals_Tukey_by_feedback_cur_MEG.csv')
     if parameter3 == None:
+       print('parameter3 none', parameter3)
        title = (f'{cond1} vs {cond2}, %s, LMEM, noFDR'%p)
        #df = pd.read_csv('/net/server/data/Archive/prob_learn/asmyasnikova83/{0}/p_val_low_{1}/p_vals_fb_cur_Tukey_by_trial_type_MEG.csv'.format(feedb, fr)) #TODO: fb_cur remove
        df = pd.read_csv('/net/server/data/Archive/prob_learn/asmyasnikova83/beta/p_vals_fb_cur_Tukey_by_trial_type_MEG.csv')
@@ -110,7 +111,7 @@ for p in planars:
     if parameter3 == 'negative':
         title = (f'In {parameter1} feedback negative vs positive, %s, LMEM, fullFDR'%p)
     if parameter3 == None:
-        title = (f'{cond1} vs {cond2}, %s, LMEM, fullFDR'%p)
+        title = (f'{cond2} vs {cond1}, %s, LMEM, fullFDR'%p)
     fig3 = plotting_LMEM.plot_topomap(times = time_to_plot, ch_type='planar1', scalings = 1, units = 'dB', show = False, vmin = -1.2, vmax = 1.2, time_unit='s', title = title, colorbar = True, extrapolate = "local", mask = np.bool_(binary_full), mask_params = dict(marker='o',		markerfacecolor='white', markeredgecolor='k', linewidth=0, markersize=7, markeredgewidth=2))
 
 
