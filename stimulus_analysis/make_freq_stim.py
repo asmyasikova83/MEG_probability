@@ -116,6 +116,8 @@ def make_beta_signal(subj, r, cond, fb, data_path, events_of_interest, L_freq, H
     epochs_tfr = mne.EpochsArray(freq_show.data, freq_show.info, tmin = period_start, events = events_stim)
         
     return (epochs_tfr)   
+#############################################################################################################
+##############################  Получение комбинированных планаров для Evoked  ###############################
 
 def combine_planar_Evoked(evoked):
     planar1 = evoked.copy()
@@ -124,3 +126,72 @@ def combine_planar_Evoked(evoked):
     planar2.pick_types(meg='planar2')
     combined = planar1.data + planar2.data
     return planar1, planar2, combined #возвращает планары, которые можно сохранить .fif в файл и np.array() из суммы планаров
+
+##########################################################################################################
+########################### Получение комбинированных планаров для эпох  #################################
+
+def combine_planar_Epoches_TFR(EpochsTFR, tmin):
+    ep_TFR_planar1 = EpochsTFR.copy();
+    ep_TFR_planar2 = EpochsTFR.copy()
+    ep_TFR_planar1.pick_types(meg='planar1')
+    ep_TFR_planar2.pick_types(meg='planar2')
+
+    #grad_RMS = np.power((np.power(evk_planar1.data, 2) + np.power(evk_planar2.data, 2)), 1/2)
+    combine = ep_TFR_planar1.get_data() + ep_TFR_planar2.get_data()
+    ep_TFR_combined = mne.EpochsArray(combine, ep_TFR_planar1.info, tmin = tmin, events = EpochsTFR.events)
+
+    return ep_TFR_combined #возвращает эпохи, которые можно сохранить .fif в файл
+def make_subjects_df(combined_planar, s, subj, r, t, fb_cur, tmin, tmax, step, scheme):
+    time_intervals = np.arange(tmin, tmax, step)
+    list_of_time_intervals = []
+    i = 0
+    while i < (len(time_intervals) - 1):
+        interval = time_intervals[i:i+2]
+        list_of_time_intervals.append(interval)
+        #print(interval)
+        i = i+1
+    list_of_beta_power = []
+    for i in list_of_time_intervals:
+        combined_planar_in_interval = combined_planar.copy()
+        combined_planar_in_interval = combined_planar_in_interval.crop(tmin=i[0], tmax=i[1], include_tmax=True)
+        mean_combined_planar = combined_planar_in_interval.get_data().mean(axis=-1)
+        beta_power = []
+        for j in range(len(mean_combined_planar)):
+            a = mean_combined_planar[j][s]
+            beta_power.append(a)
+        list_of_beta_power.append(beta_power)
+    trial_number = range(len(mean_combined_planar))
+    subject = [subj]*len(mean_combined_planar)
+    run = ['run{0}'.format(r)]*len(mean_combined_planar)
+    trial_type = [t]*len(mean_combined_planar)
+    feedback_cur = [fb_cur]*len(mean_combined_planar)
+    #in stim we don't need prev data not supported
+    #feedback_prev_data = np.loadtxt("/net/server/data/Archive/prob_learn/vtretyakova/Nikita_mio_cleaned/prev_fb_mio_corrected/{0}_run{1}_{2}_fb_cur_{3}_prev_fb.txt".format(subj, r, t, fb_cur), dtype='int')
+    #if feedback_prev_data.shape == (3,):
+    #    feedback_prev_data = feedback_prev_data.reshape(1,3)
+    FB_rew = [50, 51]
+    FB_lose = [52, 53]
+    '''
+    feedback_prev = []
+    for i in feedback_prev_data:
+        if i[2] in FB_rew:
+            a = 'positive'
+        else:
+            a = 'negative'
+        feedback_prev.append(a)
+    ''' 
+    # схема подкрепления 
+    a = scheme.loc[(scheme['fname'] == subj) & (scheme['block'] == r)]['scheme'].tolist()[0]
+    sch = [a]*len(mean_combined_planar)
+    df = pd.DataFrame()
+    df['trial_number'] = trial_number
+    # beta на интервалах
+    for idx, beta in enumerate(list_of_beta_power):
+        df['beta power %s'%list_of_time_intervals[idx]] = beta
+        df['subject'] = subject
+        df['round'] = run
+        df['trial_type'] = trial_type
+        df['feedback_cur'] = feedback_cur
+        #df['feedback_prev'] = feedback_prev
+        df['scheme'] = sch
+    return (df)
