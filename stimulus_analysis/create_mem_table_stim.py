@@ -61,7 +61,8 @@ for s in range(102):
                         df = df.append(df_subj)
                     except (OSError, FileNotFoundError):
                         print('This file not exist')
-    df.to_csv('/{0}/stim_check/{1}_feedback/dataframe_for_LMEM/df_LMEM_{1}.csv'.format(prefix, freq_range, s))
+    df.to_csv('/{0}/stim_check/{1}_feedback/dataframe_for_LMEM/df_LMEM_{2}.csv'.format(prefix, freq_range, s))
+    print('saved!')
                     
 	
 	
