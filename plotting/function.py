@@ -714,39 +714,31 @@ def ttest_pair_bk(data_path, subjects, parameter1, parameter2, planar, n): # n -
     comp2_mean = comp2.mean(axis=0)
     return t_stat, p_val, comp1_mean, comp2_mean
 
-def ttest_pair(data_path, subjects, fr, parameter1, parameter2, parameter3, parameter4, planar, n): # n - количество временных отчетов
+def ttest_pair(data_path, response, subjects, fr, parameter1, parameter2, parameter3, parameter4, planar, n): # n - количество временных отчетов
     contr = np.zeros((len(subjects), 2, 102, n))
-
     for ind, subj in enumerate(subjects):
         if  parameter3 == 'negative':
-            #TODO
-            print('parameter1', parameter1)
-            #data_path = '/net/server/data/Archive/prob_learn/asmyasnikova83/beta/beta_16_30_fb_ave_comb_planar/'
-            #P062_risk_evoked_beta_16_30_positive_resp_comb_planar.fif
-            temp1 = mne.Evoked(op.join(data_path, '{0}_{1}_evoked_{2}_{3}_resp_{4}.fif'.format(subj, parameter1, fr,  parameter3, planar)))
-            temp2 = mne.Evoked(op.join(data_path, '{0}_{1}_evoked_{2}_{3}_resp_{4}.fif'.format(subj, parameter1, fr, parameter4, planar)))
+            #TODO less time points
+            if response:
+                temp1 = mne.Evoked(op.join(data_path, '{0}_{1}_evoked_{2}_{3}_resp_{4}.fif'.format(subj, parameter1, fr,  parameter3, planar)))
+                temp2 = mne.Evoked(op.join(data_path, '{0}_{1}_evoked_{2}_{3}_resp_{4}.fif'.format(subj, parameter1, fr, parameter4, planar)))
+            else:
+                temp1 = mne.Evoked(op.join(data_path, '{0}_{1}_fb_cur_negative_evoked_{2}_resp_{3}.fif'.format(subj, parameter1, fr, planar)))
+                temp2 = mne.Evoked(op.join(data_path, '{0}_{1}_fb_cur_positive_evoked_{2}_resp_{3}.fif'.format(subj, parameter1, fr, planar)))
         if parameter3 == None:
-            print(parameter1)
-            print('data path', data_path)
-            #data_path = '/net/server/data/Archive/prob_learn/asmyasnikova83/CUR_FB/low_beta_12_20_ave_comb_planar/'
-            #no feedbacl contrast inside trial type
-            print('parameter1', parameter1)
-            print('parameter2', parameter2)
-            temp1 = mne.Evoked(op.join(data_path, '{0}_{1}_evoked_{2}_trf_no_log_division_resp_{3}.fif'.format(subj, parameter1, fr, planar)))
-            temp2 = mne.Evoked(op.join(data_path, '{0}_{1}_evoked_{2}_trf_no_log_division_resp_{3}.fif'.format(subj, parameter2, fr, planar)))
-            #temp1 = mne.Evoked(op.join(data_path, '{0}_{1}_evoked_{2}_beta_16_30_trf_early_log_resp_{3}.fif'.format(subj, parameter1, fr, planar)))
-            #temp2 = mne.Evoked(op.join(data_path, '{0}_{1}_evoked_{2}_beta_16_30_trf_early_log_resp_{3}.fif'.format(subj, parameter2, fr, planar)))
-
+            if response:
+                temp1 = mne.Evoked(op.join(data_path, '{0}_{1}_evoked_{2}_beta_16_30_trf_early_log_resp_{3}.fif'.format(subj, parameter1, fr, planar)))
+                temp2 = mne.Evoked(op.join(data_path, '{0}_{1}_evoked_{2}_beta_16_30_trf_early_log_resp_{3}.fif'.format(subj, parameter2, fr, planar)))
+            else:
+                temp1 = mne.Evoked(op.join(data_path, '{0}_{1}_evoked_beta_16_30_resp_{2}.fif'.format(subj, parameter1, planar)))
+                temp2 = mne.Evoked(op.join(data_path, '{0}_{1}_evoked_beta_16_30_resp_{2}.fif'.format(subj, parameter2, planar)))
         contr[ind, 0, :, :] = temp1.data
         contr[ind, 1, :, :] = temp2.data
-		
     comp1 = contr[:, 0, :, :]
     comp2 = contr[:, 1, :, :]
     t_stat, p_val = stats.ttest_rel(comp2, comp1, axis=0)
-
     comp1_mean = comp1.mean(axis=0)
     comp2_mean = comp2.mean(axis=0)
-	
     return t_stat, p_val, comp1_mean, comp2_mean
 
 #############################################################################
@@ -841,11 +833,25 @@ def plot_stat_comparison(response, path, comp1, comp2, p_mul_min, p_mul_max, p_v
     plt.fill_between(time, y1 = p_mul_min, y2 = p_mul_max, where = ((p_val < 0.05) * (p_fdr > 0.05)), facecolor = 'g', alpha = 0.46, step = 'pre')
     # plt.fill_between(time, y1 = p_mul_max, y2 = p_mul_min, where = ((time>-0.350)*(time<-0.050)), facecolor = 'm', alpha = 0.46, step = 'pre')
     plt.tick_params(labelsize = 40)
-
     #plt.legend(loc='lower left', fontsize = 25)
     plt.title(title, fontsize = 40)
     plt.savefig(path+'output/'+ f'{comp1_label}_vs_{comp2_label}/'+title + '.png', transparent=True)
     plt.close()
+#############################################################################
+##################### непарный ttest #######################################
+def ttest_vs_zero(data_path, subjects, parameter1, freq_range, planar, n): # n - количество временных отчетов
+    contr = np.zeros((len(subjects), 1, 102, n))
+
+    for ind, subj in enumerate(subjects):
+        temp1 = mne.Evoked(op.join(data_path, '{0}_{1}_evoked_{2}_resp_{3}.fif'.format(subj, parameter1, freq_range, planar)))
+        contr[ind, 0, :, :] = temp1.data
+
+    comp1 = contr[:, 0, :, :]
+    t_stat, p_val = stats.ttest_1samp(comp1, 0, axis=0)
+
+    comp1_mean = comp1.mean(axis=0)
+                                       
+    return t_stat, p_val, comp1_mean
 
 def to_str_ar(ch_l):
     temp = []

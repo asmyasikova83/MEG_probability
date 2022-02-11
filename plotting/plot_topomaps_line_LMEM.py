@@ -10,8 +10,16 @@ import statsmodels.stats.multitest as mul
 from function import ttest_pair, ttest_vs_zero, space_fdr, full_fdr, p_val_binary, plot_deff_topo, plot_topo_vs_zero
 from config import *
 
-# загружаем комбайн планары, усредненные внутри каждого испытуемого
-data_path = '/net/server/data/Archive/prob_learn/vtretyakova/Nikita_mio_cleaned/beta_16_30_trf_no_log_division/beta_16_30_trf_no_log_division_second_bl_comb_planar/'
+# загружаем комбайн планары, усредненные внутри каждого испытуемогo
+if response:
+    data_path = '/net/server/data/Archive/prob_learn/vtretyakova/Nikita_mio_cleaned/beta_16_30_trf_no_log_division/beta_16_30_trf_no_log_division_second_bl_comb_planar/'
+else:
+    prefix = '/net/server/data/Archive/prob_learn/asmyasnikova83/'
+    freq_range = 'beta_16_30_trf_no_log_division_stim'
+    if parameter3 == 'negative':
+        data_path = '/{0}/stim_check/{1}_feedback/{1}_ave_comb_planar'.format(prefix, freq_range)
+    if parameter3 == None:
+        data_path = '/{0}/stim_check/{1}/{1}_ave_comb_planar'.format(prefix, freq_range)
 print(fr)
   
 ###################### при построении topomaps берем только тех испытуемых, у которых есть все категории условий ####################
@@ -32,16 +40,19 @@ temp = mne.Evoked("/net/server/data/Archive/prob_learn/vtretyakova/Nikita_mio_cl
 n = temp.data.shape[1] # количество временных отчетов для combaened planars - temp.data.shape = (102 x n), где 102 - количество планаров, а n - число временных отчетов
 ########################### norisk vs risk ##############################
 for p in planars:
-    _, _, risk_mean, norisk_mean = ttest_pair(data_path, subjects, fr, parameter1 = f'{cond1}', parameter2 = f'{cond2}', parameter3 = parameter3, parameter4 = parameter4, planar = p,  n = n)
+    _, _, risk_mean, norisk_mean = ttest_pair(data_path, response, subjects, fr, parameter1 = f'{cond1}', parameter2 = f'{cond2}', parameter3 = parameter3, parameter4 = parameter4, planar = p,  n = n)
     if parameter3 == 'negative':
        title = (f'In {cond1} feedback negative vs positive, %s, noFDR'%p)
-       #df = pd.read_csv('/net/server/data/Archive/prob_learn/asmyasnikova83/beta/p_vals_factor_significance_MEG.csv')
+       #Put new p_vals_Tukey_by_feedback_cur_MEG.csv on early log!
        df = pd.read_csv('/net/server/data/Archive/prob_learn/asmyasnikova83/beta/p_vals_Tukey_by_feedback_cur_MEG.csv')
     if parameter3 == None:
        print('parameter3 none', parameter3)
        title = (f'{cond1} vs {cond2}, %s, LMEM, noFDR'%p)
-       #df = pd.read_csv('/net/server/data/Archive/prob_learn/asmyasnikova83/{0}/p_val_low_{1}/p_vals_fb_cur_Tukey_by_trial_type_MEG.csv'.format(feedb, fr)) #TODO: fb_cur remove
-       df = pd.read_csv('/net/server/data/Archive/prob_learn/asmyasnikova83/beta/p_vals_fb_cur_Tukey_by_trial_type_MEG.csv')
+       if response:
+           #put new csv
+           df = pd.read_csv('/net/server/data/Archive/prob_learn/asmyasnikova83/beta/p_vals_fb_cur_Tukey_by_trial_type_MEG.csv')
+       else:
+           df = pd.read_csv('/net/server/data/Archive/prob_learn/asmyasnikova83/stim_check/p_vals_fb_cur_Tukey_by_trial_type_MEG_stim.csv')
     
     ########################### p value #############################
     # загружаем таблицу с pvalue, полученными с помощью LMEM в R
@@ -52,7 +63,6 @@ for p in planars:
         
         pval_s = df[df['sensor'] == i]
         if parameter3 == 'negative':
-            #TODO 
             pval_norisk_risk = pval_s[f'{cond1}-negative_positive'].tolist()
         if parameter3 == None:
             pval_norisk_risk = pval_s[f'norisk_{cond1}'].tolist()
@@ -90,7 +100,7 @@ for p in planars:
 
     plotting_LMEM = mne.EvokedArray(data_for_plotting, info = temp.info)
     plotting_LMEM.times = times
-
+    #no fdr
     binary = p_val_binary(pval_in_intevals, treshold = 0.05)
     if parameter3 == 'negative':
         title = (f'In {parameter1} feedback negative vs positive, %s, LMEM, noFDR'%p)
@@ -121,11 +131,17 @@ for p in planars:
         #fig3.savefig('/net/server/data/Archive/prob_learn/asmyasnikova83/{0}/topomaps_lines_LMEM_{1}_poster/norisk_vs_risk/LMEM_norisk_vs_risk_stat_full_fdr_{2}_separ_fb.jpeg'.format(feedb, fr, p), dpi = 300)
         fig3.savefig(f'/net/server/data/Archive/prob_learn/asmyasnikova83/beta/topomaps_lines_LMEM_new_poster/{cond1}/LMEM_{cond1}_vs_{parameter3}_vs_{parameter4}_stat_full_fdr_{fr}_separ_fb.jpeg', dpi = 900)
     if parameter3 == None:
-        os.makedirs(f'/net/server/data/Archive/prob_learn/asmyasnikova83/beta/topomaps_lines_LMEM_new_poster/{cond1}_vs_{cond2}/' , exist_ok = True)
-        fig.savefig(f'/net/server/data/Archive/prob_learn/asmyasnikova83/beta/topomaps_lines_LMEM_new_poster/{cond1}_vs_{cond2}/LMEM_{cond1}_vs_{cond2}_stat_no_fdr_{fr}_separ_fb.jpeg', dpi = 900)
-        fig2.savefig(f'/net/server/data/Archive/prob_learn/asmyasnikova83/beta/topomaps_lines_LMEM_new_poster/{cond1}_vs_{cond2}/LMEM_{cond1}_vs_{cond2}_stat_space_fdr_{fr}_separ_fb.jpeg', dpi = 900)
-        #fig3.savefig('/net/server/data/Archive/prob_learn/asmyasnikova83/{0}/topomaps_lines_LMEM_{1}_poster/norisk_vs_risk/LMEM_norisk_vs_risk_stat_full_fdr_{2}_separ_fb.jpeg'.format(feedb, fr, p), dpi = 300)
-        fig3.savefig(f'/net/server/data/Archive/prob_learn/asmyasnikova83/beta/topomaps_lines_LMEM_new_poster/{cond1}_vs_{cond2}/LMEM_{cond1}_vs_{cond2}_stat_full_fdr_{fr}_separ_fb.jpeg', dpi = 900)
+        if response:
+            os.makedirs(f'/net/server/data/Archive/prob_learn/asmyasnikova83/topomaps/topomaps_rows_LMEM_response/{cond1}_vs_{cond2}/' , exist_ok = True)
+            fig.savefig(f'/net/server/data/Archive/prob_learn/asmyasnikova83/topomaps/topomaps_rows_LMEM_response/{cond1}_vs_{cond2}/LMEM_{cond1}_vs_{cond2}_stat_no_fdr_{fr}_separ_fb.jpeg', dpi = 900)
+            fig2.savefig(f'/net/server/data/Archive/prob_learn/asmyasnikova83/topomaps/topomaps_rows_LMEM_response/{cond1}_vs_{cond2}/LMEM_{cond1}_vs_{cond2}_stat_space_fdr_{fr}_separ_fb.jpeg', dpi = 900)
+            fig3.savefig(f'/net/server/data/Archive/prob_learn/asmyasnikova83/topomaps/topomaps_rows_LMEM_reponse/{cond1}_vs_{cond2}/LMEM_{cond1}_vs_{cond2}_stat_full_fdr_{fr}_separ_fb.jpeg', dpi = 900)
+        else:
+            os.makedirs(f'/net/server/data/Archive/prob_learn/asmyasnikova83/topomaps/topomaps_rows_LMEM_stimulus/{cond1}_vs_{cond2}/' , exist_ok = True)
+            fig.savefig(f'/net/server/data/Archive/prob_learn/asmyasnikova83/topomaps/topomaps_rows_LMEM_stimulus/{cond1}_vs_{cond2}/LMEM_{cond1}_vs_{cond2}_stat_no_fdr_{fr}_separ_fb.jpeg', dpi = 900)
+            fig2.savefig(f'/net/server/data/Archive/prob_learn/asmyasnikova83/topomaps/topomaps_rows_LMEM_stimulus/{cond1}_vs_{cond2}/LMEM_{cond1}_vs_{cond2}_stat_space_fdr_{fr}_separ_fb.jpeg', dpi = 900)
+            fig3.savefig(f'/net/server/data/Archive/prob_learn/asmyasnikova83/topomaps/topomaps_rows_LMEM_stimulus/{cond1}_vs_{cond2}/LMEM_{cond1}_vs_{cond2}_stat_full_fdr_{fr}_separ_fb.jpeg', dpi = 900)
+
 
 '''
 
