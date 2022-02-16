@@ -723,12 +723,13 @@ def ttest_pair(data_path, response, subjects, fr, parameter1, parameter2, parame
                 temp1 = mne.Evoked(op.join(data_path, '{0}_{1}_evoked_{2}_{3}_resp_{4}.fif'.format(subj, parameter1, fr,  parameter3, planar)))
                 temp2 = mne.Evoked(op.join(data_path, '{0}_{1}_evoked_{2}_{3}_resp_{4}.fif'.format(subj, parameter1, fr, parameter4, planar)))
             else:
+            #stim
                 temp1 = mne.Evoked(op.join(data_path, '{0}_{1}_fb_cur_negative_evoked_{2}_resp_{3}.fif'.format(subj, parameter1, fr, planar)))
                 temp2 = mne.Evoked(op.join(data_path, '{0}_{1}_fb_cur_positive_evoked_{2}_resp_{3}.fif'.format(subj, parameter1, fr, planar)))
         if parameter3 == None:
             if response:
-                temp1 = mne.Evoked(op.join(data_path, '{0}_{1}_evoked_{2}_beta_16_30_trf_early_log_resp_{3}.fif'.format(subj, parameter1, fr, planar)))
-                temp2 = mne.Evoked(op.join(data_path, '{0}_{1}_evoked_{2}_beta_16_30_trf_early_log_resp_{3}.fif'.format(subj, parameter2, fr, planar)))
+                temp1 = mne.Evoked(op.join(data_path, '{0}_{1}_evoked_{2}_resp_{3}.fif'.format(subj, parameter1, fr, planar)))
+                temp2 = mne.Evoked(op.join(data_path, '{0}_{1}_evoked_{2}_resp_{3}.fif'.format(subj, parameter2, fr, planar)))
             else:
                 temp1 = mne.Evoked(op.join(data_path, '{0}_{1}_evoked_beta_16_30_resp_{2}.fif'.format(subj, parameter1, planar)))
                 temp2 = mne.Evoked(op.join(data_path, '{0}_{1}_evoked_beta_16_30_resp_{2}.fif'.format(subj, parameter2, planar)))
