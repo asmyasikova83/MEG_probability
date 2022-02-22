@@ -72,6 +72,13 @@ for p in planars:
     pval_in_intevals = np.array(pval_in_intevals)
     pval_space_fdr = space_fdr(pval_in_intevals)
     pval_full_fdr =  full_fdr(pval_in_intevals)
+    #find super channels in a specific feedback contrast 
+    sensors = []
+    for j in range(102):
+        if pval_full_fdr[j, 12] < 0.0002 and pval_full_fdr[j, 13] < 0.0002:
+            f_name = path + 'sensors_late_fb_1500_1900_neg_pos_super_sign.txt'
+            sensors.append(j)
+    print(sensors)
     # считаем разницу бета и добавляем к шаблону (донору)
     temp.data = risk_mean - norisk_mean
 
