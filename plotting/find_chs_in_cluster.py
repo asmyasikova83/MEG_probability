@@ -8,8 +8,8 @@ from config import *
 
 freq_range = 'beta_16_30_trf_no_log_division'
 # загружаем комбайн планары, усредненные внутри каждого испытуемого
-data_path = '/net/server/data/Archive/prob_learn/vtretyakova/Nikita_mio_cleaned/beta_16_30_trf_no_log_division/beta_16_30_trf_no_log_division_second_bl_comb_planar/'
-#data_path = '/net/server/data/Archive/prob_learn/vtretyakova/Nikita_mio_cleaned/beta_16_30_trf_early_log/beta_16_30_trf_early_log_comb_planar/' 
+#data_path = '/net/server/data/Archive/prob_learn/vtretyakova/Nikita_mio_cleaned/beta_16_30_trf_no_log_division/beta_16_30_trf_no_log_division_second_bl_comb_planar/'
+data_path = '/net/server/data/Archive/prob_learn/vtretyakova/Nikita_mio_cleaned/beta_16_30_trf_early_log/beta_16_30_trf_early_log_comb_planar/' 
 # задаем время и донора
 temp = mne.Evoked("/net/server/data/Archive/prob_learn/vtretyakova/Nikita_mio_cleaned/beta_16_30_ave_into_subjects_comb_planar/P001_norisk_evoked_beta_16_30_resp_comb_planar.fif")
 n = temp.data.shape[1]
@@ -38,13 +38,13 @@ cluster = np.zeros((102, 1))
 power = []
 counter = 0
 k = 0
-anterior = False
-posterior = True
+anterior = True
+posterior = False
 channels = []
 f_name = '/net/server/data/Archive/prob_learn/asmyasnikova83/maps_signif_sensors/threshold/'
 for ch in sensors:
     if anterior:
-        if data_to_sum[ch] > 1.98: #mean in anterior we observe positive values
+        if data_to_sum[ch] > 1.98/2: #mean in anterior we observe positive values
             print(data_to_sum[ch])
             print(ch)
             cluster[ch] = 1
@@ -57,7 +57,7 @@ for ch in sensors:
         cluster[20] = 0
         title = 'Anterior'
     if posterior:
-        if data_to_sum[ch] < -6.29: #in posterior we observe negative power
+        if data_to_sum[ch] < -6.29/2: #in posterior we observe negative power
             print(data_to_sum[ch])
             print(ch)
             cluster[ch] = 1
