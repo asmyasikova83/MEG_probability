@@ -67,7 +67,7 @@ os.makedirs(path + 'output/', exist_ok=True)
 for p in planars:
     #extract data and ttest
     print(data_path)
-    comp1_mean, comp2_mean, p_val = compute_p_val(response, data_path, subjects, cond1, cond2, parameter3, parameter4, fr, time, t, idx_array_extended)
+    comp1_mean, comp2_mean, comp3_mean, p_val = compute_p_val(response, data_path, subjects, cond1, cond2, parameter3, parameter4, fr, time, t, idx_array_extended)
     #scaling
     if comp1_mean.max()>comp2_mean.max():
         p_mul_max=comp1_mean.max()+ abs(comp1_mean.max()/10)
@@ -82,10 +82,11 @@ for p in planars:
     print('comp2_label', comp2_label)
     print('cond1_name', cond1_name)
     print('cond2_name', cond2_name)
+    aver = False
     for indx in range(102):
         rej,p_fdr = mne.stats.fdr_correction(p_val[indx,:], alpha=0.05, method='indep')
-        plot_stat_comparison(response, path, comp1_mean[indx], comp2_mean[indx], p_mul_min, p_mul_max, p_val[indx], p_fdr, parameter3, time, title = chan_labels[indx+204],
-                             folder = "%s_vs_%s" % (cond1_name, cond2_name), comp1_label = cond1_name, comp2_label = cond2_name)
+        plot_stat_comparison(response, aver, path, comp1_mean[indx], comp2_mean[indx],  comp3_mean[indx], -5.0, 5.0, p_val[indx], p_fdr, parameter3, time, title = chan_labels[indx+204],
+                             folder = "%s_vs_%s" % (cond1_name, cond2_name), comp1_label = cond1_name, comp2_label = cond2_name, comp3_label = 'difference')
 
     for ind, planar in enumerate(planars):
         #place the channel time courses in html file
