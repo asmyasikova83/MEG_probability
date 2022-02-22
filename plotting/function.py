@@ -662,17 +662,10 @@ def extract_and_av_cond_data(data_path, subjects, fr,  n): # n - количес�
     contr = np.zeros((len(subjects), 4, 102, n))
 
     for ind, subj in enumerate(subjects):
-       # temp1 = mne.Evoked(op.join(data_path, '{0}_{1}_evoked_beta_16_30_resp_{2}.fif'.format(subj, parameter1, planar)))
-       # temp2 = mne.Evoked(op.join(data_path, '{0}_{1}_evoked_beta_16_30_resp_{2}.fif'.format(subj, parameter2, planar)))
-       # data_path = '/net/server/data/Archive/prob_learn/vtretyakova/Nikita_mio_cleaned/beta_16_30_trf_no_log_division/beta_16_30_trf_no_log_division_second_bl_comb_planar/'
-        temp1 = mne.Evoked(op.join(data_path, '{0}_risk_evoked_{1}_trf_no_log_division_resp_comb_planar.fif'.format(subj, fr)))
-        temp2 = mne.Evoked(op.join(data_path, '{0}_norisk_evoked_{1}_trf_no_log_division_resp_comb_planar.fif'.format(subj, fr)))
-        temp3 = mne.Evoked(op.join(data_path, '{0}_prerisk_evoked_{1}_trf_no_log_division_resp_comb_planar.fif'.format(subj, fr)))
-        temp4 = mne.Evoked(op.join(data_path, '{0}_postrisk_evoked_{1}_trf_no_log_division_resp_comb_planar.fif'.format(subj, fr)))
-       # temp1 = mne.Evoked(op.join(data_path, '{0}_risk_evoked_beta_16_30_trf_early_log_resp_comb_planar.fif'.format(subj, fr)))
-       # temp2 = mne.Evoked(op.join(data_path, '{0}_norisk_evoked_beta_16_30_trf_early_log_resp_comb_planar.fif'.format(subj, fr)))
-       # temp3 = mne.Evoked(op.join(data_path, '{0}_prerisk_evoked_beta_16_30_trf_early_log_resp_comb_planar.fif'.format(subj, fr)))
-       # temp4 = mne.Evoked(op.join(data_path, '{0}_postrisk_evoked_beta_16_30_trf_early_log_resp_comb_planar.fif'.format(subj, fr)))
+        temp1 = mne.Evoked(op.join(data_path, '{0}_risk_evoked_beta_16_30_trf_early_log_resp_comb_planar.fif'.format(subj, fr)))
+        temp2 = mne.Evoked(op.join(data_path, '{0}_norisk_evoked_beta_16_30_trf_early_log_resp_comb_planar.fif'.format(subj, fr)))
+        temp3 = mne.Evoked(op.join(data_path, '{0}_prerisk_evoked_beta_16_30_trf_early_log_resp_comb_planar.fif'.format(subj, fr)))
+        temp4 = mne.Evoked(op.join(data_path, '{0}_postrisk_evoked_beta_16_30_trf_early_log_resp_comb_planar.fif'.format(subj, fr)))
         contr[ind, 0, :, :] = temp1.data
         contr[ind, 1, :, :] = temp2.data
         contr[ind, 2, :, :] = temp3.data
@@ -697,9 +690,6 @@ def ttest_pair_bk(data_path, subjects, parameter1, parameter2, planar, n): # n -
     contr = np.zeros((len(subjects), 2, 102, n))
 
     for ind, subj in enumerate(subjects):
-       # temp1 = mne.Evoked(op.join(data_path, '{0}_{1}_evoked_beta_16_30_resp_{2}.fif'.format(subj, parameter1, planar)))
-       # temp2 = mne.Evoked(op.join(data_path, '{0}_{1}_evoked_beta_16_30_resp_{2}.fif'.format(subj, parameter2, planar)))
-        #data_path = '/net/server/data/Archive/prob_learn/asmyasnikova83/low_beta_12_20_CORR//beta_12_20_ave_comb_planar/'
         temp1 = mne.Evoked(op.join(data_path, '{0}_{1}_evoked_{2}_resp_{3}.fif'.format(subj, parameter1, fr, planar)))
         temp2 = mne.Evoked(op.join(data_path, '{0}_{1}_evoked_{2}_resp_{3}.fif'.format(subj, parameter2, fr, planar)))
         
@@ -768,8 +758,8 @@ def compute_p_val(response,data_path, subjects, cond1, cond2, parameter3, parame
         if parameter3 == None:
             if response:
             #response TODO FREQ+Range
-                cond1_fname = data_path + f'{subj}_{cond1}_evoked_beta_16_30_trf_no_log_division_resp_comb_planar.fif'
-                cond2_fname = data_path + f'{subj}_{cond2}_evoked_beta_16_30_trf_no_log_division_resp_comb_planar.fif'
+                cond1_fname = data_path + f'{subj}_{cond1}_evoked_beta_16_30_trf_early_log_resp_comb_planar.fif'
+                cond2_fname = data_path + f'{subj}_{cond2}_evoked_beta_16_30_trf_early_log_resp_comb_planar.fif'
             else:
             #stimulus
                 cond1_fname = data_path + f'{subj}_{cond1}_evoked_beta_16_30_resp_comb_planar.fif'
@@ -791,25 +781,29 @@ def compute_p_val(response,data_path, subjects, cond1, cond2, parameter3, parame
         contr[ind, 1, :, :] = temp2.data
     comp1_before = contr[:, 0, :, :]
     comp2_before = contr[:, 1, :, :]
+    comp3_before = contr[:, 0, :, :] - contr[:, 1, :, :]
     comp1 = np.zeros((len(subjects), 102, len(time)))
     comp2 = np.zeros((len(subjects), 102, len(time)))
+    comp3 = np.zeros((len(subjects), 102, len(time)))
     #use idx array to resample the data for further stat
     for i, idx in enumerate(idx_array):
         i = int(i)
         idx = int(idx)
         comp1[:, :, i] = comp1_before[:, :, idx]
         comp2[:, :, i] = comp2_before[:, :, idx]
+        comp3[:, :, i] = comp3_before[:, :, idx]
     #p_val over subjects
     t_stat, p_val = stats.ttest_rel(comp1, comp2, axis=0)
 
     #average the  data over subjects
     comp1_mean = comp1.mean(axis=0)
     comp2_mean = comp2.mean(axis=0)
-    return comp1_mean, comp2_mean, p_val
+    comp3_mean = comp3.mean(axis=0)
+    return comp1_mean, comp2_mean, comp3_mean, p_val
      
     print(time.shape)
-def plot_stat_comparison(response, path, comp1, comp2, p_mul_min, p_mul_max, p_val, p_fdr, parameter3, time, title='demo_title', folder='comparison',
-                         comp1_label='comp1', comp2_label='comp2'):
+def plot_stat_comparison(response, aver, path, comp1, comp2, comp3, p_mul_min, p_mul_max, p_val, p_fdr, parameter3, time, title='demo_title', folder='comparison',
+                         comp1_label='comp1', comp2_label='comp2', comp3_label='difference'):
     assert(comp1.shape[0] == comp2.shape[0] == time.shape[0])
     os.makedirs(path+'output/'+ f'{comp1_label}_vs_{comp2_label}/', exist_ok = True)
     print(path)
@@ -827,9 +821,14 @@ def plot_stat_comparison(response, path, comp1, comp2, p_mul_min, p_mul_max, p_v
     if parameter3 == None:
         plt.plot(time, comp1, color='r', linewidth=3, label=comp1_label)
         plt.plot(time, comp2, color='b', linewidth=3, label=comp2_label)
+        #plot difference
+        if aver:
+            plt.plot(time, comp3, color='k', linewidth=5, linestyle = 'dotted', label=comp3_label)
     if parameter3 == 'negative':
         plt.plot(time, comp1, color='r', linewidth=3, label=comp1_label)
         plt.plot(time, comp2, color='b', linewidth=3, label=comp2_label)
+        if aver:
+            plt.plot(time, comp3, color='k', linewidth=5, linestyle = 'dotted', label=comp3_label)
     plt.fill_between(time, y1 = p_mul_min, y2 = p_mul_max, where = (p_fdr < 0.05), facecolor = 'm', alpha = 0.46, step = 'pre')
     plt.fill_between(time, y1 = p_mul_min, y2 = p_mul_max, where = ((p_val < 0.05) * (p_fdr > 0.05)), facecolor = 'g', alpha = 0.46, step = 'pre')
     # plt.fill_between(time, y1 = p_mul_max, y2 = p_mul_min, where = ((time>-0.350)*(time<-0.050)), facecolor = 'm', alpha = 0.46, step = 'pre')
