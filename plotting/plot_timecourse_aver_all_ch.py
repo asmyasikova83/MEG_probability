@@ -20,7 +20,7 @@ options = {
 }
 
 if response:
-    freq_range = 'beta_16_30_trf_no_log_division'
+    freq_range = 'beta_16_30_trf_early_log'
 else:
     freq_range = 'beta_16_30_trf_no_log_division_stim'
 #freq_range = = 'beta_16_30_trf_early_log'
@@ -34,7 +34,7 @@ if parameter3  == None:
     if response:
         #response-locked data
         print('Response is true')
-        data_path = '/net/server/data/Archive/prob_learn/vtretyakova/Nikita_mio_cleaned/beta_16_30_trf_no_log_division/beta_16_30_trf_no_log_division_second_bl_comb_planar/'
+        data_path = '/net/server/data/Archive/prob_learn/vtretyakova/Nikita_mio_cleaned/beta_16_30_trf_early_log/beta_16_30_trf_early_log_comb_planar/'
         # if pretrial
         #data_path = '/net/server/data/Archive/prob_learn/asmyasnikova83/probability/beta_16_30_trf_early_log/beta_16_30_trf_early_log_ave_comb_planar/'
         #TODO FOR stim and resp
@@ -63,7 +63,7 @@ temp = mne.Evoked("/net/server/data/Archive/prob_learn/vtretyakova/Nikita_mio_cl
 
 time = temp.times# количество временных отчетов для combaened planars - temp.data.shape = (102 x n), где 102 - количество планаров, а n - число временных отчетов
 
-########################### norisk vs risk ##############################
+#n, comp2_mean, comp3_mean, p_val = compute_p_val(response, data_path, subjects, cond1, cond2, parameter3, parameter4, fr, time, t, idx_array_extended)########################## norisk vs risk ##############################
 
 
 #coordinates and channel names from matlab files - the files are here https://github.com/niherus/MNE_TFR_ToolBox/tree/master/VISUALISATION
@@ -84,12 +84,10 @@ if donor:
     time, idx_array_extended = resample_before_stat(t_min, t_max)
 else:
     time, idx_array_extended = resample_before_stat(t_min, t_max)
-print(time)
-print(idx_array_extended)
 for p in planars:
     #extract data and ttest
     print(data_path)
-    comp1_mean, comp2_mean, p_val = compute_p_val(response, data_path, subjects, cond1, cond2, parameter3, parameter4, fr, time,  t, idx_array_extended)
+    comp1_mean, comp2_mean, comp3_mean, p_val = compute_p_val(response, data_path, subjects, cond1, cond2, parameter3, parameter4, fr, time, t, idx_array_extended)
     #scaling
     if comp1_mean.max()>comp2_mean.max():
         p_mul_max=comp1_mean.max()+ abs(comp1_mean.max()/10)
@@ -110,7 +108,7 @@ for p in planars:
     p_val_aver = np.zeros(le)
     comp1_mean_aver = np.zeros(le)
     comp2_mean_aver = np.zeros(le)
-    print(p_val_aver.shape)
+    comp3_mean_aver = np.zeros(le)
     counter = 0
     #significant channels in the intersect of decision and fb whole
     #cluster = [5, 6, 9, 10, 12, 13, 15, 22, 26, 37, 59, 60, 64, 66, 69, 70, 71, 74, 75, 76, 77, 78, 84, 86]
@@ -119,9 +117,19 @@ for p in planars:
     #3 most significant in anticipation
     #cluster = [8, 16, 19]
     #plot_timecourse_aver_all_ch.py5 best sensors in the intersect of decision and fb whole
-    #cluster = [15, 26, 59, 66, 69]
+    #cluster = [15, 66, 75, 76]
     #pos-response (100-500 ms) cluster
     #cluster = [70, 71, 73, 74, 75, 77, 86, 89]
+    #for contrasts w tukey
+    #Decision [68, 75, 76]
+    #orisk prerisk
+    #nticipation of feedback [8, 16, 19]
+    #in risk neg pos tukey
+    #cluster = [59, 66, 69]
+    #3 best anterior
+    cluster = [5, 10, 20]
+    #3 best poster
+    #cluster = [60, 69, 76]
     #average p_vals and timecourses over all 102 channels 
     for i in range(0, len(cluster)):
         j = cluster[i]
@@ -129,20 +137,22 @@ for p in planars:
         p_val_aver = p_val_aver + p_val[j,:]
         comp1_mean_aver = comp1_mean_aver + comp1_mean[j,:]
         comp2_mean_aver = comp2_mean_aver + comp2_mean[j,:]
+        comp3_mean_aver = comp3_mean_aver + comp3_mean[j,:]
         counter = counter + 1
     p_val_aver_fin = p_val_aver/counter
     comp1_mean_aver_fin = comp1_mean_aver/counter
     comp2_mean_aver_fin = comp2_mean_aver/counter
-    print(comp1_mean_aver_fin)
-    print(p_val_aver_fin)
+    comp3_mean_aver_fin = comp3_mean_aver/counter
     rej,p_fdr = mne.stats.fdr_correction(p_val_aver_fin, alpha=0.05, method='indep')
     if response:
-        title = f'{cond1_name} vs {cond2_name}RES'
+        title = f'{cond1_name} vs {cond2_name}REP'
     else:
-        title = f'{cond1_name} vs {cond2_name}STI'
+        title = f'{cond1_name} vs {cond2_name}STA'
     print('title', title)
     p_mul_min = -5.5
     p_mul_max = 5.5
-    plot_stat_comparison(response, path, comp1_mean_aver_fin, comp2_mean_aver_fin, p_mul_min, p_mul_max, p_val_aver_fin, p_fdr, parameter3, time, title = title,
-            folder = "%s_vs_%s" % (cond1_name, cond2_name), comp1_label = cond1_name, comp2_label = cond2_name)
+    #to plot difference
+    aver = True
+    plot_stat_comparison(response, aver, path, comp1_mean_aver_fin, comp2_mean_aver_fin,  comp3_mean_aver_fin, p_mul_min, p_mul_max, p_val_aver_fin, p_fdr, parameter3, time, title = title,
+                                                 folder = "%s_vs_%s" % (cond1_name, cond2_name), comp1_label = cond1_name, comp2_label = cond2_name, comp3_label = 'difference')
     print('\tAll printed')
