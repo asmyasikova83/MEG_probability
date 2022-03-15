@@ -48,6 +48,7 @@ for p in planars:
     if parameter3 == 'negative':
        title = (f'In {cond1} feedback negative vs positive, %s, noFDR'%p)
        df = pd.read_csv(f'/{prefix}/beta/p_vals_Tukey_by_feedback_cur_MEG_early_log.csv')
+       #df = pd.read_csv(f'/{prefix}/beta/p_vals_Tukey_by_feedback_MEG_t_ratio_test.csv')
     if parameter3 == None:
        title = (f'{cond1} vs {cond2}, %s, LMEM, noFDR'%p)
        if response:
@@ -73,12 +74,14 @@ for p in planars:
     pval_space_fdr = space_fdr(pval_in_intevals)
     pval_full_fdr =  full_fdr(pval_in_intevals)
     #find super channels in a specific feedback contrast 
+    '''
     sensors = []
     for j in range(102):
         if pval_full_fdr[j, 12] < 0.0002 and pval_full_fdr[j, 13] < 0.0002:
             f_name = path + 'sensors_late_fb_1500_1900_neg_pos_super_sign.txt'
             sensors.append(j)
     print(sensors)
+    '''
     # считаем разницу бета и добавляем к шаблону (донору)
     temp.data = risk_mean - norisk_mean
 
@@ -111,7 +114,7 @@ for p in planars:
     #no fdr
     binary = p_val_binary(pval_in_intevals, treshold = 0.05)
     if parameter3 == 'negative':
-        title = (f'In {parameter1} feedback negative vs positive, %s, LMEM, noFDR'%p)
+        title = (f'In {cond1} feedback negative vs positive, %s, LMEM, noFDR'%p)
     if parameter3 == None:
         title = (f'{cond2} vs {cond1}, %s, LMEM, noFDR'%p)
     fig = plotting_LMEM.plot_topomap(times = time_to_plot, ch_type='planar1', scalings = 1, units = 'dB', show = False, vmin = -1.2, vmax = 1.2, time_unit='s', title = title, colorbar = True, extrapolate = "local", mask = np.bool_(binary), mask_params = dict(marker='o',		markerfacecolor='white', markeredgecolor='k', linewidth=0, markersize=7, markeredgewidth=2))
@@ -119,7 +122,7 @@ for p in planars:
     # space fdr
     binary_space = p_val_binary(pval_space_fdr, treshold = 0.05)
     if parameter3 == 'negative':
-        title = (f'In {parameter1} feedback negative vs positive, %s, LMEM, space FDR'%p)
+        title = (f'In {cond1} feedback negative vs positive, %s, LMEM, space FDR'%p)
     if parameter3 == None:
         title = (f'{cond1} vs {cond2}, %s, LMEM, spaceFDR'%p)
     fig2 = plotting_LMEM.plot_topomap(times = time_to_plot, ch_type='planar1', scalings = 1, units = 'dB', show = False, vmin = -1.2, vmax = 1.2, time_unit='s', title = title, colorbar = True, extrapolate = "local", mask = np.bool_(binary_space), mask_params = dict(marker='o',		markerfacecolor='white', markeredgecolor='k', linewidth=0, markersize=7, markeredgewidth=2))
@@ -127,7 +130,7 @@ for p in planars:
     # full fdr
     binary_full = p_val_binary(pval_full_fdr, treshold = 0.05)
     if parameter3 == 'negative':
-        title = (f'In {parameter1} feedback negative vs positive, %s, LMEM, fullFDR'%p)
+        title = (f'In {cond1} feedback negative vs positive, %s, LMEM, fullFDR'%p)
     if parameter3 == None:
         title = (f'{cond2} vs {cond1}, %s, LMEM, fullFDR'%p)
     fig3 = plotting_LMEM.plot_topomap(times = time_to_plot, ch_type='planar1', scalings = 1, units = 'dB', show = False, vmin = -1.2, vmax = 1.2, time_unit='s', title = title, colorbar = True, extrapolate = "local", mask = np.bool_(binary_full), mask_params = dict(marker='o',		markerfacecolor='white', markeredgecolor='k', linewidth=0, markersize=7, markeredgewidth=2))
