@@ -876,7 +876,6 @@ def add_pic_time_course_html(filename, pic, pic_folder, pos_n, size):
         
 ############ space FDR for each sensor independently ######################################
 def space_fdr(p_val_n):
-    #print(p_val_n.shape)
     temp = copy.deepcopy(p_val_n)
     for i in range(temp.shape[1]):
         _, temp[:,i] = mul.fdrcorrection(p_val_n[:,i])
