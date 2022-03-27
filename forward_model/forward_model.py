@@ -71,5 +71,3 @@ fname = f'/home/asmyasnikova83/Archive/prob_learn/asmyasnikova83/forward/fwd/ave
 fwd = mne.read_forward_solution(fname)
 leadfield = fwd['sol']['data']
 print("Leadfield size : %d sensors x %d dipoles" % leadfield.shape)
-#print(leadfield[4, 30:650])
-#rint(fwd['src'])

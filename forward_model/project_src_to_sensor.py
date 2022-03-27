@@ -41,7 +41,8 @@ brain_areas = ['audalanteriorcingulate', 'caudalmiddlefrontal', 'cuneus', 'entor
               'parahippocampal', 'parsopercularis', 'parsorbitalis', 'parstriangularis', 'pericalcarine', 'postcentral', 'posteriorcingulate', 'precentral',
               'precuneus', 'rostralanteriorcingulate', 'rostralmiddlefrontal', 'superiorfrontal', 'superiorparietal', 'superiortemporal','supramarginal',
               'temporalpole', 'transversetemporal']
-for area in brain_areas:
+test = ['frontalpole']
+for area in test:
     # To select a region to activate, we use -----
     # a region of interest.
     selected_label = mne.read_labels_from_annot(
@@ -75,12 +76,12 @@ for area in brain_areas:
     raw = mne.simulation.simulate_raw(info, source_simulator, forward=fwd)
     cov = mne.make_ad_hoc_cov(raw.info)
     mne.simulation.add_noise(raw, cov, iir_filter=[1.0, -1.0, 0.04])
-    epochs = mne.Epochs(raw, events, event_id = 1.0, tmin = -1.0, tmax = 1.0, proj=True,
+    epochs = mne.Epochs(raw, events, event_id = 1, tmin = -1.0, tmax = 1.0, proj=True,
                             picks='mag')
     evoked = epochs.average()
     #plot  the projection onto the sensor space
     pic = evoked.plot_topomap(ch_type='mag', time_unit='s')
-    pic.savefig(f'{area}.png')
+    pic.savefig(f'{area}_dif_time.png')
     print(f'{area} is done!')
 
 
