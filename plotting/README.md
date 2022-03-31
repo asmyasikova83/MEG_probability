@@ -17,12 +17,16 @@ plot_topomaps_LMEM_factors.py - topomaps with statistics from LMEM (factors)
 plot_topomaps_line_LMEM.py  - topomaps with p_vals from LMEM 
 
 plot_topomaps_aver_pair.py topomaps averaged over time intervals
+#resample_before_stat added, yuilding less time points which stops overfitting
 
 topo_ch_MEG_template.py - MEG template with a set of channels
 
 topo_ch_template.py -  template with green significant channels
 
-#TODO remove scripts: plot_topomaps_ttest_pair.py  plot_timecourse_aver.py
+p_val_gradient.py - plots topomaps with ttest/LMEM for signed p-vals in contrasts
+
+p_val_gradient_pairs.py - plots averaged topomaps with LMEM for signed p-vas in contrasts
+
 #TODO do donor for less time points
 
 
