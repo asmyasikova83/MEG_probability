@@ -1,0 +1,12 @@
+Project which prepares forward model based on our data and makes projections of sources (labels) to sensor space (using the forward model)
+
+forward_model.py - this script extracst epochs, makes forward models (for each subject, condition, run and feedback separately) and averages
+the forward models
+
+make_bem.py - legacy form Vera, makes bem models
+https://github.com/Mirrabella/probability_learning/blob/main/Sources/make_bem.py
+
+project_src_to_sensor.py  takes forward model, simulates activity in predefined source space  (aka labels) and projects the labels
+onto sensor space
+
+functions.py - script containing functions which do the epoching and make forward moddel

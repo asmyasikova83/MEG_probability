@@ -1,73 +1,80 @@
 import mne, os
 import os.path as op
 import numpy as np
-from functions import make_fwd_solution
-
-os.environ["SUBJECTS_DIR"] = "/net/server/data/Archive/prob_learn/freesurfer/"
-
-data_path = '/net/server/data/Archive/prob_learn/vtretyakova/ICA_cleaned' 
-
-os.makedirs('/home/asmyasnikova83/Archive/prob_learn/asmyasnikova83/forward/fwd/', exist_ok = True)
-#path_forward = '/home/asmyasnikova83/Archive/prob_learn/asmyasnikova83/forward'
-subjects_dir = '/net/server/data/Archive/prob_learn/experiment/P011/170214/ORIGINAL_TSSS/'
+from functions import make_epochs_for_fwd, make_fwd_solution
 
 subjects = []
-for i in range(20,30):
+for i in range(0, 63):
     if i < 10:
         subjects += ['P00' + str(i)]
     else:
         subjects += ['P0' + str(i)]
-#subjects.remove('P062')
-#subjects.remove('P036')
-#subjects.remove('P052')
-#subjects.remove('P032')
-#subjects.remove('P045')
+subjects.remove('P062')
+subjects.remove('P036')
+subjects.remove('P052')
+subjects.remove('P032')
+subjects.remove('P045')
 
-#rounds = [1, 2, 3, 4, 5, 6]
-rounds = ['6']
-#rial_type = ['norisk', 'risk', 'prerisk', 'postrisk']
-trial_type = ['risk']
+runs = [1, 2, 3, 4, 5, 6]
+trial_type = ['norisk', 'risk', 'prerisk', 'postrisk']
 feedback = ['positive', 'negative']
 
 period_start = -1.750
 period_end = 2.750
 
+os.makedirs('/home/asmyasnikova83/forward_model/', exist_ok = True)
+os.makedirs('/home/asmyasnikova83/forward_model/bem/', exist_ok = True)
+os.makedirs('/home/asmyasnikova83/forward_model/fwd', exist_ok = True)
+
+path_data = '/net/server/data/Archive/prob_learn/vtretyakova/Nikita_mio_cleaned/events_by_cond_mio_corrected'
+data_path = '/net/server/data/Archive/prob_learn/vtretyakova/ICA_cleaned' 
+path_epochs = '/home/asmyasnikova83/forward_model'
+path_bem =  '/home/asmyasnikova83/forward_model/bem'
+path_trans = '/net/server/mnt/Archive/prob_learn/freesurfer'
+path_forward = '/home/asmyasnikova83/forward_model/fwd'
+
+prepare_epochs = True
 prepare_fwd_solution = False
 process_fwd_solution = False
 
+planars = ['planar1', 'planar2']
 
+if prepare_epochs:
+    for planar in planars:
+        for subj in subjects:
+            for r in runs:
+                for cond in trial_type:
+                    for fb in feedback:
+                        try:
+                            events_response = np.loadtxt('{0}/{1}_run{2}_{3}_fb_cur_{4}.txt'.format(path_data, subj, r, cond, fb), dtype='int')
+                            epochs = make_epochs_for_fwd(subj, r, cond, fb, events_response, planar, period_start, period_end, data_path, path_epochs)
+                        except (OSError):
+                            print('This file not exist')
 if prepare_fwd_solution:
-    for subj in subjects:
-        events_response = np.loadtxt('/net/server/data/Archive/prob_learn/vtretyakova/Nikita_mio_cleaned/events_by_cond_mio_corrected/P061_run5_norisk_fb_cur_positive.txt', dtype='int')
-        # если только одна метка, т.е. одна эпоха, то выдается ошибка, поэтому приводи shape к виду (N,3)
-        if events_response.shape == (3,):
-            events_response = events_response.reshape(1,3)
-        raw_fname = op.join(data_path, '{0}/run2_{0}_raw_ica.fif'.format(subj))
-
-        raw_data = mne.io.Raw(raw_fname, preload=True)
-        picks = mne.pick_types(raw_data.info, meg = True, eog = True)
-        epochs = mne.Epochs(raw_data, events_response, event_id = None, tmin = period_start, 
-                        tmax = period_end, baseline = None, picks = picks, preload = True)
-
-        bem = mne.read_bem_solution('/net/server/data/Archive/prob_learn/asmyasnikova83/forward_model/bem/{0}_bem.h5'.format(subj), verbose=None)
-        src = mne.setup_source_space(subject =subj, spacing='ico5', add_dist=False ) # by default - spacing='oct6' (4098 sources per hemisphere)
-        trans = '/net/server/mnt/Archive/prob_learn/freesurfer/{0}/mri/T1-neuromag/sets/{0}-COR.fif'.format(subj)
-        fwd = make_fwd_solution(subj, bem, src, trans, epochs.info)
-        print(fwd)
-        fname = f'/home/asmyasnikova83/Archive/prob_learn/asmyasnikova83/forward/fwd/{subj}-fwd.fif'
-        mne.write_forward_solution(fname, fwd, overwrite=True, verbose=None)
+    for planar in planars:
+        for subj in subjects:
+            for r in runs:
+                for cond in trial_type:
+                    for fb in feedback:
+                        try:
+                            epochs = mne.read_epochs('{0}/{1}_run{2}_{3}_fb_cur_{4}_{5}-epo.fif'.format(path_epochs, subj, r, cond, fb, planar), preload = True)                               
+                            fwd = make_fwd_solution(subj, r, cond, fb,  planar, epochs.info, path_bem, path_trans, path_forward)
+                        except (OSError):
+                            print('This file not exist')
 if process_fwd_solution:
-    fwd_all = []
-    for subj in subjects:
-        fname = f'/home/asmyasnikova83/Archive/prob_learn/asmyasnikova83/forward/fwd/{subj}-fwd.fif'
-        fwd = mne.read_forward_solution(fname)
-        fwd_all.append(fwd)
-    fwd_aver = mne.average_forward_solutions(fwd_all, weights=None, verbose=None)
-    print(fwd_aver)
-    fname = f'/home/asmyasnikova83/Archive/prob_learn/asmyasnikova83/forward/fwd/aver-fwd.fif'
-    mne.write_forward_solution(fname, fwd_aver, overwrite=True, verbose=None)
-
-fname = f'/home/asmyasnikova83/Archive/prob_learn/asmyasnikova83/forward/fwd/aver-fwd.fif'
-fwd = mne.read_forward_solution(fname)
-leadfield = fwd['sol']['data']
-print("Leadfield size : %d sensors x %d dipoles" % leadfield.shape)
+    for planar in planars:
+        fwd_all = []
+        for subj in subjects:
+            for r in runs:
+                for cond in trial_type:
+                    for fb in feedback:
+                        try:
+                            fname = '{0}/{1}_run{2}_{3}_fb_cur_{4}_{5}-fwd.fif'.format(path_forward, subj, r, cond, fb, planar)
+                            fwd = mne.read_forward_solution(fname)
+                            fwd_all.append(fwd)
+                        except (OSError):
+                            print('This file not exist')
+                            print('{0}/{1}_run{2}_{3}_fb_cur_{4}_{5}-fwd.fif'.format(path_forward, subj, r, cond, fb, planar))
+        fwd_averaged = mne.average_forward_solutions(fwd_all, weights=None, verbose=None)
+        fname = f'{path_forward}/aver_{planar}_20_63_fwd.fif'
+        mne.write_forward_solution(fname, fwd_averaged, overwrite=True, verbose=None)
