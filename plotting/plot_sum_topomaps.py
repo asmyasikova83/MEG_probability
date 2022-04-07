@@ -15,8 +15,8 @@ data_path = '/net/server/data/Archive/prob_learn/vtretyakova/Nikita_mio_cleaned/
   
 ###################### при построении topomaps берем только тех испытуемых, у которых есть все категории условий ####################
 
-decision = False
-fb = True
+decision = True
+fb = False
 
 #1 picture
 N = 1
@@ -33,12 +33,32 @@ time_to_plot = np.linspace(t_start, t_end, num = N)
 temp = mne.Evoked("/net/server/data/Archive/prob_learn/vtretyakova/Nikita_mio_cleaned/beta_16_30_ave_into_subjects_comb_planar/P001_norisk_evoked_beta_16_30_resp_comb_planar.fif")
 
 n = temp.data.shape[1] # количество временных отчетов для combaened planars - temp.data.shape = (102 x n), где 102 - количество планаров, а n - число временных отчетов
+
+summarized = False
+norisk = False
+risk = False
+prerisk = False
+postrisk = True
+
 ########################### norisk vs risk ##############################
 for p in planars:
     risk_mean, norisk_mean, prerisk_mean, postrisk_mean, p1_val, p2_val, p3_val, p4_val  = extract_and_av_cond_data(data_path, subjects, fr,  n)
-    # считаем разницу бета и добавляем к шаблону (донору)
-    temp.data = risk_mean +  norisk_mean + prerisk_mean + postrisk_mean
-    #temp.data = norisk_mean
+    # считаем бета и добавляем к шаблону (донору)
+    if summarized:
+        temp.data = risk_mean +  norisk_mean + prerisk_mean + postrisk_mean
+        cond = 'summarized'
+    if norisk:
+        temp.data = norisk_mean
+        cond = 'norisk'
+    if risk:
+        temp.data = risk_mean
+        cond = 'risk'
+    if prerisk:
+        temp.data = prerisk_mean
+        cond = 'prerisk'
+    if postrisk:
+        temp.data = postrisk_mean
+        cond = 'postrisk'
     # время в которое будет строиться топомапы
     times = np.array([t])
     # интервалы усредения
@@ -83,9 +103,22 @@ for p in planars:
         posterior_sensors = np.loadtxt(f_name, dtype = int)
         stat_sensors = np.hstack((anterior_sensors, posterior_sensors))
     cluster = np.zeros((102, 1))
-    for s in stat_sensors:
-        cluster[s] = 1
-    fig = plotting_LMEM.plot_topomap(times = time_to_plot, ch_type='planar1', scalings = 1, units = 'dB', show = False, vmin = -4.5, vmax = 4.5, time_unit='ms', title = title, colorbar = True, extrapolate = "local",  mask = np.bool_(cluster), mask_params = dict(marker='o',            markerfacecolor='white', markeredgecolor='k', linewidth=0, markersize=7, markeredgewidth=2))
+
+    plot_significant_channels = False
+    if plot_significant_channels:
+        for s in stat_sensors:
+            cluster[s] = 1
+    else:
+        cluster = np.zeros((102, 1))
+
+    if summarized:
+        vmin =  -4.5
+        vmax = 4.5
+    else:
+        vmin =  -1.8
+        vmax = 1.8
+
+    fig = plotting_LMEM.plot_topomap(times = time_to_plot, ch_type='planar1', scalings = 1, units = 'dB', show = False, vmin = vmin, vmax = vmax, time_unit='ms', title = title, colorbar = True, extrapolate = "local",  mask = np.bool_(cluster), mask_params = dict(marker='o',            markerfacecolor='white', markeredgecolor='k', linewidth=0, markersize=7, markeredgewidth=2))
 
     os.makedirs(f'/net/server/data/Archive/prob_learn/asmyasnikova83/topomaps/' , exist_ok = True)
-    fig.savefig(f'/net/server/data/Archive/prob_learn/asmyasnikova83/topomaps/sum_{title}_w_sensors.jpeg', dpi = 900)
+    fig.savefig(f'/net/server/data/Archive/prob_learn/asmyasnikova83/topomaps/sum_{title}_{cond}.jpeg', dpi = 900)
