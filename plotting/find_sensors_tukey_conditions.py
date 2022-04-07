@@ -35,10 +35,12 @@ if pre_fb:
 
     print(cond1)
     for j in range(102):
+        #decision - 900 -300 ms
         if pval_in_intevals[j,0] < 0.00009 and pval_in_intevals[j,1] < 0.00009 and pval_in_intevals[j,2] < 0.00009:
             f_name = path + 'sensors_decision_pre_resp_900_200_tukey_super_sign.txt'
             sensors.append(j)
         '''
+        #post-response 100_500 ms
         if pval_full_fdr[j,5] < 0.05 and pval_full_fdr[j,6] < 0.05:
             f_name = path + 'sensors_100_500_post_resp.txt'
             #manually remove outliers TODO automatically
@@ -46,7 +48,7 @@ if pre_fb:
                 pass
             else:
                 sensors.append(j)
-        
+        #feedback anticipation 800 ms
         if pval_in_intevals[j,8] < 0.01:
             print(pval_in_intevals[j,8])
             f_name = path + 'sensors_fb_anticip_600_800.txt'
