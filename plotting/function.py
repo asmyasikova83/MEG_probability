@@ -686,24 +686,6 @@ def extract_and_av_cond_data(data_path, subjects, fr,  n): # n - количес�
     comp4_mean = comp4.mean(axis=0)
     return comp1_mean, comp2_mean, comp3_mean, comp4_mean, p1_val, p2_val, p3_val, p4_val
 
-def ttest_pair_bk(data_path, subjects, parameter1, parameter2, planar, n): # n - количество временных отчетов
-    contr = np.zeros((len(subjects), 2, 102, n))
-
-    for ind, subj in enumerate(subjects):
-        temp1 = mne.Evoked(op.join(data_path, '{0}_{1}_evoked_{2}_resp_{3}.fif'.format(subj, parameter1, fr, planar)))
-        temp2 = mne.Evoked(op.join(data_path, '{0}_{1}_evoked_{2}_resp_{3}.fif'.format(subj, parameter2, fr, planar)))
-        
-        contr[ind, 0, :, :] = temp1.data
-        contr[ind, 1, :, :] = temp2.data
-		
-    comp1 = contr[:, 0, :, :]
-    comp2 = contr[:, 1, :, :]
-    t_stat, p_val = stats.ttest_rel(comp2, comp1, axis=0)
-
-    comp1_mean = comp1.mean(axis=0)
-    comp2_mean = comp2.mean(axis=0)
-    return t_stat, p_val, comp1_mean, comp2_mean
-
 def ttest_pair(data_path, response, subjects, fr, parameter1, parameter2, parameter3, parameter4, planar, n): # n - количество временных отчетов
     contr = np.zeros((len(subjects), 2, 102, n))
     for ind, subj in enumerate(subjects):
@@ -714,8 +696,8 @@ def ttest_pair(data_path, response, subjects, fr, parameter1, parameter2, parame
                 temp2 = mne.Evoked(op.join(data_path, '{0}_{1}_evoked_{2}_{3}_resp_{4}.fif'.format(subj, parameter1, fr, parameter4, planar)))
             else:
             #stim
-                temp1 = mne.Evoked(op.join(data_path, '{0}_{1}_fb_cur_negative_evoked_{2}_resp_{3}.fif'.format(subj, parameter1, fr, planar)))
-                temp2 = mne.Evoked(op.join(data_path, '{0}_{1}_fb_cur_positive_evoked_{2}_resp_{3}.fif'.format(subj, parameter1, fr, planar)))
+                temp1 = mne.Evoked(op.join(data_path, '{0}_{1}_fb_cur_negative_evoked_{2}_resp_{3}.fif'.format(subj, parameter3, fr, planar)))
+                temp2 = mne.Evoked(op.join(data_path, '{0}_{1}_fb_cur_positive_evoked_{2}_resp_{3}.fif'.format(subj, parameter4, fr, planar)))
         if parameter3 == None:
             if response:
                 temp1 = mne.Evoked(op.join(data_path, '{0}_{1}_evoked_{2}_resp_{3}.fif'.format(subj, parameter1, fr, planar)))
@@ -732,17 +714,6 @@ def ttest_pair(data_path, response, subjects, fr, parameter1, parameter2, parame
     comp2_mean = comp2.mean(axis=0)
     return t_stat, p_val, comp1_mean, comp2_mean
 
-#############################################################################
-##################### непарный ttest #######################################	
-def ttest_vs_zero(data_path, subjects, fr, parameter1, planar, n): # n - количество временных отчетов
-    contr = np.zeros((len(subjects), 1, 102, n))
-    for ind, subj in enumerate(subjects):
-        temp1 = mne.Evoked(op.join(data_path, '{0}_{1}_evoked_beta_16_30_trf_no_log_division_resp_{2}.fif'.format(subj,  parameter1, planar)))
-        contr[ind, 0, :, :] = temp1.data[:, :]
-    comp1 = contr[:, 0, :, :]
-    t_stat, p_val = stats.ttest_1samp(comp1, 0, axis=0)
-    comp1_mean = comp1.mean(axis=0)
-    return t_stat, p_val, comp1_mean	
 
 ##############################################################################################
 #################################### FDR CORRECTION ########################################
@@ -801,7 +772,6 @@ def compute_p_val(response,data_path, subjects, cond1, cond2, parameter3, parame
     comp3_mean = comp3.mean(axis=0)
     return comp1_mean, comp2_mean, comp3_mean, p_val
      
-    print(time.shape)
 def plot_stat_comparison(response, aver, path, comp1, comp2, comp3, p_mul_min, p_mul_max, p_val, p_fdr, parameter3, time, title='demo_title', folder='comparison',
                          comp1_label='comp1', comp2_label='comp2', comp3_label='difference'):
     assert(comp1.shape[0] == comp2.shape[0] == time.shape[0])
@@ -841,16 +811,13 @@ def plot_stat_comparison(response, aver, path, comp1, comp2, comp3, p_mul_min, p
 ##################### непарный ttest #######################################
 def ttest_vs_zero(data_path, subjects, parameter1, freq_range, planar, n): # n - количество временных отчетов
     contr = np.zeros((len(subjects), 1, 102, n))
-
     for ind, subj in enumerate(subjects):
         temp1 = mne.Evoked(op.join(data_path, '{0}_{1}_evoked_{2}_resp_{3}.fif'.format(subj, parameter1, freq_range, planar)))
         contr[ind, 0, :, :] = temp1.data
-
     comp1 = contr[:, 0, :, :]
     t_stat, p_val = stats.ttest_1samp(comp1, 0, axis=0)
 
     comp1_mean = comp1.mean(axis=0)
-                                       
     return t_stat, p_val, comp1_mean
 
 def to_str_ar(ch_l):
@@ -919,15 +886,14 @@ def plot_deff_topo(p_val, temp, mean1, mean2, time_to_plot, title):
 	temp.last = 1395
 
 	temp.times = np.arange(-0.206, 1.395, 0.001)
-    '''
-	
+    '''	
     binary = p_val_binary(p_val, treshold = 0.05)
-    temp.data = mean2 - mean1
+    temp.data = mean1 - mean2
 
 	#temp_shift = temp.shift_time(-0.600, relative=False)
 	
     fig1 = temp.plot_topomap(times = time_to_plot, ch_type='planar1', scalings = 1, average=0.2, units = 'dB', show = False, time_unit='s', title = title);
-    fig2 = temp.plot_topomap(times = time_to_plot, ch_type='planar1', scalings = 1, average=0.2, units = 'dB', show = False, vmin = -1.2, vmax = 1.2, time_unit='s', title = title, colorbar = True, extrapolate = "local", mask = np.bool_(binary), mask_params = dict(marker='o',			markerfacecolor='white', markeredgecolor='k', linewidth=0, markersize=7, markeredgewidth=2))
+    fig2 = temp.plot_topomap(times = time_to_plot, ch_type='planar1', scalings = 1, average=0.2, units = 'dB', show = False, vmin = -1.2, vmax = 1.2, time_unit='s', title = title, colorbar = True, extrapolate = "local", mask = np.bool_(binary), mask_params = dict(marker='o',			markerfacecolor='green', markeredgecolor='yellow', linewidth=0, markersize=7, markeredgewidth=4))
 
 
 
@@ -943,17 +909,9 @@ def plot_topo_vs_zero(p_val, temp, mean1, time_to_plot, title):
 
 	temp.times = np.arange(-0.206, 1.395, 0.001)
     '''
-	
     binary = p_val_binary(p_val, treshold = 0.05)
     temp.data = mean1
-
-	#temp_shift = temp.shift_time(-0.600, relative=False)
-	
-	#fig1 = temp.plot_topomap(times = time_to_plot, ch_type='planar1', average=0.2, show = False,  vmin = -5.0, vmax = 5.0, time_unit='ms', title = title);
     fig = temp.plot_topomap(times = time_to_plot, ch_type='planar1', scalings = 1, average=0.2, units = 'dB', show = False, vmin = -4.5, vmax = 4.5, time_unit='s', title = title, colorbar = True, extrapolate = "local", mask = np.bool_(binary), mask_params = dict(marker='o',		markerfacecolor='white', markeredgecolor='k', linewidth=0, markersize=7, markeredgewidth=2))
-
-
-
     return fig, temp # temp - "Evoked" , which can be save if it is needed   
 
 ########################################################################          
