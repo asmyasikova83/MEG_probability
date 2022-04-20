@@ -53,7 +53,7 @@ for p in planars:
        title = (f'{cond1} vs {cond2}, %s, LMEM, noFDR'%p)
        if response:
            #put new csv not urgent basically the same
-           df = pd.read_csv(f'/{prefix}/beta/p_vals_fb_cur_Tukey_by_trial_type_MEG.csv')
+           df = pd.read_csv(f'/{prefix}/beta/p_vals_Tukey_by_trial_type_MEG_early_log.csv')
        else:
            df = pd.read_csv(f'/{prefix}/stim_check/p_vals_fb_cur_Tukey_by_trial_type_MEG_stim.csv')
     
@@ -133,16 +133,17 @@ for p in planars:
         title = (f'In {cond1} feedback negative vs positive, %s, LMEM, fullFDR'%p)
     if parameter3 == None:
         title = (f'{cond2} vs {cond1}, %s, LMEM, fullFDR'%p)
-    fig3 = plotting_LMEM.plot_topomap(times = time_to_plot, ch_type='planar1', scalings = 1, units = 'dB', show = False, vmin = -1.2, vmax = 1.2, time_unit='s', title = title, colorbar = True, extrapolate = "local", mask = np.bool_(binary_full), mask_params = dict(marker='o',		markerfacecolor='white', markeredgecolor='k', linewidth=0, markersize=7, markeredgewidth=2))
+    fig3 = plotting_LMEM.plot_topomap(times = time_to_plot, ch_type='planar1', scalings = 1, units = 'dB', show = False, vmin = -1.2, vmax = 1.2, time_unit='s', title = title, colorbar = True, extrapolate = "local", mask = np.bool_(binary_full), mask_params = dict(marker='o',		markerfacecolor='green', markeredgecolor='yellow', linewidth=0, markersize=7, markeredgewidth=4))
 
 
     #os.makedirs('/net/server/data/Archive/prob_learn/asmyasnikova83/{0}/topomaps_lines_LMEM_{1}_poster/norisk_vs_risk/'.format(feedb, fr) , exist_ok = True)
     if parameter3 == 'negative':
         os.makedirs(f'/{prefix}/topomaps/topomaps_rows_LMEM_response/{cond1}/', exist_ok = True)
         #fig3.savefig('/net/server/data/Archive/prob_learn/asmyasnikova83/{0}/topomaps_lines_LMEM_{1}_poster/norisk_vs_risk/LMEM_norisk_vs_risk_stat_full_fdr_{2}_separ_fb.jpeg'.format(feedb, fr, p), dpi = 300)
-        fig3.savefig(f'/{prefix}/topomaps/topomaps_rows_LMEM_response/{cond1}/LMEM_{cond1}_vs_{parameter3}_vs_{parameter4}_stat_full_fdr_{fr}_separ_fb.jpeg', dpi = 900)
+        fig3.savefig(f'/{prefix}/topomaps/topomaps_rows_LMEM_response/{cond1}/LMEM_{cond1}_{parameter3}_vs_{parameter4}_stat_full_fdr_{fr}_separ_fb.jpeg', dpi = 900)
     if parameter3 == None:
         if response:
+            print('make a dir')
             os.makedirs(f'/{prefix}/topomaps/topomaps_rows_LMEM_response/{cond1}_vs_{cond2}/' , exist_ok = True)
             fig.savefig(f'/{prefix}/topomaps/topomaps_rows_LMEM_response/{cond1}_vs_{cond2}/LMEM_{cond1}_vs_{cond2}_stat_no_fdr_{fr}_separ_fb.jpeg', dpi = 900)
             fig2.savefig(f'/{prefix}/topomaps/topomaps_rows_LMEM_response/{cond1}_vs_{cond2}/LMEM_{cond1}_vs_{cond2}_stat_space_fdr_{fr}_separ_fb.jpeg', dpi = 900)
