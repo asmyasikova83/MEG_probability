@@ -25,12 +25,14 @@ tmax = [-0.7, -0.5, -0.3, -0.1, 0.1, 0.3, 0.5, 0.7, 0.9, 1.1, 1.3, 1.5, 1.7, 1.9
 temp = mne.Evoked("/net/server/data/Archive/prob_learn/vtretyakova/Nikita_mio_cleaned/beta_16_30_ave_into_subjects_comb_planar/P001_norisk_evoked_beta_16_30_resp_comb_planar.fif")
 
 
+fr = 'beta_16_30_trf_early_log'
+planars = ['comb_planar']
+
 n = temp.data.shape[1] # количество временных отчетов для combaened planars - temp.data.shape = (102 x n), где 102 - количество планаров, а n - число временных отчетов
 if response:
     if parameter3 == 'negative':
-        data_path = f'/{prefix}/beta/beta_16_30_fb_ave_comb_planar/'
+        data_path = f'{prefix}/beta_by_feedback/{fr}_ave_into_subj_comb_planar/'
     if parameter3 == None:
-        fr = 'beta_16_30_trf_early_log'
         data_path = '/net/server/data/Archive/prob_learn/vtretyakova/Nikita_mio_cleaned/beta_16_30_trf_early_log/beta_16_30_trf_early_log_comb_planar/'
 else:
     freq_range = 'beta_16_30_trf_no_log_division_stim'
@@ -40,6 +42,7 @@ else:
         data_path = '/{0}/stim_check/{1}/{1}_ave_comb_planar'.format(prefix, freq_range)
 # get beta power over conditions
 for p in planars:
+    print(p)
     print('data path', data_path)
     _, _, risk_mean, norisk_mean = ttest_pair(data_path, response, subjects, fr, parameter1 = f'{cond1}', parameter2 = f'{cond2}', parameter3 = parameter3, parameter4 = parameter4, planar = p,  n = n)
     #get p-values
@@ -83,11 +86,11 @@ pval_full_fdr =  full_fdr(pval_in_intevals)
 save = False #get intersect of significant sensors
 fullfdr = True #comppute signed p-vals
 #intervals of interest
-decision = True
-anticip = False
+decision = False
+anticip = True
 fb = False
 if fb:
-    interval = 13
+    interval = [12, 13]
 if decision:
     interval = [0, 1, 2]
 if anticip:
@@ -96,28 +99,37 @@ if save:
     sensors = []
     aver_interval = np.ones((102,1))
     for j in range(102):
-        #decision
-        if pval_full_fdr[j, interval[0]] < 0.05 and pval_full_fdr[j, interval[1]] < 0.05 and pval_full_fdr[j, interval[2]] < 0.05:
-            aver_interval[j] = (pval_full_fdr[j, interval[0]] + pval_full_fdr[j, interval[1]] + pval_full_fdr[j, interval[2]])/3
-        #fb
-        #if pval_full_fdr[j, interval] < 0.05:
-        #anticip
-        #if pval_in_intevals[j, interval] < 0.05:
-            sensors.append(j)
-    #aver_interval = aver_interval[:, np.newaxis]
+        if decision:
+            if pval_full_fdr[j, interval[0]] < 0.05 and pval_full_fdr[j, interval[1]] < 0.05 and pval_full_fdr[j, interval[2]] < 0.05:
+                aver_interval[j] = (pval_full_fdr[j, interval[0]] + pval_full_fdr[j, interval[1]] + pval_full_fdr[j, interval[2]])/3
+                sensors.append(j)
+        if fb:
+            if pval_full_fdr[j, interval[0]] < 0.05 and pval_full_fdr[j, interval[1]] < 0.05:
+                aver_interval[j] = (pval_full_fdr[j, interval[0]] + pval_full_fdr[j, interval[1]])/2
+                sensors.append(j)
+        if anticip:
+            if pval_in_intevals[j, interval] < 0.05:
+                aver_interval[j] = pval_in_intevals[j, interval]
+                sensors.append(j)
     aver_interval = np.array(aver_interval)
     sensors_to_save = np.array(sensors)
     sensors_to_save = sensors_to_save[np.newaxis]
     if parameter3 == None:
+        #set param3,4 to None
         if fb:
             f_name = path + f'sensors_late_fb_1500_1900_{cond1}_vs_{cond2}.txt'
+            f_name_aver = path + 'fb_aver.txt'
         if anticip:
             f_name = path + f'sensors_late_anticip_600_800_{cond1}_vs_{cond2}.txt'
+            f_name_aver = path + 'anticip_aver.txt'
         if decision:
             f_name = path + f'sensors_decision_-900_-300_{cond1}_vs_{cond2}.txt'
-            f_name_aver = path + 'aver.txt'
+            f_name_aver = path + 'decis_aver.txt'
     if parameter3 == 'negative':
-        f_name = path + f'sensors_late_fb_1500_1900_{cond1}_{parameter3}_vs_{parameter4}.txt'
+        #set param3. 4 to mneg pos
+        if fb:
+            f_name = path + f'sensors_late_fb_1500_1900_{cond1}_{parameter3}_vs_{parameter4}.txt'
+            f_name_aver = path + 'fb_fb_aver.txt'
     np.savetxt(f_name, sensors_to_save, fmt="%s")
     np.savetxt(f_name_aver, aver_interval, fmt="%d")
     exit()
@@ -127,38 +139,42 @@ if fullfdr:
     if parameter3 == None:
         if fb:
             f_name = path + f'sensors_late_fb_1500_1900_{cond1}_vs_{cond2}.txt'
+            f_name_aver = path + 'fb_aver.txt'
         if anticip:
             f_name = path + f'sensors_late_anticip_600_800_{cond1}_vs_{cond2}.txt'
+            f_name_aver = path + 'anticip_aver.txt'
         if decision:
             f_name = path + f'sensors_decision_-900_-300_{cond1}_vs_{cond2}.txt'
-            f_name_aver = path + 'aver.txt'
-        if parameter3 == 'negative':
+            f_name_aver = path + 'decis_aver.txt'
+    if parameter3 == 'negative':
+        if fb:
+            #in config set param3, param4 to 'negative', 'positive'
             f_name = path + f'sensors_late_fb_1500_1900_{cond1}_{parameter3}_vs_{parameter4}.txt'
-        sensors = np.loadtxt(f_name, dtype = int)
-        aver_interval = np.loadtxt(f_name_aver, dtype = int)
-        ozeros = np.zeros((102,1))
+            f_name_aver = path + 'fb_fb_aver.txt'
+    sensors = np.loadtxt(f_name, dtype = int)
+    aver_interval = np.loadtxt(f_name_aver, dtype = int)
+    ozeros = np.zeros((102,1))
     for i in range(102):
         for sen in sensors:
             if i == sen:
-                #decision
-                if (data_for_plotting[i, interval[0]] + data_for_plotting[i, interval[1]] + data_for_plotting[i, interval[2]])/3 > 0:
-                # fb, anticip
-                #if data_for_plotting[i, interval] < 0:
-                    print('i', i)
-                    #ozeros[i] = 1.0 -  10*pval_full_fdr[i, interval] #fb
-                    #ozeros[i] = 1.0 -  10*pval_in_intevals[i, interval] #anticip, no fdr
-                    ozeros[i] = 1.0 -  10*aver_interval[i]
-                #if data_for_plotting[i, interval] < 0:
-                if (data_for_plotting[i, interval[0]] + data_for_plotting[i, interval[1]] + data_for_plotting[i, interval[2]])/3 < 0:
-                    #ozeros[i] = -1.0 +  10*pval_full_fdr[i, interval]
-                    #ozeros[i] = -1.0 +  10*pval_in_intevals[i, interval]
-                    ozeros[i] = -1.0 +  10*aver_interval[i]
-    #pval_full_fdr_poster = pval_full_fdr[:, interval] #fb
-    #pval_full_fdr_poster = pval_in_intevals[:, interval] #anticip
-    #binary_full = p_val_binary(pval_full_fdr_poster[:, np.newaxis], treshold = 0.05) # fb, anticip
+                if decision:
+                    if (data_for_plotting[i, interval[0]] + data_for_plotting[i, interval[1]] + data_for_plotting[i, interval[2]])/3 > 0:
+                        ozeros[i] = 1.0 -  10*aver_interval[i]
+                    if (data_for_plotting[i, interval[0]] + data_for_plotting[i, interval[1]] + data_for_plotting[i, interval[2]])/3 < 0:
+                        ozeros[i] = -1.0 +  10*aver_interval[i]
+                if fb:
+                    if (data_for_plotting[i, interval[0]] + data_for_plotting[i, interval[1]])/2 > 0:
+                        ozeros[i] = 1.0 -  10*aver_interval[i]
+                    if (data_for_plotting[i, interval[0]] + data_for_plotting[i, interval[1]])/2 < 0:
+                        ozeros[i] = -1.0 +  10*aver_interval[i]
+                if anticip:
+                    if data_for_plotting[i, interval] > 0:
+                        ozeros[i] = 1.0 -  10*pval_in_intevals[i, interval] #anticip, no fdr
+                    if data_for_plotting[i, interval] < 0:
+                        ozeros[i] = -1.0 +  10*pval_in_intevals[i, interval]
     binary_full = p_val_binary(aver_interval[:, np.newaxis], treshold = 0.05)
     if parameter3 == 'negative':
-        title = (f'{cond1}pos_neg, LMEM, fullFDR'%p)
+        title = (f'{cond1}pos_neg, %s, LMEM, fullFDR'%p)
     else:
         title = (f'{cond1} vs {cond2}, %s, LMEM, fullFDR'%p)
 #prepare the p-vals for plotting
