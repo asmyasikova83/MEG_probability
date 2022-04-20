@@ -17,12 +17,33 @@ print(fr)
   
 ###################### при построении topomaps берем только тех испытуемых, у которых есть все категории условий ####################
 
+decis = False
+anticip = True
+fb = False
+
 N = 1
 #for one pic in a row t_start, t_end and times will be dummy
-t_start = 1.7
-t_end =  1.7
-#t_start = -0.3
-#t_end = -0.3
+if decis:
+    t_start = -0.3
+    t_end = -0.3
+    times = np.array([-0.3])
+    tmin = [-0.9, -0.7, -0.5]
+    tmax = [-0.7, -0.5, -0.3]
+    step = 2
+if anticip:
+    t_start = 0.8
+    t_end =  0.8
+    times = np.array([0.8])
+    tmin = [0.7]
+    tmax = [0.9]
+    step = 0
+if fb:
+    t_start = 1.7
+    t_end =  1.7
+    times = np.array([1.7])
+    tmin = [1.5, 1.7]
+    tmax = [1.7, 1.9]
+    step = 1
 
 # задаем время и донора
 time_to_plot = np.linspace(t_start, t_end, num = N)
@@ -39,52 +60,48 @@ for p in planars:
 
     # number of heads in line and the number of intervals into which we divided (see amount of tables with p_value in intervals)
     # считаем разницу бета и добавляем к шаблону (донору)
-    temp.data = risk_mean +  norisk_mean + prerisk_mean + postrisk_mean
+    temp.data = (risk_mean +  norisk_mean + prerisk_mean + postrisk_mean)/4
     #temp.data = norisk_mean
-    #tmin = [-0.5, -0.3]
-    #tmax = [-0.3, -0.1]
     # время в которое будет строиться топомапы
-    #times = np.array([-0.8, -0.6, -0.4, -0.2, 0, 0.2, 0.4, 0.6, 0.8, 1.0, 1.2, 1.4, 1.6, 1.8, 2.0, 2.2, 2.4])
-    times = np.array([1.7])
-        # интервалы усредения
-    #tmin = [-0.9, -0.7, -0.5, -0.3, -0.1, 0.1, 0.3, 0.5, 0.7, 0.9, 1.1, 1.3, 1.5, 1.7, 1.9, 2.1, 2.3]
-    #tmax = [-0.7, -0.5, -0.3, -0.1, 0.1, 0.3, 0.5, 0.7, 0.9, 1.1, 1.3, 1.5, 1.7, 1.9, 2.1, 2.3, 2.5]
-    #tmin = [-0.5, -0.3]
-    #tmax = [-0.3, -0.1]
-    tmin = [1.5, 1.7]
-    tmax = [1.7, 1.9]
 
     data_for_plotting = np.empty((102, 0))
 
     #усредняем сигнал в каждом из интервалов усреднения и собираем в единый np.array (102 x n) где 102 - количество комбайнд планаров, а n - количество интервалов усредения
     
-    for i in range(N+1):
+    for i in range(N+step):
         data_in_interval = temp.copy()
         data_in_interval = data_in_interval.crop(tmin=tmin[i], tmax=tmax[i], include_tmax=True)
         data_mean = data_in_interval.data.mean(axis = 1)
         data_mean = data_mean.reshape(102,1)
         data_for_plotting = np.hstack([data_for_plotting, data_mean])
-    #summarize 2 timeframes and  btain a head
-    data_to_sum = (data_for_plotting[:,0] + data_for_plotting[:,1])/2
+    if decis:
+        data_to_sum = (data_for_plotting[:,0] + data_for_plotting[:,1] + data_for_plotting[:,2])/3
+        f_name = '/net/server/data/Archive/prob_learn/asmyasnikova83/probability/signif_sensors/sensors_decision_pre_resp_900_200.txt'
+        stat_sensors = np.loadtxt(f_name, dtype = int)
+        title = ('decis')
+    if anticip:
+        data_to_sum = data_for_plotting[:,0]
+        f_name = '/net/server/data/Archive/prob_learn/asmyasnikova83/probability/signif_sensors/sensors_fb_anticip_600_800.txt'
+        stat_sensors = np.loadtxt(f_name, dtype = int)
+        title = ('anticip')
+    if fb:
+        #summarize 2 timeframes and  btain a head
+        data_to_sum = (data_for_plotting[:,0] + data_for_plotting[:,1])/2
+        f_name = '/net/server/data/Archive/prob_learn/asmyasnikova83/maps_signif_sensors/threshold/Anterior.txt'
+        anterior_sensors = np.loadtxt(f_name, dtype = int)
+        f_name = '/net/server/data/Archive/prob_learn/asmyasnikova83/maps_signif_sensors/threshold/Posterior.txt'
+        posterior_sensors = np.loadtxt(f_name, dtype = int)
+        stat_sensors = np.hstack((anterior_sensors, posterior_sensors))
+        title = ('fb')
     plotting_LMEM = mne.EvokedArray(data_to_sum[:, np.newaxis], info = temp.info)
     plotting_LMEM.times = times
-    title = ('sum late fb')
-    #title = ('norisk')
     pval_full_fdr =  full_fdr(p2_val)
     binary_full = p_val_binary(pval_full_fdr, treshold = 0.05)
-    f_name = '/net/server/data/Archive/prob_learn/asmyasnikova83/maps_signif_sensors/threshold/Anterior.txt'
-    anterior_sensors = np.loadtxt(f_name, dtype = int)
-    f_name = '/net/server/data/Archive/prob_learn/asmyasnikova83/maps_signif_sensors/threshold/Posterior.txt'
-    posterior_sensors = np.loadtxt(f_name, dtype = int)
-    stat_sensors=[]
-    stat_sensors = np.hstack((anterior_sensors, posterior_sensors))
-    print(len(stat_sensors))
+    #stat_sensors=[]
     cluster = np.zeros((102, 1))
     for s in stat_sensors:
         cluster[s] = 1
     fig = plotting_LMEM.plot_topomap(times = time_to_plot, ch_type='planar1', scalings = 1, units = 'dB', show = False, vmin = -1.8, vmax = 1.8, time_unit='ms', title = title, colorbar = True, extrapolate = "local",  mask = np.bool_(cluster), mask_params = dict(marker='o',            markerfacecolor='white', markeredgecolor='k', linewidth=0, markersize=7, markeredgewidth=2))
 
-    #fig = plotting_LMEM.plot_topomap(times = time_to_plot, ch_type='planar1', scalings = 1, units = 'dB', show = False, vmin = -6.0, vmax = 6.0, time_unit='s', title = title, colorbar = True, extrapolate = "local")
-
     os.makedirs(f'/net/server/data/Archive/prob_learn/asmyasnikova83/topomaps/' , exist_ok = True)
-    fig.savefig(f'/net/server/data/Archive/prob_learn/asmyasnikova83/topomaps/sum_fb_w_sensors.jpeg', dpi = 900)
+    fig.savefig(f'/net/server/data/Archive/prob_learn/asmyasnikova83/topomaps/sum_{title}_w_sensors.jpeg', dpi = 900)
