@@ -1,7 +1,10 @@
 import mne
 import os.path as op
 import os
+#from matplotlib import pyplot as plt
 import numpy as np
+#import pandas as pd
+#from scipy import stats
 import copy
 import statsmodels.stats.multitest as mul
 from function import ttest_pair, extract_and_av_cond_data
