@@ -12,11 +12,11 @@ from config import *
 
 # загружаем комбайн планары, усредненные внутри каждого испытуемогo
 prefix = '/net/server/data/Archive/prob_learn/asmyasnikova83/'
+fr = 'beta_16_30_trf_early_log'
 if response:
     if parameter3 == 'negative':
-       data_path = f'/{prefix}/beta/beta_16_30_fb_ave_comb_planar/'
+        data_path = f'/net/server/data/Archive/prob_learn/asmyasnikova83/beta_by_feedback/{fr}_ave_into_subj_comb_planar/'
     if parameter3 == None:
-        fr = 'beta_16_30_trf_early_log'
         data_path = '/net/server/data/Archive/prob_learn/vtretyakova/Nikita_mio_cleaned/beta_16_30_trf_early_log/beta_16_30_trf_early_log_comb_planar/'
 else:
     freq_range = 'beta_16_30_trf_no_log_division_stim'
@@ -133,7 +133,7 @@ for p in planars:
         title = (f'In {cond1} feedback negative vs positive, %s, LMEM, fullFDR'%p)
     if parameter3 == None:
         title = (f'{cond2} vs {cond1}, %s, LMEM, fullFDR'%p)
-    fig3 = plotting_LMEM.plot_topomap(times = time_to_plot, ch_type='planar1', scalings = 1, units = 'dB', show = False, vmin = -1.2, vmax = 1.2, time_unit='s', title = title, colorbar = True, extrapolate = "local", mask = np.bool_(binary_full), mask_params = dict(marker='o',		markerfacecolor='green', markeredgecolor='yellow', linewidth=0, markersize=7, markeredgewidth=4))
+    fig3 = plotting_LMEM.plot_topomap(times = time_to_plot, ch_type='planar1', scalings = 1, units = 'dB', show = False, vmin = -0.8, vmax = 0.8, time_unit='s', title = title, colorbar = True, extrapolate = "local", mask = np.bool_(binary_full), mask_params = dict(marker='o',		markerfacecolor='white', markeredgecolor='k', linewidth=0, markersize=9, markeredgewidth=4))
 
 
     #os.makedirs('/net/server/data/Archive/prob_learn/asmyasnikova83/{0}/topomaps_lines_LMEM_{1}_poster/norisk_vs_risk/'.format(feedb, fr) , exist_ok = True)
@@ -143,7 +143,6 @@ for p in planars:
         fig3.savefig(f'/{prefix}/topomaps/topomaps_rows_LMEM_response/{cond1}/LMEM_{cond1}_{parameter3}_vs_{parameter4}_stat_full_fdr_{fr}_separ_fb.jpeg', dpi = 900)
     if parameter3 == None:
         if response:
-            print('make a dir')
             os.makedirs(f'/{prefix}/topomaps/topomaps_rows_LMEM_response/{cond1}_vs_{cond2}/' , exist_ok = True)
             fig.savefig(f'/{prefix}/topomaps/topomaps_rows_LMEM_response/{cond1}_vs_{cond2}/LMEM_{cond1}_vs_{cond2}_stat_no_fdr_{fr}_separ_fb.jpeg', dpi = 900)
             fig2.savefig(f'/{prefix}/topomaps/topomaps_rows_LMEM_response/{cond1}_vs_{cond2}/LMEM_{cond1}_vs_{cond2}_stat_space_fdr_{fr}_separ_fb.jpeg', dpi = 900)
