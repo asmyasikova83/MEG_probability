@@ -686,14 +686,38 @@ def extract_and_av_cond_data(data_path, subjects, fr,  n): # n - количес�
     comp4_mean = comp4.mean(axis=0)
     return comp1_mean, comp2_mean, comp3_mean, comp4_mean, p1_val, p2_val, p3_val, p4_val
 
+def ttest_pair_early_trials(data_path, response, subjects, fr, parameter1, parameter2, parameter3, parameter4, planar, n): # n - количество временных отчетов
+    contr = np.zeros((len(subjects), 2, 102, n))
+    counter = 0
+    for ind, subj in enumerate(subjects):
+        #TODO less time points
+        try:
+            if  parameter3 == 'negative':
+                temp1 = mne.Evoked(op.join(data_path, '{0}_{1}_evoked_{2}_resp_{3}_fb_cur_negative.fif'.format(subj, parameter1, fr, planar)))
+                temp2 = mne.Evoked(op.join(data_path, '{0}_{1}_evoked_{2}_resp_{3}_fb_cur_positive.fif'.format(subj, parameter1, fr, planar)))
+                counter = counter + 1
+            if  parameter3 == None:
+                temp1 = mne.Evoked(op.join(data_path, '{0}_{1}_evoked_{2}_resp_{3}.fif'.format(subj, parameter1, fr, planar)))
+                temp2 = mne.Evoked(op.join(data_path, '{0}_{1}_evoked_{2}_resp_{3}.fif'.format(subj, parameter1, fr, planar)))
+            contr[ind, 0, :, :] = temp1.data
+            contr[ind, 1, :, :] = temp2.data
+        except (OSError):
+            print('This file not exist')
+    comp1 = contr[:, 0, :, :]
+    comp2 = contr[:, 1, :, :]
+    t_stat, p_val = stats.ttest_rel(comp2, comp1, axis=0)
+    comp1_mean = comp1.mean(axis=0)
+    comp2_mean = comp2.mean(axis=0)
+    return t_stat, p_val, comp1_mean, comp2_mean
+
 def ttest_pair(data_path, response, subjects, fr, parameter1, parameter2, parameter3, parameter4, planar, n): # n - количество временных отчетов
     contr = np.zeros((len(subjects), 2, 102, n))
     for ind, subj in enumerate(subjects):
         if  parameter3 == 'negative':
             #TODO less time points
             if response:
-                temp1 = mne.Evoked(op.join(data_path, '{0}_{1}_evoked_{2}_{3}_resp_{4}.fif'.format(subj, parameter1, fr,  parameter3, planar)))
-                temp2 = mne.Evoked(op.join(data_path, '{0}_{1}_evoked_{2}_{3}_resp_{4}.fif'.format(subj, parameter1, fr, parameter4, planar)))
+                temp1 = mne.Evoked(op.join(data_path, '{0}_{1}_evoked_{2}_resp_{3}_fb_cur_{4}.fif'.format(subj, parameter1, fr, planar, parameter3)))
+                temp2 = mne.Evoked(op.join(data_path, '{0}_{1}_evoked_{2}_resp_{3}_fb_cur_{4}.fif'.format(subj, parameter1, fr, planar, parameter4)))
             else:
             #stim
                 temp1 = mne.Evoked(op.join(data_path, '{0}_{1}_fb_cur_negative_evoked_{2}_resp_{3}.fif'.format(subj, parameter3, fr, planar)))
@@ -713,7 +737,6 @@ def ttest_pair(data_path, response, subjects, fr, parameter1, parameter2, parame
     comp1_mean = comp1.mean(axis=0)
     comp2_mean = comp2.mean(axis=0)
     return t_stat, p_val, comp1_mean, comp2_mean
-
 
 ##############################################################################################
 #################################### FDR CORRECTION ########################################
@@ -809,10 +832,13 @@ def plot_stat_comparison(response, aver, path, comp1, comp2, comp3, p_mul_min, p
     plt.close()
 #############################################################################
 ##################### непарный ttest #######################################
-def ttest_vs_zero(data_path, subjects, parameter1, freq_range, planar, n): # n - количество временных отчетов
+def ttest_vs_zero(data_path, subjects, parameter1, parameter3, freq_range, planar, n): # n - количество временных отчетов
     contr = np.zeros((len(subjects), 1, 102, n))
     for ind, subj in enumerate(subjects):
-        temp1 = mne.Evoked(op.join(data_path, '{0}_{1}_evoked_{2}_resp_{3}.fif'.format(subj, parameter1, freq_range, planar)))
+        if parameter3 == None:
+            temp1 = mne.Evoked(op.join(data_path, '{0}_{1}_evoked_{2}_resp_{3}.fif'.format(subj, parameter1, freq_range, planar)))
+        if parameter3 == 'negative' or parameter3 == 'positive':
+            temp1 = mne.Evoked(op.join(data_path, '{0}_{1}_evoked_{2}_resp_{3}_fb_cur_{4}.fif'.format(subj, parameter1, freq_range, planar, parameter3)))
         contr[ind, 0, :, :] = temp1.data
     comp1 = contr[:, 0, :, :]
     t_stat, p_val = stats.ttest_1samp(comp1, 0, axis=0)
