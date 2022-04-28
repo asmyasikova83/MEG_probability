@@ -1,22 +1,23 @@
 import mne
 import os.path as op
 import os
-from matplotlib import pyplot as plt
 import numpy as np
-import pandas as pd
-from scipy import stats
 import copy
 import statsmodels.stats.multitest as mul
-from function import ttest_pair, ttest_vs_zero, space_fdr, full_fdr, p_val_binary, plot_deff_topo, plot_topo_vs_zero, extract_and_av_cond_data
+from function import ttest_pair, extract_and_av_cond_data
 from config import *
 
 # загружаем комбайн планары, усредненные внутри каждого испытуемого
-data_path = '/net/server/data/Archive/prob_learn/vtretyakova/Nikita_mio_cleaned/beta_16_30_trf_early_log/beta_16_30_trf_early_log_comb_planar/'
+if parameter3 == 'negative':
+    freq_range = 'beta_16_30_trf_early_log'
+    data_path = '/net/server/data/Archive/prob_learn/asmyasnikova83/beta_by_feedback/{0}_ave_into_subj_comb_planar/'.format(freq_range)
+if parameter3 == None:
+    data_path = '/net/server/data/Archive/prob_learn/vtretyakova/Nikita_mio_cleaned/beta_16_30_trf_early_log/beta_16_30_trf_early_log_comb_planar/'
   
 ###################### при построении topomaps берем только тех испытуемых, у которых есть все категории условий ####################
 
-decision = True
-fb = False
+decision = False
+fb = True
 
 #1 picture
 N = 1
@@ -42,23 +43,28 @@ postrisk = True
 
 ########################### norisk vs risk ##############################
 for p in planars:
-    risk_mean, norisk_mean, prerisk_mean, postrisk_mean, p1_val, p2_val, p3_val, p4_val  = extract_and_av_cond_data(data_path, subjects, fr,  n)
-    # считаем бета и добавляем к шаблону (донору)
-    if summarized:
-        temp.data = risk_mean +  norisk_mean + prerisk_mean + postrisk_mean
-        cond = 'summarized'
-    if norisk:
-        temp.data = norisk_mean
-        cond = 'norisk'
-    if risk:
+    if parameter3 == 'negative':
+        _, p_val, risk_mean, norisk_mean = ttest_pair(data_path, response, subjects, freq_range, parameter1 = cond1, parameter2 = cond2, parameter3 = parameter3, parameter4 = parameter4, planar = p,  n = n)
         temp.data = risk_mean
-        cond = 'risk'
-    if prerisk:
-        temp.data = prerisk_mean
-        cond = 'prerisk'
-    if postrisk:
-        temp.data = postrisk_mean
-        cond = 'postrisk'
+        #temp.data = norisk_mean
+    if parameter3 == None:
+        risk_mean, norisk_mean, prerisk_mean, postrisk_mean, p1_val, p2_val, p3_val, p4_val  = extract_and_av_cond_data(data_path, subjects, fr,  n)
+        # считаем бета и добавляем к шаблону (донору)
+        if summarized:
+            temp.data = risk_mean +  norisk_mean + prerisk_mean + postrisk_mean
+            cond = 'summarized'
+        if norisk:
+            temp.data = norisk_mean
+            cond = 'norisk'
+        if risk:
+            temp.data = risk_mean
+            cond = 'risk'
+        if prerisk:
+            temp.data = prerisk_mean
+            cond = 'prerisk'
+        if postrisk:
+            temp.data = postrisk_mean
+            cond = 'postrisk'
     # время в которое будет строиться топомапы
     times = np.array([t])
     # интервалы усредения
@@ -96,7 +102,11 @@ for p in planars:
         f_name = '/net/server/data/Archive/prob_learn/asmyasnikova83/probability/signif_sensors/sensors_decision_pre_resp_900_200.txt'
         stat_sensors = np.loadtxt(f_name, dtype = int)
     if fb:
-        title = 'fb'
+        if parameter3 == None:
+            title = 'fb'
+        if parameter3 == 'negative':
+            title = cond1 + '_losses'
+            #title = cond1 + '_wins'
         f_name = '/net/server/data/Archive/prob_learn/asmyasnikova83/maps_signif_sensors/threshold/Anterior.txt'
         anterior_sensors = np.loadtxt(f_name, dtype = int)
         f_name = '/net/server/data/Archive/prob_learn/asmyasnikova83/maps_signif_sensors/threshold/Posterior.txt'
@@ -121,4 +131,4 @@ for p in planars:
     fig = plotting_LMEM.plot_topomap(times = time_to_plot, ch_type='planar1', scalings = 1, units = 'dB', show = False, vmin = vmin, vmax = vmax, time_unit='ms', title = title, colorbar = True, extrapolate = "local",  mask = np.bool_(cluster), mask_params = dict(marker='o',            markerfacecolor='white', markeredgecolor='k', linewidth=0, markersize=7, markeredgewidth=2))
 
     os.makedirs(f'/net/server/data/Archive/prob_learn/asmyasnikova83/topomaps/' , exist_ok = True)
-    fig.savefig(f'/net/server/data/Archive/prob_learn/asmyasnikova83/topomaps/sum_{title}_{cond}.jpeg', dpi = 900)
+    fig.savefig(f'/net/server/data/Archive/prob_learn/asmyasnikova83/topomaps/sum_{title}.jpeg', dpi = 900)

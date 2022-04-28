@@ -24,18 +24,18 @@ if fr.split('_')[0] == 'beta':
     f_step = 2
 #TODO issues with poster for IN feedback
 poster = False
-response = False
+response = True
 donor = False
-cond1 = 'risk'
+cond1 = 'norisk'
 cond2 = 'norisk'
 #cond1 = 'risk'
 #cond2 = 'norisk'
 parameter1 = cond1
 parameter2 = cond2
-#parameter3 = 'negative'
-#parameter4 = 'positive'
-parameter3 = None
-parameter4 = None
+parameter3 = 'negative'
+parameter4 = 'positive'
+#parameter3 = None
+#parameter4 = None
 if cond1 == 'prerisk':
     cond1_name = 'pre-LP'
 if cond1 == 'risk':
@@ -54,14 +54,15 @@ comp2_label = cond2_name
 #planars = ['planar1', 'planar2', 'combined_planars']
 planars = ['comb_planar']
 
-freq_range = 'beta_16_30_trf_no_log_division'
+freq_range = 'beta_16_30_trf_early_log'
+data_path = '/net/server/data/Archive/prob_learn/vtretyakova/Nikita_mio_cleaned/beta_16_30_trf_early_log/beta_16_30_trf_early_log_ave_into_subj'
 #path = '/net/server/data/Archive/prob_learn/asmyasnikova83/probability/stim/{0}/timecourses_aver_all_ch/'.format(freq_range)
 if response:
     #path = '/net/server/data/Archive/prob_learn/asmyasnikova83/timecourses/resp_fewer/{0}/timecourses/'.format(freq_range)
-    path = '/net/server/data/Archive/prob_learn/asmyasnikova83/probability/resp_fewer_5_best/{0}/timecourses_aver_all_ch/'.format(freq_range)
+    path = '/net/server/data/Archive/prob_learn/asmyasnikova83/timecourses/with_contrast/{0}/'.format(freq_range)
 else:
     #path = '/net/server/data/Archive/prob_learn/asmyasnikova83/timecourses/stim_fewer/{0}/timecourses/'.format(freq_range)
-    path = '/net/server/data/Archive/prob_learn/asmyasnikova83/probability/stim_fewer_5_best/{0}/timecourses_aver_all_ch/'.format(freq_range)
+    path = '/net/server/data/Archive/prob_learn/asmyasnikova83/timecourses/stim/with_contrast/{0}/timecourses_aver_all_ch/'.format(freq_range)
 os.makedirs(path, exist_ok = True)
 path_pdf = path + 'output' +  '/all_pdf/'
 
