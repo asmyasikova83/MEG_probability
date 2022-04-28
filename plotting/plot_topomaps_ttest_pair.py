@@ -1,23 +1,23 @@
 import mne
 import os.path as op
 import os
-#from matplotlib import pyplot as plt
 import numpy as np
-#from scipy import stats
 import copy
 import statsmodels.stats.multitest as mul
 from function import ttest_pair, ttest_vs_zero, space_fdr, full_fdr, p_val_binary, plot_deff_topo, plot_topo_vs_zero
 from config import *
 
+fr = 'beta_16_30_trf_early_log'
 # загружаем комбайн планары, усредненные внутри каждого испытуемого
-data_path = '/net/server/data/Archive/prob_learn/vtretyakova/Nikita_mio_cleaned/beta_16_30_trf_early_log/beta_16_30_trf_early_log_comb_planar/'
+if parameter3 == 'negative':
+    data_path = '/net/server/data/Archive/prob_learn/asmyasnikova83/beta_by_feedback/{0}_ave_into_subj_comb_planar/'.format(fr)
 if parameter3 == None:
-    fr = 'beta_16_30_trf_early_log'
+    data_path = '/net/server/data/Archive/prob_learn/vtretyakova/Nikita_mio_cleaned/beta_16_30_trf_early_log/beta_16_30_trf_early_log_comb_planar/'
 poster = True
 ###################### при построении topomaps берем только тех испытуемых, у которых есть все категории условий ####################
 
-decision = True
-fb = False
+decision = False
+fb = True
 
 if poster:
     N = 1
@@ -26,8 +26,8 @@ if poster:
         t_start = -0.3 
         t_end = -0.3
     if fb:
-        t_start = 0.7
-        t_end = 0.7
+        t_start = 1.7
+        t_end = 1.7
 else:
     N = 17
     t_start = -0.8
