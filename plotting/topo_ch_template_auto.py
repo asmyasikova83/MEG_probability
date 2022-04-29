@@ -44,11 +44,7 @@ sensors = np.loadtxt(f_name, dtype = int)
 cluster = np.zeros((102, 1))
 for s in sensors:
     cluster[s] = 1
-
-
 print('cluster', cluster)
-
-
 
 n = 1 # количество говов в ряду
 #set time for the pic  plotting
