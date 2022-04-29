@@ -43,13 +43,9 @@ for subj in subjects:
         for r in rounds:
             try:
                                
-                #epochs_positive = mne.read_epochs('/net/server/data/Archive/prob_learn/asmyasnikova83/low_{0}_CORR/{1}_epo/{2}_run{3}_{4}_fb_cur_positive_{5}-epo.fif'.format(fr, fr, subj, r, t, fr), preload = True)             #print(epochs)  
-                epochs_positive = mne.read_epochs('/net/server/data/Archive/prob_learn/vtretyakova/Nikita_mio_cleaned/beta_16_30_trf_no_log_division/beta_16_30_trf_no_log_division_second_bl_epo/{0}_run{1}_{2}_fb_cur_positive_{3}_trf_no_log_division_epo.fif'.format(subj, r, t, fr), preload = True)
+                epochs_positive = mne.read_epochs('/net/server/data/Archive/prob_learn/vtretyakova/Nikita_mio_cleaned/beta_16_30_trf_early_log/beta_16_30_trf_early_log_epo/{0}_run{1}_{2}_fb_cur_positive_{3}_trf_early_log_epo.fif'.format(subj, r, t, fr), preload = True)
                 positive_fb = np.vstack([positive_fb, epochs_positive.get_data()])
-               
-                
             except (OSError):
-                
                 print('This file not exist')
 
         ###### Шаг 1. Усреднили все положительные фидбеки внутри испытуемого (между блоками 1 -6) #################
@@ -68,7 +64,8 @@ for subj in subjects:
             try:
                                
                 #epochs_negative = mne.read_epochs('/net/server/data/Archive/prob_learn/asmyasnikova83/low_{0}_CORR/{1}_epo/{2}_run{3}_{4}_fb_cur_negative_{5}-epo.fif'.format(fr, fr, subj, r, t, fr), preload = True)
-                epochs_negative = mne.read_epochs('/net/server/data/Archive/prob_learn/vtretyakova/Nikita_mio_cleaned/beta_16_30_trf_no_log_division/beta_16_30_trf_no_log_division_second_bl_epo/{0}_run{1}_{2}_fb_cur_negative_{3}_trf_no_log_division_epo.fif'.format(subj, r, t, fr), preload = True)
+                epochs_negative = mne.read_epochs('/net/server/data/Archive/prob_learn/vtretyakova/Nikita_mio_cleaned/beta_16_30_trf_early_log/beta_16_30_trf_early_log_epo/{0}_run{1}_{2}_fb_cur_negative_{3}_trf_early_log_epo.fif'.format(subj, r, t, fr), preload = True)
+                print(epochs_negative)
                 negative_fb = np.vstack([negative_fb, epochs_negative.get_data()])
              
                 
