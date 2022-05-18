@@ -10,17 +10,27 @@ import statsmodels.stats.multitest as mul
 from function import ttest_pair, extract_and_av_cond_data
 from config import *
 
+print('Autists = ', Autists)
+print(subjects)
+
+Normals = False
 # загружаем комбайн планары, усредненные внутри каждого испытуемого
 if parameter3 == 'negative':
     freq_range = 'beta_16_30_trf_early_log'
-    data_path = '/net/server/data/Archive/prob_learn/asmyasnikova83/beta_by_feedback/{0}_ave_into_subj_comb_planar/'.format(freq_range)
+    if Normals:
+        data_path = '/net/server/data/Archive/prob_learn/asmyasnikova83/beta_by_feedback/{0}_ave_into_subj_comb_planar/'.format(freq_range)
+    if Autists:
+        data_path = '/net/server/data/Archive/prob_learn/asmyasnikova83/Autists/beta_by_feedback/{0}_ave_into_subj_comb_planar/'.format(freq_range)
 if parameter3 == None:
-    data_path = '/net/server/data/Archive/prob_learn/vtretyakova/Nikita_mio_cleaned/beta_16_30_trf_early_log/beta_16_30_trf_early_log_comb_planar/'
-  
+    if Normals:
+        data_path = '/net/server/data/Archive/prob_learn/vtretyakova/Nikita_mio_cleaned/beta_16_30_trf_early_log/beta_16_30_trf_early_log_comb_planar/'
+    if Autists:
+        data_path = '/net/server/data/Archive/prob_learn/asmyasnikova83/Autists/beta_16_30_trf_early_log/beta_16_30_trf_early_log_ave_into_subj_comb_planar/'
+
 ###################### при построении topomaps берем только тех испытуемых, у которых есть все категории условий ####################
 
-decision = False
-fb = True
+decision = True
+fb = False
 
 #1 picture
 N = 1
@@ -39,15 +49,18 @@ temp = mne.Evoked("/net/server/data/Archive/prob_learn/vtretyakova/Nikita_mio_cl
 n = temp.data.shape[1] # количество временных отчетов для combaened planars - temp.data.shape = (102 x n), где 102 - количество планаров, а n - число временных отчетов
 
 summarized = False
-norisk = False
+norisk = True
 risk = False
 prerisk = False
-postrisk = True
+postrisk = False
 
 ########################### norisk vs risk ##############################
 for p in planars:
     if parameter3 == 'negative':
-        _, p_val, risk_mean, norisk_mean = ttest_pair(data_path, response, subjects, freq_range, parameter1 = cond1, parameter2 = cond2, parameter3 = parameter3, parameter4 = parameter4, planar = p,  n = n)
+        if Normals:
+            _, p_val, risk_mean, norisk_mean = ttest_pair(data_path, response, subjects, freq_range, parameter1 = cond1, parameter2 = cond2, parameter3 = parameter3, parameter4 = parameter4, planar = p,  n = n)
+        if Autists:
+            t_stat, p_val, risk_mean, norisk_mean = ttest_pair_early_trials(data_path, response, subjects, fr, parameter1, parameter2, parameter3, parameter4, planar, n)
         temp.data = risk_mean
         #temp.data = norisk_mean
     if parameter3 == None:
@@ -134,4 +147,7 @@ for p in planars:
     fig = plotting_LMEM.plot_topomap(times = time_to_plot, ch_type='planar1', scalings = 1, units = 'dB', show = False, vmin = vmin, vmax = vmax, time_unit='ms', title = title, colorbar = True, extrapolate = "local",  mask = np.bool_(cluster), mask_params = dict(marker='o',            markerfacecolor='white', markeredgecolor='k', linewidth=0, markersize=7, markeredgewidth=2))
 
     os.makedirs(f'/net/server/data/Archive/prob_learn/asmyasnikova83/topomaps/' , exist_ok = True)
-    fig.savefig(f'/net/server/data/Archive/prob_learn/asmyasnikova83/topomaps/sum_{title}.jpeg', dpi = 900)
+    if Normals:
+        fig.savefig(f'/net/server/data/Archive/prob_learn/asmyasnikova83/topomaps/sum_{title}.jpeg', dpi = 900)
+    if Autists:
+        fig.savefig(f'/net/server/data/Archive/prob_learn/asmyasnikova83/topomaps/Autists_sum_{title}.jpeg', dpi = 900)

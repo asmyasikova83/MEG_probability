@@ -8,6 +8,7 @@ from scipy import stats
 from statsmodels.stats import multitest as mul
 
 
+
 # This code sets an environment variable called SUBJECTS_DIR
 os.environ['SUBJECTS_DIR'] = '/net/server/data/Archive/prob_learn/freesurfer'
 #subjects_dir = '/net/server/data/Archive/prob_learn/freesurfer'
@@ -26,15 +27,18 @@ resample = '10 points per second - 1 time point: +/- 50ms from timepoint value'
 donor = mne.read_source_estimate('/net/server/data/Archive/prob_learn/vtretyakova/sources/beta_16_30/ttest_pos_vs_neg_100_ms/risk_fb_cur_pos_vs_neg_pval_nofdr', 'fsaverage')
 
 a = donor.times.tolist()
-
+print(a)
 time_points = []
 for i in a:
     print(i)
-    c = round(float(i), 1)
+    c = round(float(i, 1)
+    #c = np.ceil(i, 1)
     print(c)
-    time_points.append(c)
+    time_points.append(c) 
+
+print(time_points)
     
-    
+exit()    
 os.makedirs('/net/server/data/Archive/prob_learn/asmyasnikova83/Sources/beta_16_30_sLoreta/plot_sources_ttest', exist_ok = True)
 #os.makedirs('/net/server/data/Archive/prob_learn/vtretyakova/sources/beta_16_30/plot_sources_mean_beta' , exist_ok = True)
 ########################## Обязательно делать файл, в котором будет показано какие параметры были заданы, иначе проверить вводные никак нельзя, а это необходимо при возникновении некоторых вопросов ############################################
@@ -78,7 +82,7 @@ for cond in trial_type:
 ################ contrast for choice (trial) types #################
 
 #trial_type = ['prerisk', 'risk', 'postrisk']
-trial_type = ['prerisk']
+trial_type = ['risk']
 
 #scale = [scale_pvalue, scale_pvalue, scale_mean_beta_between_choice_types]
 scale = [scale_mean_beta_between_choice_types]

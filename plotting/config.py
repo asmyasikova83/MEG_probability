@@ -23,19 +23,21 @@ if fr.split('_')[0] == 'beta':
     H_freq = 31
     f_step = 2
 #TODO issues with poster for IN feedback
+Normals = False
+Autists = True
 poster = False
 response = True
 donor = False
-cond1 = 'norisk'
+cond1 = 'risk'
 cond2 = 'norisk'
 #cond1 = 'risk'
 #cond2 = 'norisk'
 parameter1 = cond1
 parameter2 = cond2
-parameter3 = 'negative'
-parameter4 = 'positive'
-#parameter3 = None
-#parameter4 = None
+#arameter3 = 'negative'
+#arameter4 = 'positive'
+parameter3 = None
+parameter4 = None
 if cond1 == 'prerisk':
     cond1_name = 'pre-LP'
 if cond1 == 'risk':
@@ -66,11 +68,19 @@ else:
 os.makedirs(path, exist_ok = True)
 path_pdf = path + 'output' +  '/all_pdf/'
 
-
-subjects = ['P001', 'P002', 'P004','P006', 'P007', 'P008', 'P011', 'P014', 'P015', 'P016', 'P017', 'P019',
+if Normals:
+    subjects = ['P001', 'P002', 'P004','P006', 'P007', 'P008', 'P011', 'P014', 'P015', 'P016', 'P017', 'P019',
                 'P021', 'P022', 'P023', 'P024', 'P025',  'P028', 'P029', 'P030','P031',  'P032',
                 'P033', 'P034', 'P035', 'P039', 'P040', 'P042', 'P043', 'P044','P045',  'P047',
                 'P048', 'P052', 'P053', 'P055', 'P057', 'P059', 'P060', 'P062']
+if Autists:
+    subjects = ['P301', 'P304', 'P307',  'P309',  'P312', 'P313', 'P314',
+                'P316', 'P322',  'P323', 'P324', 'P325',
+                'P326', 'P329', 'P331',  'P333', 'P334',
+                'P336', 'P340', 'P341']
+    '''
+     subjects = ['P304', 'P307',  'P312', 'P313', 'P314','P316', 'P322',  'P323', 'P324', ]
+    '''
 #time points 
 t = 1051
 #tmin for corrected time course (cut off the beginning and the end of the timecourse)

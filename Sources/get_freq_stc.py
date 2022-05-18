@@ -27,19 +27,17 @@ description = 'STC for beta power 16 - 30 Hz, epochs, make with **source_band_in
 # This code sets an environment variable called SUBJECTS_DIR
 os.environ['SUBJECTS_DIR'] = '/net/server/data/Archive/prob_learn/freesurfer'
 subjects_dir = '/net/server/data/Archive/prob_learn/freesurfer'
-
 subjects = ['P301', 'P304', 'P307',  'P309',  'P312', 'P313', 'P314',
             'P316', 'P322',  'P323', 'P324', 'P325',
             'P326', 'P329', 'P331',  'P333', 'P334',
             'P336', 'P340']
-
-#subjects = ['P329']
 # P301_no norisk_fb_negative
 #'P309' - no norisk
 #'P328' - bad segmentation
 #'P327' no bem dir in freesurfer
 # 'P333' no norisk_fb_positive, neg
-# 'P340' no norisk_fb_positive
+# 'P340' did not learn
+#subjects = ['P341'] no mri
 
 rounds = [1, 2, 3, 4, 5, 6]
 #rounds = [5]
