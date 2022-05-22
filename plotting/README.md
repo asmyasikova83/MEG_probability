@@ -27,6 +27,9 @@ p_val_gradient.py - plots topomaps with ttest/LMEM for signed p-vals in contrast
 
 p_val_gradient_pairs.py - plots averaged topomaps with LMEM for signed p-vas in contrasts
 
+events_subj_stat_autists.R - make a xlsx table with counts of trial types and draw them over subjects in autists
+
+events_subj_stat_autists_mio.R - make a xlsx table with counts of trial types and fb in autists
 #TODO do donor for less time points
 
 
