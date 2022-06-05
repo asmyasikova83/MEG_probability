@@ -2,10 +2,6 @@ import mne
 import os
 import os.path as op
 import numpy as np
-import pandas as pd
-from scipy import stats
-import copy
-import statsmodels.stats.multitest as mul
 
 ###############################################################################################
 ######## File with events was made by Lera, you need this function for reading it #############
@@ -72,6 +68,5 @@ def fixation_cross_events(data_path_raw, raw_name, data_path_events, name_events
             event_fixation_cross_norisk.append(i)
                     
     event_fixation_cross_norisk = np.array(event_fixation_cross_norisk)
-    print(event_fixation_cross_norisk) 
     return(event_fixation_cross_norisk)
 
