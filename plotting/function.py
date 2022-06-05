@@ -738,6 +738,24 @@ def ttest_pair(data_path, response, subjects, fr, parameter1, parameter2, parame
     comp2_mean = comp2.mean(axis=0)
     return t_stat, p_val, comp1_mean, comp2_mean
 
+def ttest_pair_independent(data_path1, data_path2, response, Autists, Normals, fr1, fr2, parameter1, parameter3, planar, n): # n - количество временных отчетов
+    contr = np.zeros((len(Autists), 2, 102, n))
+    assert(len(Autists) == len(Normals))
+    for ind, subj in enumerate(Autists):
+        #if  parameter3 == 'negative':
+        temp1 = mne.Evoked(op.join(data_path1, '{0}_{1}_evoked_{2}_resp_{3}_fb_cur_{4}.fif'.format(Autists[ind], parameter1, fr1, planar, parameter3)))
+        temp2 = mne.Evoked(op.join(data_path2, '{0}_{1}_evoked_{2}_resp_{3}_fb_cur_{4}.fif'.format(Normals[ind], parameter1, fr2, planar, parameter3)))
+        #if parameter3 == None:
+        #    temp1 = mne.Evoked(op.join(data_path1, '{0}_{1}_evoked_{2}_resp_{3}.fif'.format(Autists[ind], parameter1, fr1, planar)))
+        #    temp2 = mne.Evoked(op.join(data_path2, '{0}_{1}_evoked_{2}_resp_{3}.fif'.format(Normals[ind], parameter1, fr2, planar)))
+        contr[ind, 0, :, :] = temp1.data
+        contr[ind, 1, :, :] = temp2.data
+    comp1 = contr[:, 0, :, :]
+    comp2 = contr[:, 1, :, :]
+    t_stat, p_val = stats.ttest_ind(comp2, comp1, axis=0)
+    comp1_mean = comp1.mean(axis=0)
+    comp2_mean = comp2.mean(axis=0)
+    return t_stat, p_val, comp1_mean, comp2_mean
 ##############################################################################################
 #################################### FDR CORRECTION ########################################
 def compute_p_val(response,data_path, subjects, cond1, cond2, parameter3, parameter4, fr, time, t, idx_array):
@@ -748,6 +766,7 @@ def compute_p_val(response,data_path, subjects, cond1, cond2, parameter3, parame
     print(time[0])
     print(round(time[-1], 1))
     print(time.shape)
+    print(len(subjects))
     for ind, subj in enumerate(subjects):
         if parameter3 == None:
             if response:
@@ -795,7 +814,7 @@ def compute_p_val(response,data_path, subjects, cond1, cond2, parameter3, parame
     comp3_mean = comp3.mean(axis=0)
     return comp1_mean, comp2_mean, comp3_mean, p_val
      
-def plot_stat_comparison(response, aver, path, comp1, comp2, comp3, p_mul_min, p_mul_max, p_val, p_fdr, parameter3, time, title='demo_title', folder='comparison',
+def plot_stat_comparison(response, contrast, path, comp1, comp2, comp3, p_mul_min, p_mul_max, p_val, p_fdr, parameter3, time, title='demo_title', folder='comparison',
                          comp1_label='comp1', comp2_label='comp2', comp3_label='difference'):
     assert(comp1.shape[0] == comp2.shape[0] == time.shape[0])
     os.makedirs(path+'output/'+ f'{comp1_label}_vs_{comp2_label}/', exist_ok = True)
@@ -815,12 +834,12 @@ def plot_stat_comparison(response, aver, path, comp1, comp2, comp3, p_mul_min, p
         plt.plot(time, comp1, color='r', linewidth=3, label=comp1_label)
         plt.plot(time, comp2, color='b', linewidth=3, label=comp2_label)
         #plot difference
-        if aver:
+        if contrast:
             plt.plot(time, comp3, color='k', linewidth=5, linestyle = 'dotted', label=comp3_label)
     if parameter3 == 'negative':
         plt.plot(time, comp1, color='r', linewidth=3, label=comp1_label)
         plt.plot(time, comp2, color='b', linewidth=3, label=comp2_label)
-        if aver:
+        if contrast:
             plt.plot(time, comp3, color='k', linewidth=5, linestyle = 'dotted', label=comp3_label)
     plt.fill_between(time, y1 = p_mul_min, y2 = p_mul_max, where = (p_fdr < 0.05), facecolor = 'm', alpha = 0.46, step = 'pre')
     plt.fill_between(time, y1 = p_mul_min, y2 = p_mul_max, where = ((p_val < 0.05) * (p_fdr > 0.05)), facecolor = 'g', alpha = 0.46, step = 'pre')
@@ -878,7 +897,6 @@ def space_fdr(p_val_n):
 ################## Full FDR -the correction is made once for the intire data array ############
 def full_fdr(p_val_n):
     s = p_val_n.shape
-    #print(p_val_n.shape)
     temp = copy.deepcopy(p_val_n)
     pval = np.ravel(temp)
     _, pval_fdr = mul.fdrcorrection(pval)
@@ -905,39 +923,28 @@ def p_val_binary(p_val_n, treshold):
 # mean1, mean2 - Evoked average between subjects (see def ttest_pair)
 # average - averaging in mne.plot_topomaps
 
-def plot_deff_topo(p_val, temp, mean1, mean2, time_to_plot, title): 	
+def plot_deff_topo(p_val, Normals_Autists, temp, mean1, mean2, time_to_plot, vmin_contrast, vmax_contrast, title):	
     #Если мы будем использовать донор Evoked из тех, которые усредняются, то время и так будет то, которое необходимо, тогда менять время нет необходимости и присваиваем только новые данные (see temp.data)
-    '''
-	temp.first = -206
-	temp.last = 1395
-
-	temp.times = np.arange(-0.206, 1.395, 0.001)
-    '''	
     binary = p_val_binary(p_val, treshold = 0.05)
     temp.data = mean1 - mean2
 
 	#temp_shift = temp.shift_time(-0.600, relative=False)
 	
     fig1 = temp.plot_topomap(times = time_to_plot, ch_type='planar1', scalings = 1, average=0.2, units = 'dB', show = False, time_unit='s', title = title);
-    fig2 = temp.plot_topomap(times = time_to_plot, ch_type='planar1', scalings = 1, average=0.2, units = 'dB', show = False, vmin = -1.2, vmax = 1.2, time_unit='s', title = title, colorbar = True, extrapolate = "local", mask = np.bool_(binary), mask_params = dict(marker='o',			markerfacecolor='green', markeredgecolor='yellow', linewidth=0, markersize=7, markeredgewidth=4))
 
+    fig2 = temp.plot_topomap(times = time_to_plot, ch_type='planar1', scalings = 1, average=0.2, units = 'dB', show = False, vmin = vmin_contrast, vmax = vmax_contrast, time_unit='s', title = title, colorbar = True, extrapolate = "local", mask = np.bool_(binary), mask_params = dict(marker='o',			markerfacecolor='green', markeredgecolor='yellow', linewidth=0, markersize=7, markeredgewidth=4))
 
 
     return fig1, fig2, temp # temp - "Evoked" for difference mean1 and mean2, which can be save if it is needed   
 
 ###################### строим topomaps со статистикой, для разницы между условиями #########################
 
-def plot_topo_vs_zero(p_val, temp, mean1, time_to_plot, title): 	
+def plot_topo_vs_zero(p_val, temp, mean1, time_to_plot, vmin, vmax, title):	
     #Если мы будем использовать донор Evoked из тех, которые усредняются, то время и так будет то, которое необходимо, тогда менять время нет необходимости и присваиваем только новые данные (see temp.data)
-    '''
-	temp.first = -206
-	temp.last = 1395
-
-	temp.times = np.arange(-0.206, 1.395, 0.001)
-    '''
     binary = p_val_binary(p_val, treshold = 0.05)
     temp.data = mean1
-    fig = temp.plot_topomap(times = time_to_plot, ch_type='planar1', scalings = 1, average=0.2, units = 'dB', show = False, vmin = -4.5, vmax = 4.5, time_unit='s', title = title, colorbar = True, extrapolate = "local", mask = np.bool_(binary), mask_params = dict(marker='o',		markerfacecolor='white', markeredgecolor='k', linewidth=0, markersize=7, markeredgewidth=2))
+    fig = temp.plot_topomap(times = time_to_plot, ch_type='planar1', scalings = 1, average=0.1, units = 'dB', show = False, vmin = vmin, vmax = vmax, time_unit='s', title = title, colorbar = True, extrapolate = "local", mask = np.bool_(binary), mask_params = dict(marker='o',		markerfacecolor='white', markeredgecolor='k', linewidth=0, markersize=7, markeredgewidth=2))
+
     return fig, temp # temp - "Evoked" , which can be save if it is needed   
 
 ########################################################################          
