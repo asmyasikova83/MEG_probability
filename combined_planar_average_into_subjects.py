@@ -7,48 +7,61 @@ import copy
 import pandas as pd
 from scipy import stats
 from function import combine_planar_Evoked
+from config import *
 
-subjects = ['P301', 'P304', 'P307',  'P309',  'P312', 'P313', 'P314',
-            'P316', 'P322',  'P323', 'P324', 'P325',
-            'P326', 'P329', 'P331',  'P333', 'P334',
-            'P336', 'P340', 'P341']
-'''
-subjects = ['P341']
-'''
+print(subjects)
+
 freq_range = 'beta_16_30_trf_early_log'
 
+fr = 'beta_16_30'
 trial_type = ['norisk', 'prerisk', 'risk', 'postrisk']
 #trial_type = ['norisk', 'prerisk', 'postrisk']
 feedback = ['positive', 'negative']
 # donor
 
-fb_split = True
-donor = mne.Evoked('/net/server/data/Archive/prob_learn/vtretyakova/Nikita_mio_cleaned/beta_16_30_ave_into_subjects_comb_planar/P001_norisk_evoked_beta_16_30_resp_comb_planar.fif')
+fb_split = False
+donor = mne.Evoked(f'/net/server/data/Archive/prob_learn/vtretyakova/Nikita_mio_cleaned/{fr}_ave_into_subjects_comb_planar/P001_norisk_evoked_beta_16_30_resp_comb_planar.fif')
 
-if fb_split:
-    os.makedirs('/net/server/data/Archive/prob_learn/asmyasnikova83/Autists/beta_by_feedback/{0}_ave_into_subj_comb_planar/'.format(freq_range), exist_ok = True)
-if not fb_split:
+if Autists:
+    os.makedirs('/net/server/data/Archive/prob_learn/asmyasnikova83/Autists/beta_by_feedback/{0}_ave_into_subjects_comb_planar/'.format(freq_range), exist_ok = True)
     os.makedirs('/net/server/data/Archive/prob_learn/asmyasnikova83/Autists/{0}/{0}_ave_into_subj_comb_planar/'.format(freq_range), exist_ok = True)
+if Normals:
+    os.makedirs('/net/server/data/Archive/prob_learn/asmyasnikova83/beta_by_feedback/{0}_ave_into_subjects_comb_planar/'.format(freq_range), exist_ok = True)
+    os.makedirs('/net/server/data/Archive/prob_learn/asmyasnikova83/beta/{0}_ave_into_subjects_comb_planar/'.format(fr), exist_ok = True)
 
 for t in trial_type:
     for fb in feedback:
         for subj in subjects:
             try:
                 if fb_split:
-                    evoked = mne.Evoked('/net/server/data/Archive/prob_learn/asmyasnikova83/Autists/beta_by_feedback/{0}_ave_into_subj/{1}_{2}_{0}_resp_fb_cur_{3}.fif'.format(freq_range, subj, t, fb))
+                    print('splitting')
+                    if Normals:
+                        print('/net/server/data/Archive/prob_learn/asmyasnikova83/beta/{0}_ave_into_subjects/{1}_{2}_evoked_{0}_resp_fb_cur_{3}.fif'.format(fr, subj, t, fb))
+                        evoked = mne.Evoked('/net/server/data/Archive/prob_learn/asmyasnikova83/beta/{0}_ave_into_subjects/{1}_{2}_evoked_{0}_resp_fb_cur_{3}.fif'.format(fr, subj, t, fb))
+                    if Autists:
+                        evoked = mne.Evoked('/net/server/data/Archive/prob_learn/asmyasnikova83/Autists/beta_by_feedback/{0}_ave_into_subj/{1}_{2}_{0}_resp_fb_cur_{3}.fif'.format(freq_range, subj, t, fb))
+                    print(evoked)
                 if not fb_split:
-                    print('/net/server/data/Archive/prob_learn/asmyasnikova83/Autists/{0}/{0}_ave_into_subj/{1}_{2}_evoked_{0}_resp.fif'.format(freq_range, subj, t))
-                    evoked = mne.Evoked('/net/server/data/Archive/prob_learn/asmyasnikova83/Autists/{0}/{0}_ave_into_subj/{1}_{2}_evoked_{0}_resp.fif'.format(freq_range, subj, t))
-                #evoked = mne.Evoked('/net/server/data/Archive/prob_learn/asmyasnikova83/hp_early_trials_check/{0}/{0}_ave_into_subj/{1}_{2}_evoked_{0}_resp.fif'.format(freq_range, subj, t))
+                    if Normals:
+                        evoked = mne.Evoked('/net/server/data/Archive/prob_learn/asmyasnikova83/beta/{0}_ave_into_subjects_classic_bline/{1}_{2}_evoked_{0}_resp.fif'.format(fr, subj, t))
+                    if Autists:
+                        print('/net/server/data/Archive/prob_learn/asmyasnikova83/Autists/{0}/{0}_ave_into_subj/{1}_{2}_evoked_{0}_resp.fif'.format(freq_range, subj, t))
+                        evoked = mne.Evoked('/net/server/data/Archive/prob_learn/asmyasnikova83/Autists/{0}/{0}_ave_into_subj/{1}_{2}_evoked_{0}_resp.fif'.format(freq_range, subj, t))
                 _, _, comb_planar = combine_planar_Evoked(evoked)
                 donor.data = comb_planar
                 if fb_split:
-                    donor.save('/net/server/data/Archive/prob_learn/asmyasnikova83/Autists/beta_by_feedback/{0}_ave_into_subj_comb_planar/{1}_{2}_evoked_{0}_resp_comb_planar_fb_cur_{3}.fif'.format(freq_range, subj, t, fb))
+                    print('saving')
+                    if Normals:
+                        donor.save('/net/server/data/Archive/prob_learn/asmyasnikova83/beta_by_feedback/{0}_ave_into_subjects_comb_planar_classic_bline/{1}_{2}_evoked_{0}_resp_comb_planar_fb_cur_{3}.fif'.format(freq_range, subj, t, fb))
+                    if Autists:
+                        donor.save('/net/server/data/Archive/prob_learn/asmyasnikova83/Autists/beta_by_feedback/{0}_ave_into_subjects_comb_planar/{1}_{2}_evoked_{0}_resp_comb_planar_fb_cur_{3}.fif'.format(freq_range, subj, t, fb))
+
                 if not fb_split:
-                    donor.save('/net/server/data/Archive/prob_learn/asmyasnikova83/Autists/{0}/{0}_ave_into_subj_comb_planar/{1}_{2}_evoked_{0}_resp_comb_planar.fif'.format(freq_range, subj, t))
-                    print('/net/server/data/Archive/prob_learn/asmyasnikova83/Autists/{0}/{0}_ave_into_subj_comb_planar/{1}_{2}_evoked_{0}_resp_comb_planar.fif'.format(freq_range, subj, t))
+                    if Normals:
+                        donor.save('/net/server/data/Archive/prob_learn/asmyasnikova83/beta/{0}_ave_into_subjects_comb_planar_classical_bline/{1}_{2}_evoked_{0}_resp_comb_planar.fif'.format(fr, subj, t))
+                    if Autists:
+                        donor.save('/net/server/data/Archive/prob_learn/asmyasnikova83/Autists/{0}/{0}_ave_into_subj_comb_planar/{1}_{2}_evoked_{0}_resp_comb_planar.fif'.format(freq_range, subj, t))
                     print('SAVED')
-                #donor.save('/net/server/data/Archive/prob_learn/asmyasnikova83/hp_early_trials_check/{0}/{0}_ave_into_subj_comb_planar/{1}_{2}_evoked_{0}_resp_comb_planar.fif'.format(freq_range, subj, t))
             except (OSError):
                 print('This file not exist')
 
