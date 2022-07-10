@@ -10,10 +10,10 @@ import statsmodels.stats.multitest as mul
 from function import ttest_pair, extract_and_av_cond_data
 from config import *
 
-print('Autists = ', Autists)
+#print('Autists = ', Autists)
 print(subjects)
 
-Normals = False
+#Normals = False
 # загружаем комбайн планары, усредненные внутри каждого испытуемого
 if parameter3 == 'negative':
     freq_range = 'beta_16_30_trf_early_log'
@@ -29,8 +29,8 @@ if parameter3 == None:
 
 ###################### при построении topomaps берем только тех испытуемых, у которых есть все категории условий ####################
 
-decision = True
-fb = False
+decision = False
+fb = True
 
 #1 picture
 N = 1
@@ -67,7 +67,7 @@ for p in planars:
         risk_mean, norisk_mean, prerisk_mean, postrisk_mean, p1_val, p2_val, p3_val, p4_val  = extract_and_av_cond_data(data_path, subjects, fr,  n)
         # считаем бета и добавляем к шаблону (донору)
         if summarized:
-            temp.data = risk_mean +  norisk_mean + prerisk_mean + postrisk_mean
+            temp.data = (risk_mean +  norisk_mean + prerisk_mean + postrisk_mean)/4
             cond = 'summarized'
         if norisk:
             temp.data = norisk_mean
@@ -107,8 +107,8 @@ for p in planars:
     if decision:
         data_to_sum = (data_for_plotting[:,0] + data_for_plotting[:,1] + data_for_plotting[:,2])/R
     if fb:
-        data_to_sum = (data_for_plotting[:,0] + data_for_plotting[:,1])/R
-
+        #data_to_sum = (data_for_plotting[:,0] + data_for_plotting[:,1])/R
+        data_to_sum = data_for_plotting.mean(axis = 1)
     plotting_LMEM = mne.EvokedArray(data_to_sum[:, np.newaxis], info = temp.info)
     plotting_LMEM.times = times
 
@@ -119,7 +119,7 @@ for p in planars:
         stat_sensors = np.loadtxt(f_name, dtype = int)
     if fb:
         if parameter3 == None:
-            title = 'fb'
+            title = f'fb_{cond}'
         if parameter3 == 'negative':
             title = cond1 + '_losses'
             #title = cond1 + '_wins'
@@ -138,8 +138,8 @@ for p in planars:
         cluster = np.zeros((102, 1))
 
     if summarized:
-        vmin =  -4.5
-        vmax = 4.5
+        vmin =  -1.8
+        vmax = 1.8
     else:
         vmin =  -1.8
         vmax = 1.8
@@ -148,6 +148,6 @@ for p in planars:
 
     os.makedirs(f'/net/server/data/Archive/prob_learn/asmyasnikova83/topomaps/' , exist_ok = True)
     if Normals:
-        fig.savefig(f'/net/server/data/Archive/prob_learn/asmyasnikova83/topomaps/sum_{title}.jpeg', dpi = 900)
+        fig.savefig(f'/net/server/data/Archive/prob_learn/asmyasnikova83/topomaps/Normals_sum_{title}.jpeg', dpi = 900)
     if Autists:
         fig.savefig(f'/net/server/data/Archive/prob_learn/asmyasnikova83/topomaps/Autists_sum_{title}.jpeg', dpi = 900)
