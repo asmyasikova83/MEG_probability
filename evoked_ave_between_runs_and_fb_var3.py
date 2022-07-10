@@ -19,16 +19,21 @@ freq_range = 'beta_16_30_trf_early_log'
 #создаем папку, куда будут сохраняться полученные комбайны
 #os.makedirs('/net/server/data/Archive/prob_learn/asmyasnikova83/Autists/{0}/{0}_ave_into_subj'.format(freq_range), exist_ok = True)
 
+if Autists:
+    line = 'Autists'
+if Normals:
+    line = 'beta'
+
 for subj in subjects:
+    print(subj)
     for t in trial_type:
         ################################ Positive feedback ################################
         positive_fb = np.empty((0, 306, n))
         for r in rounds:
             try:
-                if Autists:
-                    epochs_positive = mne.read_epochs('/net/server/data/Archive/prob_learn/asmyasnikova83/Autists/{0}/{0}_epo/{1}_run{2}_{3}_fb_cur_positive_{0}_epo.fif'.format(freq_range, subj, r, t), preload = True)          
-                if Normals:
-                    epochs_positive = mne.read_epochs('/net/server/data/Archive/prob_learn/asmyasnikova83/Normals/{0}/{0}_epo/{1}_run{2}_{3}_fb_cur_positive_{0}_epo.fif'.format(freq_range, subj, r, t), preload = True)
+                #fix 
+                # epochs_positive = mne.read_epochs('/net/server/data/Archive/prob_learn/asmyasnikova83/{0}/{1}/{1}_epo/{2}_run{3}_{4}_fb_cur_positive_{1}_epo.fif'.format(line, freq_range, subj, r, t), preload = True)
+                epochs_positive = mne.read_epochs('/net/server/data/Archive/prob_learn/asmyasnikova83/{0}/{1}_epo/{2}_run{3}_{4}_fb_cur_positive_{1}_epo.fif'.format(line, freq_range, subj, r, t), preload = True)          
                 positive_fb = np.vstack([positive_fb, epochs_positive.get_data()])
                
                 
@@ -47,12 +52,12 @@ for subj in subjects:
             
         ########################## Negative feedback #############################
         negative_fb = np.empty((0, 306, n))
+
         for r in rounds:
             try:
-                if Autists:            
-                    epochs_negative = mne.read_epochs('/net/server/data/Archive/prob_learn/asmyasnikova83/Autists/{0}/{0}_epo/{1}_run{2}_{3}_fb_cur_negative_{0}_epo.fif'.format(freq_range, subj, r, t), preload = True)
-                if Normals:
-                    epochs_negative = mne.read_epochs('/net/server/data/Archive/prob_learn/asmyasnikova83/Normals/{0}/{0}_epo/{1}_run{2}_{3}_fb_cur_negative_{0}_epo.fif'.format(freq_range, subj, r, t), preload = True)
+                #fix autists
+                #epochs_negative = mne.read_epochs('/net/server/data/Archive/prob_learn/asmyasnikova83/{0}/{1}/{1}_epo/{2}_run{3}_{4}_fb_cur_negative_{1}_epo.fif'.format(line, freq_range, subj, r, t), preload = True)
+                epochs_negative = mne.read_epochs('/net/server/data/Archive/prob_learn/asmyasnikova83/{0}/{1}_epo/{2}_run{3}_{4}_fb_cur_negative_{1}_epo.fif'.format(line, freq_range, subj, r, t), preload = True)
                 negative_fb = np.vstack([negative_fb, epochs_negative.get_data()])
              
                 
@@ -93,5 +98,4 @@ for subj in subjects:
         else:
             print('Subject has no feedbacks in this condition')
             pass
-
 

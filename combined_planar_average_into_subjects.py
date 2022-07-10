@@ -10,7 +10,6 @@ from function import combine_planar_Evoked
 from config import *
 
 print(subjects)
-
 freq_range = 'beta_16_30_trf_early_log'
 
 fr = 'beta_16_30'
@@ -33,35 +32,36 @@ for t in trial_type:
     for fb in feedback:
         for subj in subjects:
             try:
-                if fb_split:
-                    print('splitting')
-                    if Normals:
-                        print('/net/server/data/Archive/prob_learn/asmyasnikova83/beta/{0}_ave_into_subjects/{1}_{2}_evoked_{0}_resp_fb_cur_{3}.fif'.format(fr, subj, t, fb))
-                        evoked = mne.Evoked('/net/server/data/Archive/prob_learn/asmyasnikova83/beta/{0}_ave_into_subjects/{1}_{2}_evoked_{0}_resp_fb_cur_{3}.fif'.format(fr, subj, t, fb))
-                    if Autists:
-                        evoked = mne.Evoked('/net/server/data/Archive/prob_learn/asmyasnikova83/Autists/beta_by_feedback/{0}_ave_into_subj/{1}_{2}_{0}_resp_fb_cur_{3}.fif'.format(freq_range, subj, t, fb))
-                    print(evoked)
-                if not fb_split:
-                    if Normals:
-                        evoked = mne.Evoked('/net/server/data/Archive/prob_learn/asmyasnikova83/beta/{0}_ave_into_subjects_classic_bline/{1}_{2}_evoked_{0}_resp.fif'.format(fr, subj, t))
-                    if Autists:
-                        print('/net/server/data/Archive/prob_learn/asmyasnikova83/Autists/{0}/{0}_ave_into_subj/{1}_{2}_evoked_{0}_resp.fif'.format(freq_range, subj, t))
-                        evoked = mne.Evoked('/net/server/data/Archive/prob_learn/asmyasnikova83/Autists/{0}/{0}_ave_into_subj/{1}_{2}_evoked_{0}_resp.fif'.format(freq_range, subj, t))
+                #if fb_split:
+                #if Normals:
+                #print('/net/server/data/Archive/prob_learn/asmyasnikova83/beta/{0}_ave_into_subjects/{1}_{2}_evoked_{0}_resp_fb_cur_{3}.fif'.format(fr, subj, t, fb))
+                #evoked = mne.Evoked('/net/server/data/Archive/prob_learn/asmyasnikova83/beta/{0}_ave_into_subjects/{1}_{2}_evoked_{0}_resp_fb_cur_{3}.fif'.format(fr, subj, t, fb))
+                #if Autists:
+                evoked = mne.Evoked('/net/server/data/Archive/prob_learn/asmyasnikova83/Autists/beta_by_feedback/{0}_ave_into_subj/{1}_{2}_{0}_resp_fb_cur_{3}.fif'.format(freq_range, subj, t, fb))
+                #print(evoked)
+                #if not fb_split:
+                #if Normals:
+                #evoked = mne.Evoked('/net/server/data/Archive/prob_learn/asmyasnikova83/beta/{0}_ave_into_subjects/{1}_{2}_evoked_{0}_resp.fif'.format(fr, subj, t))
+                #evoked = mne.Evoked('/net/server/data/Archive/prob_learn/asmyasnikova83/beta/{0}_ave_into_subjects/{1}_{2}_evoked_{0}_resp_fb_cur_{3}.fif'.format(fr, subj, t, fb))
+                #if Autists:
+                #print('/net/server/data/Archive/prob_learn/asmyasnikova83/Autists/{0}/{0}_ave_into_subj/{1}_{2}_evoked_{0}_resp.fif'.format(freq_range, subj, t))
+                #evoked = mne.Evoked('/net/server/data/Archive/prob_learn/asmyasnikova83/Autists/{0}/{0}_ave_into_subj/{1}_{2}_evoked_{0}_resp.fif'.format(freq_range, subj, t))
                 _, _, comb_planar = combine_planar_Evoked(evoked)
                 donor.data = comb_planar
-                if fb_split:
-                    print('saving')
-                    if Normals:
-                        donor.save('/net/server/data/Archive/prob_learn/asmyasnikova83/beta_by_feedback/{0}_ave_into_subjects_comb_planar_classic_bline/{1}_{2}_evoked_{0}_resp_comb_planar_fb_cur_{3}.fif'.format(freq_range, subj, t, fb))
-                    if Autists:
-                        donor.save('/net/server/data/Archive/prob_learn/asmyasnikova83/Autists/beta_by_feedback/{0}_ave_into_subjects_comb_planar/{1}_{2}_evoked_{0}_resp_comb_planar_fb_cur_{3}.fif'.format(freq_range, subj, t, fb))
+                #if fb_split:
+                #print('saving')
+                #if Normals:
+                #donor.save('/net/server/data/Archive/prob_learn/asmyasnikova83/beta_by_feedback/{0}_ave_into_subjects_comb_planar_classic_bline/{1}_{2}_evoked_{0}_resp_comb_planar_fb_cur_{3}.fif'.format(freq_range, subj, t, fb))
+                #if Autists:
+                #donor.save('/net/server/data/Archive/prob_learn/asmyasnikova83/Autists/beta_by_feedback/{0}_ave_into_subjects_comb_planar/{1}_{2}_evoked_{0}_resp_comb_planar_fb_cur_{3}.fif'.format(freq_range, subj, t, fb))
 
-                if not fb_split:
-                    if Normals:
-                        donor.save('/net/server/data/Archive/prob_learn/asmyasnikova83/beta/{0}_ave_into_subjects_comb_planar_classical_bline/{1}_{2}_evoked_{0}_resp_comb_planar.fif'.format(fr, subj, t))
-                    if Autists:
-                        donor.save('/net/server/data/Archive/prob_learn/asmyasnikova83/Autists/{0}/{0}_ave_into_subj_comb_planar/{1}_{2}_evoked_{0}_resp_comb_planar.fif'.format(freq_range, subj, t))
-                    print('SAVED')
+                #if not fb_split:
+                #if Normals:
+                #donor.save('/net/server/data/Archive/prob_learn/asmyasnikova83/beta/{0}_ave_into_subjects_comb_planar/{1}_{2}_evoked_{3}_resp_comb_planar.fif'.format(fr, subj, t, freq_range))
+                #donor.save('/net/server/data/Archive/prob_learn/asmyasnikova83/beta/{0}_ave_into_subjects_comb_planar/{1}_{2}_evoked_{0}_resp_comb_planar_fb_cur_{3}.fif'.format(freq_range, subj, t, fb))
+                #if Autists:
+                donor.save('/net/server/data/Archive/prob_learn/asmyasnikova83/Autists/{0}/{0}_ave_into_subj_comb_planar/{1}_{2}_evoked_{0}_resp_comb_planar.fif'.format(freq_range, subj, t))
+                print('SAVED')
             except (OSError):
                 print('This file not exist')
 
