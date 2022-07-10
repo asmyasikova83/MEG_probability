@@ -742,12 +742,13 @@ def ttest_pair_independent(data_path1, data_path2, response, Autists, Normals, f
     contr = np.zeros((len(Autists), 2, 102, n))
     assert(len(Autists) == len(Normals))
     for ind, subj in enumerate(Autists):
+        #TODO
         #if  parameter3 == 'negative':
         temp1 = mne.Evoked(op.join(data_path1, '{0}_{1}_evoked_{2}_resp_{3}_fb_cur_{4}.fif'.format(Autists[ind], parameter1, fr1, planar, parameter3)))
         temp2 = mne.Evoked(op.join(data_path2, '{0}_{1}_evoked_{2}_resp_{3}_fb_cur_{4}.fif'.format(Normals[ind], parameter1, fr2, planar, parameter3)))
         #if parameter3 == None:
-        #    temp1 = mne.Evoked(op.join(data_path1, '{0}_{1}_evoked_{2}_resp_{3}.fif'.format(Autists[ind], parameter1, fr1, planar)))
-        #    temp2 = mne.Evoked(op.join(data_path2, '{0}_{1}_evoked_{2}_resp_{3}.fif'.format(Normals[ind], parameter1, fr2, planar)))
+        #temp1 = mne.Evoked(op.join(data_path1, '{0}_{1}_evoked_{2}_resp_{3}.fif'.format(Autists[ind], parameter1, fr1, planar)))
+        #temp2 = mne.Evoked(op.join(data_path2, '{0}_{1}_evoked_{2}_resp_{3}.fif'.format(Normals[ind], parameter1, fr2, planar)))
         contr[ind, 0, :, :] = temp1.data
         contr[ind, 1, :, :] = temp2.data
     comp1 = contr[:, 0, :, :]
