@@ -25,12 +25,12 @@ baseline = (-0.35, -0.05)
 
 freq_range = 'beta_16_30_trf_no_log_division_stim'
 prefix_vera = '/net/server/data/Archive/prob_learn/vtretyakova'
-prefix_sasha = '/net/server/data/Archive/prob_learn/asmyasnikova83'
+prefix_sasha = '/net/server/data/Archive/prob_learn/asmyasnikova83/Events_normals'
 
 description = 'Усредение от реакции. Выделяем частоты и при корректировке на бейзлан, каждое значение данных делим на бейзлан, но без логарифмирования. Логарифмирование проводим на последних этапах: перед рисованием, либо перед статистикой'
 
 subjects = []
-for i in range(35,36):
+for i in range(0,63):
     if i < 10:
         subjects += ['P00' + str(i)]
     else:
@@ -41,7 +41,7 @@ for i in range(35,36):
 rounds = [1, 2, 3, 4, 5, 6]
 #rounds = [5]
 trial_type = ['norisk', 'prerisk', 'risk', 'postrisk']
-#trial_type = ['risk']
+#trial_type = ['norisk']
 feedback = ['positive', 'negative']
 #feedback = ['positive']
 
@@ -67,8 +67,6 @@ for subj in subjects:
             for fb in feedback:
                 try:
                     #fix cross data from nolog bline step (for fb use fb_cur) 
-                    print('{0}/stim_check/{1}_feedback/{1}_epo/{2}_run{3}_{4}_fb_cur_{5}_{1}_epo.fif'.format(prefix_sasha, freq_range, subj, r, cond, fb))
-                    #print('/net/server/data/Archive/prob_learn/asmyasnikova83/stim_check/{0}/{0}_epo/{1}_run{2}_{3}_{0}_epo.fif'.format(freq_range, subj, r, cond))
                     epochs_tfr = mne.read_epochs('{0}/stim_check/{1}_feedback/{1}_epo/{2}_run{3}_{4}_fb_cur_{5}_{1}_epo.fif'.format(prefix_sasha, freq_range, subj, r, cond, fb), preload = True)    
                     #epochs_tfr = mne.read_epochs('/net/server/data/Archive/prob_learn/asmyasnikova83/stim_check/{0}/{0}_epo/{1}_run{2}_{3}_{0}_epo.fif'.format(freq_range, subj, r, cond), preload = True)    
                     data = epochs_tfr.get_data()         
@@ -82,7 +80,6 @@ for subj in subjects:
                     
                     # подготавливаем бейзлан для вычитания
                     freqs = np.arange(L_freq, H_freq, f_step)
-    
                     #read events
 	            #events for baseline
 	            # download marks of positive and negative feedback, if exist
@@ -168,7 +165,8 @@ for subj in subjects:
                     
                     epochs_second_bl = mne.EpochsArray(data_second_bl, epochs_tfr.info, tmin = period_start, events = epochs_tfr.events)
                 
-                    epochs_second_bl.save('{0}/stim_check/{1}_feedback/{2}_second_bl_epo/{2}_run{3}_{4}_fb_cur_{5}_{1}_epo.fif'.format(prefix_sasha, freq_range, subj, r, cond, fb), overwrite=True)
+                    epochs_second_bl.save('{0}/stim_check/{1}_feedback/{1}_second_bl_epo/{2}_run{3}_{4}_fb_cur_{5}_{1}_epo.fif'.format(prefix_sasha, freq_range, subj, r, cond, fb), overwrite=True)
+                    print('{0}/stim_check/{1}_feedback/{1}_second_bl_epo/{2}_run{3}_{4}_fb_cur_{5}_{1}_epo.fif'.format(prefix_sasha, freq_range, subj, r, cond, fb))
                     #epochs_second_bl.save('/net/server/data/Archive/prob_learn/asmyasnikova83/stim_check/{0}/{0}_second_bl_epo/{1}_run{2}_{3}_{0}_epo.fif'.format(freq_range, subj, r, cond), overwrite=True)
                 except (OSError):
                     print('This file not exist')
