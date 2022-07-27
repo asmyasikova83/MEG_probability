@@ -24,6 +24,7 @@ by_one = False
 wide_decision = False
 super_decision  = False
 super_feedback = True
+super_early_feedback = False
 
 n = 1 # количество говов в ряду
 #set time for the pic  plotting
@@ -113,7 +114,6 @@ if occipital_cluster:
     title = 'Occipit cluster'
 if anterior_cluster:
     cluster[5,:] = 1
-    #luster[6,:] = 1
     cluster[9,:] = 1
     cluster[10,:] = 1
     cluster[11,:] = 1
@@ -121,11 +121,7 @@ if anterior_cluster:
     cluster[13,:] = 1
     cluster[15,:] = 1
     cluster[22,:] = 1
-    #cluster[25,:] = 1
-    #luster[26,:] = 1
     cluster[37,:] = 1
-    #cluster[59,:] = 1
-    #cluster[66,:] = 1 
     title = 'Anterior cluster'
 if decision:
     cluster[5,:] = 1
@@ -174,25 +170,14 @@ if decision:
     title = 'Decision cluster'
 if post_error:
     cluster[8,:] = 1
-    #cluster[9,:] = 1
     cluster[16,:] = 1
-    #cluster[17,:] = 1
-    #cluster[18,:] = 1
     cluster[19,:] = 1
     
     title = 'Post-error'
 if post_feedback_early:
-    #cluster[70,:] = 1
-    #cluster[71,:] = 1
-    #cluster[73,:] = 1
-    #cluster[74,:] = 1
-    #cluster[75,:] = 1
-    #cluster[77,:] = 1
-    #cluster[86,:] = 1
     cluster[60,:] = 1
     cluster[70,:] = 1
     cluster[71,:] = 1
-    #cluster[72,:] = 1
     cluster[73,:] = 1
     cluster[73,:] = 1
     cluster[74,:] = 1
@@ -340,21 +325,23 @@ if super_decision:
     cluster[76,:] = 1
     title = 'super_decision'
 if super_feedback:
-    #cluster[59,:] = 1
-    #cluster[66,:] = 1
-    #cluster[69,:] = 1
     #super posterior
     #cluster[60,:] = 1
     #cluster[69,:] = 1
     #cluster[76,:] = 1
     #super anterior
-    cluster[5,:] = 1
     cluster[10,:] = 1
     cluster[20,:] = 1
-    title = 'super_feedback'
-     
+    cluster[12,:] = 1
+    title = 'super_anterior'
+if super_early_feedback:
+    cluster[76,:] = 1
+    cluster[77,:] = 1
+    cluster[70,:] = 1
+    title = 'early_super_fb'
+
 stat_sensors = np.array(cluster)
 
 os.makedirs('/net/server/data/Archive/prob_learn/asmyasnikova83/head_templates_channels_green/', exist_ok = True)
 fig = temp.plot_topomap(times = time_to_plot, ch_type='planar1', scalings = 1, units = 'dB', show = False, vmin = -0.9, vmax = 0.9, time_unit='s', title = title, colorbar = False, extrapolate = "local", mask = np.bool_(stat_sensors), mask_params = dict(marker='o', markerfacecolor='green', markeredgecolor='k', linewidth=0, markersize=10, markeredgewidth=2))
-fig.savefig('/net/server/data/Archive/prob_learn/asmyasnikova83/maps_signif_sensors/super_fb_anter.jpeg', dpi = 900)
+fig.savefig(f'/net/server/data/Archive/prob_learn/asmyasnikova83/maps_signif_sensors/{title}.jpeg', dpi = 900)
