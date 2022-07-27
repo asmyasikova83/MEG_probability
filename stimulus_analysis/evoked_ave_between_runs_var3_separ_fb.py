@@ -20,10 +20,9 @@ for i in range(0, 63):
 
 rounds = [1, 2, 3, 4, 5, 6]
 freq_range = 'beta_16_30_trf_no_log_division_stim'
-prefix = '/net/server/data/Archive/prob_learn/asmyasnikova83'
+prefix = '/net/server/data/Archive/prob_learn/asmyasnikova83/Events_normals'
 trial_type = ['norisk', 'prerisk', 'risk', 'postrisk']
-#trial_type = ['risk']
-
+#trial_type = ['risk', 'norisk']
 # донор
 temp = mne.Evoked("/net/server/data/Archive/prob_learn/vtretyakova/Nikita_mio_cleaned/beta_16_30_ave_into_subjects/P001_norisk_evoked_beta_16_30_resp.fif")
 
@@ -32,20 +31,16 @@ n = temp.data.shape[1] # количество временных точек (б�
 #aсоздаем папку, куда будут сохраняться полученные комбайны
 os.makedirs('{0}/stim_check/{1}_feedback/{1}_ave_into_subj/'.format(prefix, freq_range), exist_ok = True)
 
-
 for subj in subjects:
     for t in trial_type:
         ################################ Positive feedback ################################
         positive_fb = np.empty((0, 306, n))
         for r in rounds:
             try:
-                               
                 epochs_positive = mne.read_epochs('{0}/stim_check/{1}_feedback/{1}_second_bl_epo/{2}_run{3}_{4}_fb_cur_positive_{1}_epo.fif'.format(prefix, freq_range, subj, r, t), preload = True)             
-
-                    
+                print(epochs_positive)
                 positive_fb = np.vstack([positive_fb, epochs_positive.get_data()])
                
-                
             except (OSError):
                 
                 print('This file not exist')
@@ -69,7 +64,7 @@ for subj in subjects:
                                
                 epochs_negative = mne.read_epochs('{0}/stim_check/{1}_feedback/{1}_second_bl_epo/{2}_run{3}_{4}_fb_cur_negative_{1}_epo.fif'.format(prefix, freq_range, subj, r, t), preload = True)
                 negative_fb = np.vstack([negative_fb, epochs_negative.get_data()])
-             
+                print(epochs_negative)
                 
             except (OSError):
                 print('This file not exist')
