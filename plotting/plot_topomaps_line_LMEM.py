@@ -40,7 +40,7 @@ else:
 # задаем время и донора
 time_to_plot = np.linspace(t_start, t_end, num = N)
 temp = mne.Evoked("/net/server/data/Archive/prob_learn/vtretyakova/Nikita_mio_cleaned/beta_16_30_ave_into_subjects_comb_planar/P001_norisk_evoked_beta_16_30_resp_comb_planar.fif")
-
+planars = ['comb_planar']
 n = temp.data.shape[1] # количество временных отчетов для combaened planars - temp.data.shape = (102 x n), где 102 - количество планаров, а n - число временных отчетов
 ########################### norisk vs risk ##############################
 for p in planars:
