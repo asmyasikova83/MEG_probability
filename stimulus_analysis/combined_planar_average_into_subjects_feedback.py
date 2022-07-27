@@ -20,12 +20,11 @@ for i in range(0,63):
 #subjects.remove('P056')
 
 freq_range = 'beta_16_30_trf_no_log_division_stim'
-prefix = '/net/server/data/Archive/prob_learn/asmyasnikova83'
+prefix = '/net/server/data/Archive/prob_learn/asmyasnikova83/Events_normals'
 
 trial_type = ['norisk', 'prerisk', 'risk', 'postrisk']
-#trial_type = ['risk']
-feedback = ['positive', 'negative']
-#feedback = ['positive']
+#trial_type = ['norisk', 'risk']
+feedback = ['negative', 'positive']
 
 # donor
 donor = mne.Evoked('/net/server/data/Archive/prob_learn/vtretyakova/Nikita_mio_cleaned/beta_16_30_ave_into_subjects_comb_planar/P001_norisk_evoked_beta_16_30_resp_comb_planar.fif')
