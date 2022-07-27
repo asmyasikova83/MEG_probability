@@ -3,7 +3,7 @@ import mne
 import os
 import os.path as op
 import numpy as np
-from make_freq_stim import make_beta_signal, read_events_N
+from make_freq_stim import make_beta_signal
 from os.path import exists
 
 L_freq = 16
@@ -25,12 +25,12 @@ baseline = (-0.35, -0.05)
 
 freq_range = 'beta_16_30_trf_no_log_division_stim'
 
-prefix = '/net/server/data/Archive/prob_learn/asmyasnikova83'
+prefix = '/net/server/data/Archive/prob_learn/asmyasnikova83/Events_normals'
 
 description = 'Усреденение от стимула /n Выделяем частоты и при корректировке на бейзлайн, каждое значение данных делим на бейзлайн, но без логарифмирования. Логарифмирование проводим на последних этапах: перед рисованием, либо перед статистикой'
 
 subjects = []
-for i in range(35,36):
+for i in range(0,63):
     if i < 10:
         subjects += ['P00' + str(i)]
     else:
@@ -40,7 +40,7 @@ for i in range(35,36):
 #rounds = [5]
 rounds = [1, 2, 3, 4, 5, 6]
 trial_type = ['norisk', 'prerisk', 'risk', 'postrisk']
-#trial_type = ['risk']
+#trial_type = ['norisk']
 feedback = ['positive', 'negative']
 
 data_path = '/net/server/data/Archive/prob_learn/vtretyakova/ICA_cleaned'
@@ -84,8 +84,7 @@ for subj in subjects:
                     if tfr_stim == 0:
                         continue
                     else:
-                        tfr_stim.save('{0}/stim_check/{1}_feedback/{1}_epo/{2}_run{3}_{4}_fb_cur_{4}_{1}_epo.fif'.format(prefix, freq_range, subj, r, cond, fb))
-                        #tfr_stim.save('/net/server/data/Archive/prob_learn/asmyasnikova83/stim_check/{0}_feedback/{0}_epo/{1}_run{2}_{3}_{0}_epo.fif'.format(freq_range, subj, r, cond))
+                        tfr_stim.save('{0}/stim_check/{1}_feedback/{1}_epo/{2}_run{3}_{4}_fb_cur_{5}_{1}_epo.fif'.format(prefix, freq_range, subj, r, cond, fb))
                 except (OSError):
                     print('This file not exist')
 
