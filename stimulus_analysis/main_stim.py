@@ -2,7 +2,7 @@ import mne
 import os
 import os.path as op
 import numpy as np
-from make_freq_stim import make_beta_signal, read_events_N
+from make_freq_stim import make_beta_signal
 from os.path import exists
 
 L_freq = 16
@@ -41,7 +41,7 @@ trial_type = ['norisk', 'prerisk', 'risk', 'postrisk']
 feedback = ['positive', 'negative']
 #feedback = ['positive']
 
-prefix = '/net/server/data/Archive/prob_learn/asmyasnikova83'
+prefix = '/net/server/data/Archive/prob_learn/asmyasnikova83/Events_normals'
 data_path = '/net/server/data/Archive/prob_learn/vtretyakova/ICA_cleaned'
 os.makedirs('{0}/stim_check/{1}'.format(prefix, freq_range), exist_ok = True)
 os.makedirs('{0}/stim_check/{1}/{1}_epo'.format(prefix, freq_range), exist_ok = True)
