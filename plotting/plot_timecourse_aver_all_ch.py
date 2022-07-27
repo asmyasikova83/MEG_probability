@@ -41,14 +41,13 @@ if parameter3  == None:
     else:
         #stimulus-locked data
         print('Response is false')
-        #data_path = '/net/server/data/Archive/prob_learn/asmyasnikova83/probability/stim/{0}/{0}_ave_comb_planar/'.format(freq_range)
-        data_path = '/net/server/data/Archive/prob_learn/asmyasnikova83/stim_check/{0}/{0}_ave_comb_planar/'.format(freq_range)
+        data_path = '/net/server/data/Archive/prob_learn/asmyasnikova83/Events_normals/stim_check/{0}/{0}_ave_comb_planar/'.format(freq_range)
 if parameter3  == 'negative':
     if response:
-        data_path = '/net/server/data/Archive/prob_learn/asmyasnikova83/beta/beta_16_30_fb_ave_comb_planar/'
+        data_path = '/net/server/data/Archive/prob_learn/asmyasnikova83/beta_by_feedback/beta_16_30_trf_early_log_ave_into_subjects_comb_planar/'
     else:
         print('Response is false')
-        data_path = '/net/server/data/Archive/prob_learn/asmyasnikova83/stim_check/{0}_feedback/{0}_ave_comb_planar/'.format(freq_range)
+        data_path = '/net/server/data/Archive/prob_learn/asmyasnikova83/Events_normals/stim_check/{0}_feedback/{0}_ave_comb_planar/'.format(freq_range)
   
 ###################### при построении topomaps берем только тех испытуемых, у которых есть все категории условий ####################
 ### extract subjects with all conditions:fb+trial_type ####
@@ -87,7 +86,7 @@ else:
 for p in planars:
     #extract data and ttest
     print(data_path)
-    comp1_mean, comp2_mean, comp3_mean, p_val = compute_p_val(response, data_path, subjects, cond1, cond2, parameter3, parameter4, fr, time, t, idx_array_extended)
+    comp1_mean, comp2_mean, comp3_mean, p_val = compute_p_val(response, data_path, subjects, cond1, cond2, parameter3, parameter4, freq_range, time, t, idx_array_extended)
     #scaling
     if comp1_mean.max()>comp2_mean.max():
         p_mul_max=comp1_mean.max()+ abs(comp1_mean.max()/10)
@@ -126,14 +125,15 @@ for p in planars:
     #nticipation of feedback [8, 16, 19]
     #in risk neg pos tukey
     #cluster = [59, 66, 69]
-    #3 best anterior
-    cluster = [5, 10, 20]
+    # best anterior TODO REMOVE 5 DONE
+    cluster = [10, 12, 20]
     #3 best poster
     #cluster = [60, 69, 76]
+    #3 best early feedback
+    #cluster = [76, 77, 70]
     #average p_vals and timecourses over all 102 channels 
     for i in range(0, len(cluster)):
         j = cluster[i]
-        print(j)
         p_val_aver = p_val_aver + p_val[j,:]
         comp1_mean_aver = comp1_mean_aver + comp1_mean[j,:]
         comp2_mean_aver = comp2_mean_aver + comp2_mean[j,:]
@@ -145,9 +145,9 @@ for p in planars:
     comp3_mean_aver_fin = comp3_mean_aver/counter
     rej,p_fdr = mne.stats.fdr_correction(p_val_aver_fin, alpha=0.05, method='indep')
     if response:
-        title = f'{cond1_name} vs {cond2_name}REP'
+        title = f'{cond1_name} vs {cond2_name}RELfb'
     else:
-        title = f'{cond1_name} vs {cond2_name}STA'
+        title = f'{cond1_name} vs {cond2_name}STLfb'
     print('title', title)
     p_mul_min = -5.5
     p_mul_max = 5.5
