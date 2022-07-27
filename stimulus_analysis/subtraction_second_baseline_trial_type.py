@@ -25,12 +25,12 @@ baseline = (-0.35, -0.05)
 
 freq_range = 'beta_16_30_trf_no_log_division_stim'
 prefix_vera = '/net/server/data/Archive/prob_learn/vtretyakova'
-prefix_sasha = '/net/server/data/Archive/prob_learn/asmyasnikova83'
+prefix_sasha = '/net/server/data/Archive/prob_learn/asmyasnikova83/Events_normals'
 
 description = 'Усредение от реакции. Выделяем частоты и при корректировке на бейзлан, каждое значение данных делим на бейзлан, но без логарифмирования. Логарифмирование проводим на последних этапах: перед рисованием, либо перед статистикой'
 
 subjects = []
-for i in range(35, 36):
+for i in range(0, 63):
     if i < 10:
         subjects += ['P00' + str(i)]
     else:
@@ -41,7 +41,7 @@ for i in range(35, 36):
 rounds = [1, 2, 3, 4, 5, 6]
 #rounds = [4]
 trial_type = ['norisk', 'prerisk', 'risk', 'postrisk']
-#trial_type = ['risk']
+#trial_type = ['norisk']
 
 feedback = ['positive', 'negative']
 
