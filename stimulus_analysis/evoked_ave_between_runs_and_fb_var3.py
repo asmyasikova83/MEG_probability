@@ -27,7 +27,7 @@ temp = mne.Evoked("/net/server/data/Archive/prob_learn/vtretyakova/Nikita_mio_cl
 
 n = temp.data.shape[1] # количество временных точек (берем у донора, если донор из тех же данных.
 freq_range = 'beta_16_30_trf_no_log_division_stim'
-prefix = '/net/server/data/Archive/prob_learn/asmyasnikova83'
+prefix = '/net/server/data/Archive/prob_learn/asmyasnikova83/Events_normals'
 #создаем папку, куда будут сохраняться полученные комбайны
 os.makedirs('{0}/stim_check/{1}/{1}_ave_into_subj'.format(prefix, freq_range), exist_ok = True)
 
@@ -50,5 +50,3 @@ for subj in subjects:
         else:
             print('Subject has no data in this condition')
             pass
-
-
