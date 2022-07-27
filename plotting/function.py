@@ -761,7 +761,7 @@ def ttest_pair_independent(data_path1, data_path2, response, Autists, Normals, f
 #################################### FDR CORRECTION ########################################
 def compute_p_val(response,data_path, subjects, cond1, cond2, parameter3, parameter4, fr, time, t, idx_array):
     #do ttests for subjects and compute p-values P062_risk_evoked_positive_beta_12_20_resp_comb_planar.fif
-    #t = 1051
+    #t = 1350
     #contr = np.zeros((len(subjects), 2, 102, int(time.shape[0])))
     contr = np.zeros((len(subjects), 2, 102, t))
     print(time[0])
@@ -781,8 +781,8 @@ def compute_p_val(response,data_path, subjects, cond1, cond2, parameter3, parame
             print(cond1_fname)
         if parameter3 == 'negative':
             if response:
-                cond1_fname = data_path + f'{subj}_{cond1}_evoked_{fr}_{parameter3}_resp_comb_planar.fif'
-                cond2_fname = data_path + f'{subj}_{cond1}_evoked_{fr}_{parameter4}_resp_comb_planar.fif'
+                cond1_fname = data_path + f'{subj}_{cond1}_evoked_{fr}_resp_comb_planar_fb_cur_{parameter3}.fif'
+                cond2_fname = data_path + f'{subj}_{cond1}_evoked_{fr}_resp_comb_planar_fb_cur_{parameter4}.fif'
             else:
                 cond1_fname = data_path + f'{subj}_{cond1}_fb_cur_{parameter3}_evoked_beta_16_30_resp_comb_planar.fif'
                 cond2_fname = data_path + f'{subj}_{cond1}_fb_cur_{parameter4}_evoked_beta_16_30_resp_comb_planar.fif'
@@ -799,6 +799,7 @@ def compute_p_val(response,data_path, subjects, cond1, cond2, parameter3, parame
     comp1 = np.zeros((len(subjects), 102, len(time)))
     comp2 = np.zeros((len(subjects), 102, len(time)))
     comp3 = np.zeros((len(subjects), 102, len(time)))
+    print('compm aver shape', comp3.shape)
     #use idx array to resample the data for further stat
     for i, idx in enumerate(idx_array):
         i = int(i)
@@ -852,11 +853,11 @@ def plot_stat_comparison(response, contrast, path, comp1, comp2, comp3, p_mul_mi
     plt.close()
 #############################################################################
 ##################### непарный ttest #######################################
-def ttest_vs_zero(data_path, subjects, parameter1, parameter3, freq_range, planar, n): # n - количество временных отчетов
+def ttest_vs_zero_bk(data_path, subjects, parameter1, parameter3, freq_range, planar, n): # n - количество временных отчетов
     contr = np.zeros((len(subjects), 1, 102, n))
     for ind, subj in enumerate(subjects):
         if parameter3 == None:
-            temp1 = mne.Evoked(op.join(data_path, '{0}_{1}_evoked_{2}_resp_{3}.fif'.format(subj, parameter1, freq_range, planar)))
+            temp1 = mne.Evoked(op.join(data_path, '{0}_{1}_evoked_{2}_resp_{3}.fif'.format(subj,  parameter1, freq_range, planar)))
         if parameter3 == 'negative' or parameter3 == 'positive':
             temp1 = mne.Evoked(op.join(data_path, '{0}_{1}_evoked_{2}_resp_{3}_fb_cur_{4}.fif'.format(subj, parameter1, freq_range, planar, parameter3)))
         contr[ind, 0, :, :] = temp1.data
@@ -865,6 +866,21 @@ def ttest_vs_zero(data_path, subjects, parameter1, parameter3, freq_range, plana
 
     comp1_mean = comp1.mean(axis=0)
     return t_stat, p_val, comp1_mean
+
+def ttest_vs_zero(data_path, subjects, parameter1, parameter3, freq_range, planar, n): # n - количество временных отчетов
+    contr = np.zeros((len(subjects), 1, 102, n))
+
+    for ind, subj in enumerate(subjects):
+        temp1 = mne.Evoked(op.join(data_path, '{0}_{1}_evoked_{2}_resp_{3}.fif'.format(subj, parameter1, freq_range, planar)))
+                                
+        contr[ind, 0, :, :] = temp1.data
+                                                        
+    comp1 = contr[:, 0, :, :]
+    t_stat, p_val = stats.ttest_1samp(comp1, 0, axis=0)
+
+    comp1_mean = comp1.mean(axis=0)
+                                                                            
+    return t_stat, p_val, comp1_mean, contr
 
 def to_str_ar(ch_l):
     temp = []
