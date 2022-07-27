@@ -10,7 +10,7 @@ from config import *
 fr = 'beta_16_30_trf_early_log'
 # загружаем комбайн планары, усредненные внутри каждого испытуемого
 if parameter3 == 'negative':
-    data_path = '/net/server/data/Archive/prob_learn/asmyasnikova83/beta_by_feedback/{0}_ave_into_subj_comb_planar/'.format(fr)
+    data_path = '/net/server/data/Archive/prob_learn/asmyasnikova83/beta_by_feedback/{0}_ave_into_subjects_comb_planar/'.format(fr)
 if parameter3 == None:
     data_path = '/net/server/data/Archive/prob_learn/vtretyakova/Nikita_mio_cleaned/beta_16_30_trf_early_log/beta_16_30_trf_early_log_comb_planar/'
 poster = True
@@ -99,10 +99,10 @@ stat = False
 
 if not stat:
     if parameter3 == 'negative':
-        title = (f'In {parameter1} fb negpos, nostat')
+        title = (f'In {cond1} fb negpos, nostat')
     if parameter3 == None:
         title = (f'{cond1} vs {cond2} nofdr, nostat')
-    fig = plotting_LMEM.plot_topomap(times = time_to_plot, ch_type='planar1', scalings = 1, units = 'dB', show = False, vmin = -0.5, vmax = 0.5, time_unit='ms', title = title, colorbar = True, extrapolate = "local")
+    fig = plotting_LMEM.plot_topomap(times = time_to_plot, ch_type='planar1', scalings = 1, units = 'dB', show = False, vmin = -1.2, vmax = 1.2, time_unit='ms', title = title, colorbar = True, extrapolate = "local")
     print('Pic ready')
 
 if stat:
