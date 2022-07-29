@@ -32,10 +32,10 @@ cond2 = 'norisk'
 #cond2 = 'norisk'
 #parameter1 = cond1
 #parameter2 = cond2
-parameter3 = 'negative'
-parameter4 = 'positive'
-#parameter3 = None
-#parameter4 = None
+#parameter3 = 'negative'
+#parameter4 = 'positive'
+parameter3 = None
+parameter4 = None
 if cond1 == 'prerisk':
     cond1_name = 'pre-LP'
 if cond1 == 'risk':
@@ -57,9 +57,9 @@ planars = 'comb_planar'
 freq_range = 'beta_16_30_trf_early_log'
 data_path = '/net/server/data/Archive/prob_learn/vtretyakova/Nikita_mio_cleaned/beta_16_30_trf_early_log/beta_16_30_trf_early_log_ave_into_subj'
 #path = '/net/server/data/Archive/prob_learn/asmyasnikova83/probability/stim/{0}/timecourses_aver_all_ch/'.format(freq_range)
-Autists = False
+Autists = True
 Normals = False
-Normals_Autists = True
+Normals_Autists = False
 
 if response:
     if Normals:
@@ -84,7 +84,7 @@ if Normals:
     sample_full = 'full (40) Norm'
     #autists for pairs
     subjects_short = ['P023', 'P053', 'P022','P016', 'P040','P065', 'P001', 'P064', 'P055','P060', 'P019', 'P034', 'P004',
-                'P039','P035', 'P008','P047', 'P059', 'P021', 'P063','P032', 'P044']
+                'P039','P035', 'P008','P047', 'P059', 'P021', 'P063','P032', 'P044', 'P061', 'P067']
     #prerisk changed bline
     subjects = ['P023', 'P053', 'P022','P016',          'P001',        'P055','P060', 'P019', 'P034', 'P004',
                 'P039',              'P047', 'P059',      'P063','P032', 'P044']
@@ -101,7 +101,7 @@ if Normals:
 if Autists:
     subjects_full= ['P301', 'P304', 'P307', 'P308', 'P311', 'P312', 'P313', 'P314', 'P316', 'P318', 'P320', 'P321', 'P322',
                 'P323', 'P324', 'P325', 'P326', 'P327', 'P328', 'P329', 'P330', 'P331', 'P332', 'P333', 'P334', 'P335',
-                'P336', 'P338', 'P341']
+                'P336', 'P338', 'P341', 'P342']
     #subjects.remove('P308') #autism not confirmed
     #subjects.remove('P336') #not all conditions
     #subjects.remove('P330') #no norisk neg
@@ -112,7 +112,7 @@ if Autists:
 
     #autists for pairs
     subjects_short = ['P301','P304','P307','P332','P312', 'P313', 'P314', 'P316','P318', 'P320', 'P321', 'P322', 'P323',
-                        'P325', 'P326', 'P327', 'P328', 'P329','P333', 'P334', 'P335', 'P341']
+                        'P325', 'P326', 'P327', 'P328', 'P329','P333', 'P334', 'P335', 'P341', 'P342', 'P324']
     #prerisk changed bline
     subjects_prerisk_changed_bline = ['P301','P304','P307','P332',               'P314',     'P318', 'P320', 'P321', 'P322', 'P323',
                         'P325',             'P328', 'P329',     'P334', 'P335', 'P341']
