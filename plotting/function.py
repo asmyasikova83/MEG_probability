@@ -744,11 +744,11 @@ def ttest_pair_independent(data_path1, data_path2, response, Autists, Normals, f
     for ind, subj in enumerate(Autists):
         #TODO
         #if  parameter3 == 'negative':
-        temp1 = mne.Evoked(op.join(data_path1, '{0}_{1}_evoked_{2}_resp_{3}_fb_cur_{4}.fif'.format(Autists[ind], parameter1, fr1, planar, parameter3)))
-        temp2 = mne.Evoked(op.join(data_path2, '{0}_{1}_evoked_{2}_resp_{3}_fb_cur_{4}.fif'.format(Normals[ind], parameter1, fr2, planar, parameter3)))
+        #temp1 = mne.Evoked(op.join(data_path1, '{0}_{1}_evoked_{2}_resp_{3}_fb_cur_{4}.fif'.format(Autists[ind], parameter1, fr1, planar, parameter3)))
+        #temp2 = mne.Evoked(op.join(data_path2, '{0}_{1}_evoked_{2}_resp_{3}_fb_cur_{4}.fif'.format(Normals[ind], parameter1, fr2, planar, parameter3)))
         #if parameter3 == None:
-        #temp1 = mne.Evoked(op.join(data_path1, '{0}_{1}_evoked_{2}_resp_{3}.fif'.format(Autists[ind], parameter1, fr1, planar)))
-        #temp2 = mne.Evoked(op.join(data_path2, '{0}_{1}_evoked_{2}_resp_{3}.fif'.format(Normals[ind], parameter1, fr2, planar)))
+        temp1 = mne.Evoked(op.join(data_path1, '{0}_{1}_evoked_{2}_resp_{3}.fif'.format(Autists[ind], parameter1, fr1, planar)))
+        temp2 = mne.Evoked(op.join(data_path2, '{0}_{1}_evoked_{2}_resp_{3}.fif'.format(Normals[ind], parameter1, fr2, planar)))
         contr[ind, 0, :, :] = temp1.data
         contr[ind, 1, :, :] = temp2.data
     comp1 = contr[:, 0, :, :]
@@ -762,8 +762,10 @@ def ttest_pair_independent(data_path1, data_path2, response, Autists, Normals, f
 def compute_p_val(response,data_path, subjects, cond1, cond2, parameter3, parameter4, fr, time, t, idx_array):
     #do ttests for subjects and compute p-values P062_risk_evoked_positive_beta_12_20_resp_comb_planar.fif
     #t = 1350
+    t = 1051
     #contr = np.zeros((len(subjects), 2, 102, int(time.shape[0])))
     contr = np.zeros((len(subjects), 2, 102, t))
+    print(contr.shape)
     print(time[0])
     print(round(time[-1], 1))
     print(time.shape)
@@ -791,6 +793,7 @@ def compute_p_val(response,data_path, subjects, cond1, cond2, parameter3, parame
         #here we remove the edges with artifacts
         temp1 = mne.Evoked(cond1_fname, verbose = 'ERROR').pick_types("grad").crop(tmin = time[0], tmax = round(time[-1], 1))
         temp2 = mne.Evoked(cond2_fname, verbose = 'ERROR').pick_types("grad").crop(tmin = time[0], tmax = round(time[-1], 1))
+        print(temp1.data.shape)
         contr[ind, 0, :, :] = temp1.data
         contr[ind, 1, :, :] = temp2.data
     comp1_before = contr[:, 0, :, :]
@@ -822,33 +825,35 @@ def plot_stat_comparison(response, contrast, path, comp1, comp2, comp3, p_mul_mi
     os.makedirs(path+'output/'+ f'{comp1_label}_vs_{comp2_label}/', exist_ok = True)
     print(path)
     plt.figure()
-    plt.rcParams['axes.facecolor'] = 'none'
+    #plt.rcParams['axes.facecolor'] = 'green'
+    plt.rcParams['figure.figsize'] = 40, 12
+    plt.rcParams['axes.linewidth'] = 1
     plt.xlim(time[0], time[-1])
-    plt.xticks(np.arange(-1.0,3.0, 1))
-    plt.ylim(p_mul_min, p_mul_max)
+    plt.xticks(np.arange(-1,3.0, 1))
+    plt.ylim([-5.5, 5.5])
     #add axis for stimulus-locked data
-    plt.plot([0, 0.001], [-50, 50], color='k', linewidth=3, linestyle='--', zorder=1)
-    plt.plot([-50, 50], [0, 0.001], color='k', linewidth=3, linestyle='--', zorder=1)
+    plt.plot([0, 0.001], [-50, 50], color='k', linewidth=3, linestyle='dotted', zorder=1)
+    plt.plot([-50, 50], [0, 0.001], color='k', linewidth=3, linestyle='solid', zorder=1)
     if response:
         #add FB axis if response-locked data
-        plt.plot([1, 1.001], [-50, 50], color='k', linewidth=3, linestyle='--', zorder=1)
+        plt.plot([1, 1.001], [-50, 50], color='k', linewidth=3, linestyle='dotted', zorder=1)
     if parameter3 == None:
-        plt.plot(time, comp1, color='r', linewidth=3, label=comp1_label)
-        plt.plot(time, comp2, color='b', linewidth=3, label=comp2_label)
+        plt.plot(time, comp1, color='r', linewidth=5, label=comp1_label)
+        plt.plot(time, comp2, color='b', linewidth=5, label=comp2_label)
         #plot difference
         if contrast:
-            plt.plot(time, comp3, color='k', linewidth=5, linestyle = 'dotted', label=comp3_label)
+            plt.plot(time, comp3, color='k', linewidth=5, linestyle = 'dashed', label=comp3_label)
     if parameter3 == 'negative':
         plt.plot(time, comp1, color='r', linewidth=3, label=comp1_label)
         plt.plot(time, comp2, color='b', linewidth=3, label=comp2_label)
         if contrast:
             plt.plot(time, comp3, color='k', linewidth=5, linestyle = 'dotted', label=comp3_label)
-    plt.fill_between(time, y1 = p_mul_min, y2 = p_mul_max, where = (p_fdr < 0.05), facecolor = 'm', alpha = 0.46, step = 'pre')
-    plt.fill_between(time, y1 = p_mul_min, y2 = p_mul_max, where = ((p_val < 0.05) * (p_fdr > 0.05)), facecolor = 'g', alpha = 0.46, step = 'pre')
+    #plt.fill_between(time, y1 = p_mul_min, y2 = p_mul_max, where = (p_fdr < 0.05), facecolor = 'm', alpha = 0.46, step = 'pre')
+    #plt.fill_between(time, y1 = p_mul_min, y2 = p_mul_max, where = ((p_val < 0.05) * (p_fdr > 0.05)), facecolor = 'g', alpha = 0.46, step = 'pre')
     # plt.fill_between(time, y1 = p_mul_max, y2 = p_mul_min, where = ((time>-0.350)*(time<-0.050)), facecolor = 'm', alpha = 0.46, step = 'pre')
-    plt.tick_params(labelsize = 40)
-    #plt.legend(loc='lower left', fontsize = 25)
-    plt.title(title, fontsize = 40)
+    plt.tick_params(labelsize = 20)
+    #plt.legend(loc='upper left', fontsize = 15)
+    plt.title(title, fontsize = 20)
     plt.savefig(path+'output/'+ f'{comp1_label}_vs_{comp2_label}/'+title + '.png', transparent=True)
     plt.close()
 #############################################################################
@@ -867,7 +872,7 @@ def ttest_vs_zero_bk(data_path, subjects, parameter1, parameter3, freq_range, pl
     comp1_mean = comp1.mean(axis=0)
     return t_stat, p_val, comp1_mean
 
-def ttest_vs_zero(data_path, subjects, parameter1, parameter3, freq_range, planar, n): # n - количество временных отчетов
+def ttest_vs_zero_test(data_path, subjects, parameter1, parameter3, freq_range, planar, n): # n - количество временных отчетов
     contr = np.zeros((len(subjects), 1, 102, n))
 
     for ind, subj in enumerate(subjects):
@@ -943,14 +948,13 @@ def p_val_binary(p_val_n, treshold):
 def plot_deff_topo(p_val, Normals_Autists, temp, mean1, mean2, time_to_plot, vmin_contrast, vmax_contrast, title):	
     #Если мы будем использовать донор Evoked из тех, которые усредняются, то время и так будет то, которое необходимо, тогда менять время нет необходимости и присваиваем только новые данные (see temp.data)
     binary = p_val_binary(p_val, treshold = 0.05)
-    temp.data = mean1 - mean2
+    #temp.data = mean1 - mean2
 
 	#temp_shift = temp.shift_time(-0.600, relative=False)
 	
     fig1 = temp.plot_topomap(times = time_to_plot, ch_type='planar1', scalings = 1, average=0.2, units = 'dB', show = False, time_unit='s', title = title);
 
-    fig2 = temp.plot_topomap(times = time_to_plot, ch_type='planar1', scalings = 1, average=0.2, units = 'dB', show = False, vmin = vmin_contrast, vmax = vmax_contrast, time_unit='s', title = title, colorbar = True, extrapolate = "local", mask = np.bool_(binary), mask_params = dict(marker='o',			markerfacecolor='green', markeredgecolor='yellow', linewidth=0, markersize=7, markeredgewidth=4))
-
+    fig2 = temp.plot_topomap(times = time_to_plot, ch_type='planar1', scalings = 1, average=0.2, units = 'dB', show = False, vmin = vmin_contrast, vmax = vmax_contrast, time_unit='s', title = title, colorbar = True, extrapolate = "local", mask = np.bool_(binary), mask_params = dict(marker='o',			markerfacecolor='white', markeredgecolor='k', linewidth=2, markersize=7, markeredgewidth=4))
 
     return fig1, fig2, temp # temp - "Evoked" for difference mean1 and mean2, which can be save if it is needed   
 
@@ -960,7 +964,7 @@ def plot_topo_vs_zero(p_val, temp, mean1, time_to_plot, vmin, vmax, title):
     #Если мы будем использовать донор Evoked из тех, которые усредняются, то время и так будет то, которое необходимо, тогда менять время нет необходимости и присваиваем только новые данные (see temp.data)
     binary = p_val_binary(p_val, treshold = 0.05)
     temp.data = mean1
-    fig = temp.plot_topomap(times = time_to_plot, ch_type='planar1', scalings = 1, average=0.1, units = 'dB', show = False, vmin = vmin, vmax = vmax, time_unit='s', title = title, colorbar = True, extrapolate = "local", mask = np.bool_(binary), mask_params = dict(marker='o',		markerfacecolor='white', markeredgecolor='k', linewidth=0, markersize=7, markeredgewidth=2))
+    fig = temp.plot_topomap(times = time_to_plot, ch_type='planar1', scalings = 1, average=0.1, units = 'dB', show = False, vmin = vmin, vmax = vmax, time_unit='s', title = title, colorbar = True, extrapolate = "local", mask = np.bool_(binary), mask_params = dict(marker='o',		markerfacecolor='white', markeredgecolor='k', linewidth=0, markersize=7, markeredgewidth=4))
 
     return fig, temp # temp - "Evoked" , which can be save if it is needed   
 
