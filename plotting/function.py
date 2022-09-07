@@ -828,7 +828,8 @@ def plot_stat_comparison(response, contrast, path, comp1, comp2, comp3, p_mul_mi
     #plt.rcParams['axes.facecolor'] = 'green'
     plt.rcParams['figure.figsize'] = 40, 12
     plt.rcParams['axes.linewidth'] = 1
-    plt.xlim(time[0], time[-1])
+    #plt.xlim(time[0], time[-1])
+    plt.xlim(-0.95, 2.05)
     plt.xticks(np.arange(-1,3.0, 1))
     plt.ylim([-5.5, 5.5])
     #add axis for stimulus-locked data
@@ -842,10 +843,10 @@ def plot_stat_comparison(response, contrast, path, comp1, comp2, comp3, p_mul_mi
         plt.plot(time, comp2, color='b', linewidth=5, label=comp2_label)
         #plot difference
         if contrast:
-            plt.plot(time, comp3, color='k', linewidth=5, linestyle = 'dashed', label=comp3_label)
+            plt.plot(time, comp3, color='k', linewidth=5, linestyle = 'dotted', label=comp3_label)
     if parameter3 == 'negative':
-        plt.plot(time, comp1, color='r', linewidth=3, label=comp1_label)
-        plt.plot(time, comp2, color='b', linewidth=3, label=comp2_label)
+        plt.plot(time, comp1, color='r', linewidth=5, label=comp1_label)
+        plt.plot(time, comp2, color='b', linewidth=5, label=comp2_label)
         if contrast:
             plt.plot(time, comp3, color='k', linewidth=5, linestyle = 'dotted', label=comp3_label)
     #plt.fill_between(time, y1 = p_mul_min, y2 = p_mul_max, where = (p_fdr < 0.05), facecolor = 'm', alpha = 0.46, step = 'pre')
