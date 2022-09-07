@@ -45,8 +45,6 @@ if Normals:
     prefix_events = '/net/server/data/Archive/prob_learn/asmyasnikova83/Events_normals'
     prefix_data = '/net/server/data/Archive/prob_learn/asmyasnikova83/Normals_extended'
 
-#os.makedirs('/{0}/{1}_classical_bline'.format(prefix_data, freq_range), exist_ok = True)
-#os.makedirs('/{0}/{1}_classical_bline/{1}_epo'.format(prefix_data, freq_range), exist_ok = True)
 os.makedirs('/{0}/{1}{2}_classical_bline'.format(prefix_data, freq_range, prefix), exist_ok = True)
 os.makedirs('/{0}/{1}{2}_classical_bline/{1}_epo'.format(prefix_data, freq_range, prefix), exist_ok = True)
 ########################## Обязательно делать файл, в котором будет показано какие параметры были заданы, иначе проверить вводные никак нельзя, а это необходимо при возникновении некоторых вопросов ############################################
@@ -63,6 +61,7 @@ with open(config_name, "w") as file:
 
 ##############################################################################################################
 
+print(subjects)
 
 for subj in subjects:
     for r in rounds:
@@ -70,10 +69,6 @@ for subj in subjects:
             for fb in feedback:
                 try:
                     epochs_tfr = make_beta_signal(prefix_events, prefix, subj, r, cond, fb, data_path, L_freq, H_freq, f_step, period_start, period_end, baseline, n_cycles, time_bandwidth = time_bandwidth)
-                    #if Autists:
-                    #    print('/{0}/{1}_classical_bline/{1}_epo/{2}_run{3}_{4}_fb_cur_{5}_{1}_epo.fif'.format(prefix_data, freq_range, subj, r, cond, fb))
-                    #    epochs_tfr.save('/{0}/{1}_classical_bline/{1}_epo/{2}_run{3}_{4}_fb_cur_{5}_{1}_epo.fif'.format(prefix_data, freq_range, subj, r, cond, fb), overwrite=True)
-                    #if Normals:
                     epochs_tfr.save('/{0}/{1}{2}_classical_bline/{1}_epo/{3}_run{4}_{5}_fb_cur_{6}_{1}_epo.fif'.format(prefix_data, freq_range, prefix, subj, r, cond, fb), overwrite=True)
                 except (OSError):
                     print('This file not exist')
