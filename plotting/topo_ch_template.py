@@ -9,7 +9,7 @@ from function import nocolor_topomaps_line
 
 #we will mark significant channels
 template_for_channels = False
-anterior_cluster = False
+anterior_cluster = True
 occipital_cluster = False
 decision = False
 post_response = False
@@ -23,7 +23,7 @@ by_one_fr = False
 by_one = False
 wide_decision = False
 super_decision  = False
-super_feedback = True
+super_feedback = False
 super_early_feedback = False
 
 n = 1 # количество говов в ряду
@@ -113,16 +113,15 @@ if occipital_cluster:
     cluster[93,:] = 1
     title = 'Occipit cluster'
 if anterior_cluster:
-    cluster[5,:] = 1
     cluster[9,:] = 1
     cluster[10,:] = 1
     cluster[11,:] = 1
     cluster[12,:] = 1
     cluster[13,:] = 1
-    cluster[15,:] = 1
+    cluster[20,:] = 1
     cluster[22,:] = 1
     cluster[37,:] = 1
-    title = 'Anterior cluster'
+    title = 'LatestAnterior'
 if decision:
     cluster[5,:] = 1
     cluster[6,:] = 1
@@ -325,15 +324,16 @@ if super_decision:
     cluster[76,:] = 1
     title = 'super_decision'
 if super_feedback:
-    #super posterior
-    #cluster[60,:] = 1
-    #cluster[69,:] = 1
-    #cluster[76,:] = 1
+    ##super posterior
+    cluster[60,:] = 1
+    cluster[69,:] = 1
+    cluster[76,:] = 1
+    title = 'super_posterior'
     #super anterior
-    cluster[10,:] = 1
-    cluster[20,:] = 1
-    cluster[12,:] = 1
-    title = 'super_anterior'
+    #cluster[10,:] = 1
+    #cluster[20,:] = 1
+    #cluster[12,:] = 1
+    #title = 'super_anterior'
 if super_early_feedback:
     cluster[76,:] = 1
     cluster[77,:] = 1
@@ -341,7 +341,7 @@ if super_early_feedback:
     title = 'early_super_fb'
 
 stat_sensors = np.array(cluster)
-
-os.makedirs('/net/server/data/Archive/prob_learn/asmyasnikova83/head_templates_channels_green/', exist_ok = True)
+print(title)
+#os.makedirs('/net/server/data/Archive/prob_learn/asmyasnikova83/head_templates_channels_green/', exist_ok = True)
 fig = temp.plot_topomap(times = time_to_plot, ch_type='planar1', scalings = 1, units = 'dB', show = False, vmin = -0.9, vmax = 0.9, time_unit='s', title = title, colorbar = False, extrapolate = "local", mask = np.bool_(stat_sensors), mask_params = dict(marker='o', markerfacecolor='green', markeredgecolor='k', linewidth=0, markersize=10, markeredgewidth=2))
 fig.savefig(f'/net/server/data/Archive/prob_learn/asmyasnikova83/maps_signif_sensors/{title}.jpeg', dpi = 900)
