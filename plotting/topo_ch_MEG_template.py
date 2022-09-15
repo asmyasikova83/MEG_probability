@@ -8,7 +8,7 @@ from function import nocolor_topomaps_line
 #we will mark significant channels
 template_for_channels = True
 
-all_channels = True
+all_channels = False
 frontal_cluster = False
 fronto_central_cluster = False
 central_cluster = False
