@@ -7,17 +7,20 @@ import pandas as pd
 from scipy import stats
 import copy
 import statsmodels.stats.multitest as mul
-from function import ttest_pair, ttest_vs_zero, space_fdr, full_fdr, p_val_binary, plot_deff_topo, plot_topo_vs_zero
+from function import ttest_pair, space_fdr, full_fdr, p_val_binary, plot_deff_topo, plot_topo_vs_zero
 from config import *
 
 # загружаем комбайн планары, усредненные внутри каждого испытуемогo
 prefix = '/net/server/data/Archive/prob_learn/asmyasnikova83/'
 fr = 'beta_16_30_trf_early_log'
 if response:
-    if parameter3 == 'negative':
-        data_path = f'/net/server/data/Archive/prob_learn/asmyasnikova83/beta_by_feedback/{fr}_ave_into_subj_comb_planar/'
-    if parameter3 == None:
-        data_path = '/net/server/data/Archive/prob_learn/vtretyakova/Nikita_mio_cleaned/beta_16_30_trf_early_log/beta_16_30_trf_early_log_comb_planar/'
+    if Autists:
+        path_pic = '/net/server/data/Archive/prob_learn/asmyasnikova83/topomaps_LMEM_response_Autists/{0}/'.format(fr)
+        data_path = '{0}/Autists_extended/{1}_classical_bline/{1}_ave_into_subjects_comb_planar/'.format(prefix, fr)
+    if Normals:
+        path_pic = '/net/server/data/Archive/prob_learn/asmyasnikova83/topomaps_LMEM_response_Normals/{0}/'.format(fr)
+        #data_path = '/{0}/Normals_extended/{1}_classical_bline/{1}_ave_into_subjects_comb_planar/'.format(prefix, fr)
+        data_path = '/net/server/data/Archive/prob_learn/asmyasnikova83/beta_by_feedback/beta_16_30_trf_early_log_ave_into_subjects_comb_planar/'
 else:
     freq_range = 'beta_16_30_trf_no_log_division_stim'
     if parameter3 == 'negative':
@@ -47,15 +50,20 @@ for p in planars:
     _, _, risk_mean, norisk_mean = ttest_pair(data_path, response, subjects, fr, parameter1 = f'{cond1}', parameter2 = f'{cond2}', parameter3 = parameter3, parameter4 = parameter4, planar = p,  n = n)
     if parameter3 == 'negative':
        title = (f'In {cond1} feedback negative vs positive, %s, noFDR'%p)
-       df = pd.read_csv(f'/{prefix}/beta/p_vals_Tukey_by_feedback_cur_MEG_early_log.csv')
-       #df = pd.read_csv(f'/{prefix}/beta/p_vals_Tukey_by_feedback_MEG_t_ratio_test.csv')
+       if Autists:
+           #CHECK THIS DF OUT
+           df = pd.read_csv(f'/{prefix}/beta/p_vals_Tukey_by_feedback_cur_MEG_early_log_group.csv')
+       if Normals:
+           df = pd.read_csv(f'/{prefix}/beta/p_vals_Tukey_by_feedback_cur_MEG_early_log.csv')
     if parameter3 == None:
        title = (f'{cond1} vs {cond2}, %s, LMEM, noFDR'%p)
-       if response:
-           #put new csv not urgent basically the same
-           df = pd.read_csv(f'/{prefix}/beta/p_vals_Tukey_by_trial_type_MEG_early_log.csv')
-       else:
-           df = pd.read_csv(f'/{prefix}/stim_check/p_vals_fb_cur_Tukey_by_trial_type_MEG_stim.csv')
+       if Autists:
+           df = pd.read_csv(f'/{prefix}/beta/p_vals_Tukey_by_trial_type_MEG_early_log_group.csv')
+       if Normals:
+           if response:
+               df = pd.read_csv(f'/{prefix}/beta/p_vals_Tukey_by_trial_type_MEG_early_log.csv')
+           else:
+               df = pd.read_csv(f'/{prefix}/stim_check/p_vals_fb_cur_Tukey_by_trial_type_MEG_stim.csv')
     
     ########################### p value #############################
 
@@ -133,20 +141,18 @@ for p in planars:
         title = (f'In {cond1} feedback negative vs positive, %s, LMEM, fullFDR'%p)
     if parameter3 == None:
         title = (f'{cond2} vs {cond1}, %s, LMEM, fullFDR'%p)
-    fig3 = plotting_LMEM.plot_topomap(times = time_to_plot, ch_type='planar1', scalings = 1, units = 'dB', show = False, vmin = -0.8, vmax = 0.8, time_unit='s', title = title, colorbar = True, extrapolate = "local", mask = np.bool_(binary_full), mask_params = dict(marker='o',		markerfacecolor='white', markeredgecolor='k', linewidth=0, markersize=9, markeredgewidth=4))
+    #fig3 = plotting_LMEM.plot_topomap(times = time_to_plot, ch_type='planar1', scalings = 1, units = 'dB', show = False, vmin = -0.8, vmax = 0.8, time_unit='s', title = title, colorbar = True, extrapolate = "local", mask = np.bool_(binary_full), mask_params = dict(marker='o',		markerfacecolor='white', markeredgecolor='k', linewidth=0, markersize=9, markeredgewidth=4))
+    fig3 = plotting_LMEM.plot_topomap(times = time_to_plot, ch_type='planar1', scalings = 1, units = 'dB', show = False, vmin = -1.2, vmax = 1.2, time_unit='s', title = title, colorbar = True, extrapolate = "local", mask = np.bool_(binary_full), mask_params = dict(marker='o',		markerfacecolor='white', markeredgecolor='k', linewidth=0, markersize=7, markeredgewidth=2))
 
-
-    #os.makedirs('/net/server/data/Archive/prob_learn/asmyasnikova83/{0}/topomaps_lines_LMEM_{1}_poster/norisk_vs_risk/'.format(feedb, fr) , exist_ok = True)
     if parameter3 == 'negative':
-        os.makedirs(f'/{prefix}/topomaps/topomaps_rows_LMEM_response/{cond1}/', exist_ok = True)
-        #fig3.savefig('/net/server/data/Archive/prob_learn/asmyasnikova83/{0}/topomaps_lines_LMEM_{1}_poster/norisk_vs_risk/LMEM_norisk_vs_risk_stat_full_fdr_{2}_separ_fb.jpeg'.format(feedb, fr, p), dpi = 300)
-        fig3.savefig(f'/{prefix}/topomaps/topomaps_rows_LMEM_response/{cond1}/LMEM_{cond1}_{parameter3}_vs_{parameter4}_stat_full_fdr_{fr}_separ_fb.jpeg', dpi = 900)
+        os.makedirs(f'/{path_pic}/{cond1}/', exist_ok = True)
+        fig3.savefig(f'/{path_pic}/{cond1}/LMEM_{cond1}_{parameter3}_vs_{parameter4}_stat_full_fdr_{fr}_separ_fb.jpeg', dpi = 900)
     if parameter3 == None:
         if response:
-            os.makedirs(f'/{prefix}/topomaps/topomaps_rows_LMEM_response/{cond1}_vs_{cond2}/' , exist_ok = True)
-            fig.savefig(f'/{prefix}/topomaps/topomaps_rows_LMEM_response/{cond1}_vs_{cond2}/LMEM_{cond1}_vs_{cond2}_stat_no_fdr_{fr}_separ_fb.jpeg', dpi = 900)
-            fig2.savefig(f'/{prefix}/topomaps/topomaps_rows_LMEM_response/{cond1}_vs_{cond2}/LMEM_{cond1}_vs_{cond2}_stat_space_fdr_{fr}_separ_fb.jpeg', dpi = 900)
-            fig3.savefig(f'/{prefix}/topomaps/topomaps_rows_LMEM_response/{cond1}_vs_{cond2}/LMEM_{cond1}_vs_{cond2}_stat_full_fdr_{fr}_separ_fb.jpeg', dpi = 900)
+            os.makedirs(f'/{path_pic}/{cond1}_vs_{cond2}/' , exist_ok = True)
+            fig.savefig(f'/{path_pic}/{cond1}_vs_{cond2}/LMEM_{cond1}_vs_{cond2}_stat_no_fdr_{fr}_separ_fb.jpeg', dpi = 900)
+            fig2.savefig(f'/{path_pic}/{cond1}_vs_{cond2}/LMEM_{cond1}_vs_{cond2}_stat_space_fdr_{fr}_separ_fb.jpeg', dpi = 900)
+            fig3.savefig(f'/{path_pic}/{cond1}_vs_{cond2}/LMEM_{cond1}_vs_{cond2}_stat_full_fdr_{fr}_separ_fb.jpeg', dpi = 900)
         else:
             os.makedirs(f'/{prefix}/topomaps/topomaps_rows_LMEM_stimulus/{cond1}_vs_{cond2}/' , exist_ok = True)
             fig.savefig(f'/{prefix}/topomaps/topomaps_rows_LMEM_stimulus/{cond1}_vs_{cond2}/LMEM_{cond1}_vs_{cond2}_stat_no_fdr_{fr}_separ_fb.jpeg', dpi = 900)
