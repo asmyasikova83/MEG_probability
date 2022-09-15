@@ -57,9 +57,10 @@ planars = ['comb_planar']
 freq_range = 'beta_16_30_trf_early_log'
 data_path = '/net/server/data/Archive/prob_learn/vtretyakova/Nikita_mio_cleaned/beta_16_30_trf_early_log/beta_16_30_trf_early_log_ave_into_subj'
 #path = '/net/server/data/Archive/prob_learn/asmyasnikova83/probability/stim/{0}/timecourses_aver_all_ch/'.format(freq_range)
+
 Autists = False
-Normals = True
-Normals_Autists = False
+Normals = False
+Normals_Autists = True
 
 if response:
     if Normals:
@@ -75,30 +76,25 @@ else:
 os.makedirs(path, exist_ok = True)
 path_pdf = path + 'output' +  '/all_pdf/'
 
-
 if Normals:
     subjects = ['P001', 'P002', 'P004','P006', 'P007', 'P008', 'P011', 'P014', 'P015', 'P016', 'P017', 'P019',
                 'P021', 'P022', 'P023', 'P024', 'P025',  'P028', 'P029', 'P030','P031',  'P032',
                 'P033', 'P034', 'P035', 'P039', 'P040', 'P042', 'P043', 'P044','P045',  'P047',
                 'P048', 'P052', 'P053', 'P055', 'P057', 'P059', 'P060', 'P062']
     sample_full = 'full (40) Norm'
-    #autists for pairs
+    # for pairs, classical bline
     subjects_norisk = ['P023', 'P053', 'P022','P016', 'P040','P065', 'P001', 'P064', 'P055','P060', 'P019', 'P034', 'P004',
                 'P039','P035', 'P008','P047', 'P059', 'P021', 'P063','P032', 'P044', 'P061', 'P067']
-    #prerisk changed bline
     subjects_prerisk = ['P023', 'P053', 'P022','P016', 'P040','P065', 'P001', 'P064', 'P055','P060', 'P019', 'P034', 'P004',
                 'P039','P035', 'P008','P047', 'P059', 'P021', 'P063','P032', 'P044', 'P061'     ]
     subjects_risk = ['P023', 'P053', 'P022','P016', 'P040','P065', 'P001', 'P064', 'P055','P060', 'P019', 'P034', 'P004',
                 'P039','P035', 'P008','P047', 'P059', 'P021', 'P063','P032', 'P044'          ]
-    #risk changed bline 20 subj
-    #prerisk classical_bline
     subjects_postrisk = ['P023', 'P053', 'P022','P016', 'P040','P065', 'P001', 'P064', 'P055','P060', 'P019', 'P034', 'P004',
                 'P039','P035', 'P008','P047', 'P059', 'P021', 'P063','P032', 'P044', 'P061'     ]
-    subjects_prerisk_classical_bline = ['P023', 'P053', 'P022','P016',             'P001',   'P060', 'P019',    'P004',
-                'P039',                'P047',      'P063','P032', 'P044','P061', 'P067']
-    #risk classical_bline
-    subjects_risk_classical_bline = ['P023', 'P053', 'P022','P016', 'P040','P065', 'P001', 'P064', 'P055','P060', 'P019',     'P004',
-                'P039',               'P047', 'P059', 'P021', 'P063','P032', 'P044', 'P061', 'P067']
+    #subjects_prerisk_classical_bline = ['P023', 'P053', 'P022','P016',             'P001',   'P060', 'P019',    'P004',
+    #            'P039',                'P047',      'P063','P032', 'P044','P061', 'P067']
+    #subjects_risk_classical_bline = ['P023', 'P053', 'P022','P016', 'P040','P065', 'P001', 'P064', 'P055','P060', 'P019',     'P004',
+    #            'P039',               'P047', 'P059', 'P021', 'P063','P032', 'P044', 'P061', 'P067']
     sample = 'short Norm'
 if Autists:
     subjects_full= ['P301', 'P304', 'P307', 'P308', 'P311', 'P312', 'P313', 'P314', 'P316', 'P318', 'P320', 'P321', 'P322',
@@ -115,23 +111,19 @@ if Autists:
     #autists for pairs
     subjects = ['P301','P304','P307','P332','P312', 'P313', 'P314', 'P316','P318', 'P320', 'P321', 'P322', 'P323',
                         'P325', 'P326', 'P327', 'P328', 'P329','P333', 'P334', 'P335', 'P341', 'P342', 'P324']
-    #norisk changed bline
+    #norisk classical bline
     subjects_norisk = ['P301','P304','P307','P332','P312', 'P313', 'P314', 'P316','P318', 'P320', 'P321', 'P322', 'P323',
                         'P325', 'P326', 'P327', 'P328', 'P329','P333', 'P334', 'P335', 'P341', 'P342', 'P324']
-    #prerisk changed bline
-    #risk changed bline
     subjects_prerisk = ['P301','P304','P307','P332','P312', 'P313', 'P314', 'P316','P318', 'P320', 'P321', 'P322', 'P323',
                         'P325', 'P326', 'P327', 'P328', 'P329','P333', 'P334', 'P335', 'P341', 'P342'    ]
     subjects_risk = ['P301','P304','P307','P332','P312', 'P313', 'P314', 'P316','P318', 'P320', 'P321', 'P322', 'P323',
                         'P325', 'P326', 'P327', 'P328', 'P329','P333', 'P334', 'P335', 'P341',            ]
-    #postrisk changed_bline 
     subjects_postrisk = ['P301','P304','P307','P332','P312', 'P313', 'P314', 'P316','P318', 'P320', 'P321', 'P322', 'P323',
                         'P325', 'P326', 'P327', 'P328', 'P329','P333', 'P334', 'P335', 'P341', 'P342'    ]
-    #prerisk classical_bline 
-    subjects_prerisk_classical_bline = ['P301','P304','P307','P332',            'P314',               'P320', 'P321',       'P323',
+    #prerisk bk_bline?
+    subjects_prerisk_ch = ['P301','P304','P307','P332',            'P314',               'P320', 'P321',       'P323',
                         'P325',             'P328',               'P334', 'P335', 'P341', 'P342', 'P324']
-    #risk classical_bline
-    subjects_risk_classical_bline = ['P301','P304','P307','P332','P312', 'P313', 'P314', 'P316','P318', 'P320', 'P321',     'P323',
+    subjects_risk_ch = ['P301','P304','P307','P332','P312', 'P313', 'P314', 'P316','P318', 'P320', 'P321',     'P323',
                         'P325',            'P328', 'P329','P333', 'P334', 'P335', 'P341',     'P324']
     sample = 'Autists'
 if Normals_Autists:
@@ -148,25 +140,32 @@ if Normals_Autists:
     #norisk changed bline
     Autists_norisk = ['P301','P304','P307','P332','P312', 'P313', 'P314', 'P316','P318', 'P320', 'P321', 'P322', 'P323',
                         'P325', 'P326', 'P327', 'P328', 'P329','P333', 'P334', 'P335', 'P341', 'P342', 'P324']
-    #prerisk changed bline
-    #risk changed bline
-    #postrisk changed_bline 
     Autists_prerisk = ['P301','P304','P307','P332','P312', 'P313', 'P314', 'P316','P318', 'P320', 'P321', 'P322', 'P323',
                         'P325', 'P326', 'P327', 'P328', 'P329','P333', 'P334', 'P335', 'P341', 'P342'    ]
     Autists_risk = ['P301','P304','P307','P332','P312', 'P313', 'P314', 'P316','P318', 'P320', 'P321', 'P322', 'P323',
                         'P325', 'P326', 'P327', 'P328', 'P329','P333', 'P334', 'P335', 'P341',            ]
     Autists_postrisk = ['P301','P304','P307','P332','P312', 'P313', 'P314', 'P316','P318', 'P320', 'P321', 'P322', 'P323',
                         'P325', 'P326', 'P327', 'P328', 'P329','P333', 'P334', 'P335', 'P341', 'P342'    ]
+    # classical bline
     Normals_norisk = ['P023', 'P053', 'P022','P016', 'P040','P065', 'P001', 'P064', 'P055','P060', 'P019', 'P034', 'P004',
                 'P039','P035', 'P008','P047', 'P059', 'P021', 'P063','P032', 'P044', 'P061', 'P067']
-    #prerisk changed bline
     Normals_prerisk = ['P023', 'P053', 'P022','P016', 'P040','P065', 'P001', 'P064', 'P055','P060', 'P019', 'P034', 'P004',
                 'P039','P035', 'P008','P047', 'P059', 'P021', 'P063','P032', 'P044', 'P061'     ]
     Normals_risk = ['P023', 'P053', 'P022','P016', 'P040','P065', 'P001', 'P064', 'P055','P060', 'P019', 'P034', 'P004',
                 'P039','P035', 'P008','P047', 'P059', 'P021', 'P063','P032', 'P044',          ]
     Normals_postrisk = ['P023', 'P053', 'P022','P016', 'P040','P065', 'P001', 'P064', 'P055','P060', 'P019', 'P034', 'P004',
                 'P039','P035', 'P008','P047', 'P059', 'P021', 'P063','P032', 'P044', 'P061'     ]
+    #bk bline
+
+    Normals_prerisk_ch = ['P023', 'P053', 'P022','P016',             'P001',   'P060', 'P019',    'P004',
+                'P039',                'P047',      'P063','P032', 'P044','P061', 'P067']
+    #risk classical_bline
+    Normals_risk_ch = ['P023', 'P053', 'P022','P016', 'P040','P065', 'P001', 'P064', 'P055','P060', 'P019',     'P004',
+                'P039',               'P047', 'P059', 'P021', 'P063','P032', 'P044', 'P061', 'P067']
+    Normals_postrisk_ch = ['P023', 'P053', 'P022','P016', 'P040','P065', 'P001', 'P064', 'P055','P060', 'P019', 'P034', 'P004',
+                'P039','P035', 'P008','P047', 'P059', 'P021', 'P063','P032', 'P044', 'P061'     ]
     sample = 'Norm_Autists'
+
 #time points 
 t = 1051
 #tmin for corrected time course (cut off the beginning and the end of the timecourse)
