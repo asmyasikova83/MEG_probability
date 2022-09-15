@@ -170,5 +170,3 @@ fig3 = temp.plot_topomap(times = time_to_plot, ch_type='planar1', scalings = 1, 
 fig.savefig(f'{path_pic}/LMEM_trial_type_feedback_cur_stat_{freq_range}_no_fdr.jpeg', dpi = 900)
 fig2.savefig(f'{path_pic}/LMEM_trial_type_feedback_cur_stat_{freq_range}_space_fdr.jpeg', dpi = 900)
 fig3.savefig(f'{path_pic}/LMEM_trial_type_feedback_cur_stat_{freq_range}_full_fdr.jpeg', dpi = 900)
-
-
