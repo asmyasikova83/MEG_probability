@@ -2,7 +2,7 @@
 import mne
 import numpy as np
 import pandas as pd
-from function import ttest_pair, ttest_vs_zero, space_fdr, full_fdr, p_val_binary, plot_deff_topo, plot_topo_vs_zero, nocolor_topomaps_line
+from function import space_fdr, full_fdr, p_val_binary, plot_deff_topo, plot_topo_vs_zero, nocolor_topomaps_line
 from config import *
 #import re
 
@@ -13,11 +13,16 @@ anticip = False
 fb = True
 early_fb = True
 late_fb = False
+fb_autists = True
 
 path = '/net/server/data/Archive/prob_learn/asmyasnikova83/probability/signif_sensors/'
 os.makedirs(path, exist_ok = True)
 # загружаем таблицу с pvalue, полученными с помощью LMEM в R
-df  = pd.read_csv('/net/server/data/Archive/prob_learn/asmyasnikova83/beta/p_vals_factor_significance_MEG_Vera.csv')
+
+if fb_autists:
+    df  = pd.read_csv('/net/server/data/Archive/prob_learn/asmyasnikova83/beta/p_vals_factor_significance_MEG_group.csv')
+else:
+    df  = pd.read_csv('/net/server/data/Archive/prob_learn/asmyasnikova83/beta/p_vals_factor_significance_MEG_Vera.csv')
 # задаем время для построения топомапов (используется в функции MNE plot_topomap)
 # загружаем донора (любой Evoked с комбинированными планарами или одним планаром - чтобы было 102 сеносора). 
 temp = mne.Evoked("/net/server/data/Archive/prob_learn/vtretyakova/Nikita_mio_cleaned/beta_16_30_ave_into_subjects_comb_planar/P001_norisk_evoked_beta_16_30_resp_comb_planar.fif")
@@ -81,7 +86,8 @@ if fb:
     pval_in_intevals = []
     for i in range(102):
         pval_s = df[df['sensor'] == i]
-        pval_norisk_prerisk = pval_s['trial_type:feedback_cur'].tolist()
+        #pval_norisk_prerisk = pval_s['trial_type:feedback_cur'].tolist()
+        pval_norisk_prerisk = pval_s['group'].tolist()
         pval_in_intevals.append(pval_norisk_prerisk)
     pval_in_intevals = np.array(pval_in_intevals)
     pval_space_fdr = space_fdr(pval_in_intevals)
@@ -89,13 +95,19 @@ if fb:
     sensors = []
     for j in range(102):
         if early_fb:
-            if pval_full_fdr[j,11] < 0.05 and pval_full_fdr[j,12] < 0.05:
+            #TODO check time interval
+            if pval_full_fdr[j,10] < 0.05 and pval_full_fdr[j,11] < 0.05:
                 f_name = path + 'sensors_early_fb_1100_1500.txt'
                 sensors.append(j)
         if late_fb:
-            if pval_full_fdr[j, 12] < 0.035 and pval_full_fdr[j, 13] < 0.035:
+            if pval_full_fdr[j, 12] < 0.05 and pval_full_fdr[j, 13] < 0.05:
                 #TODO correct ..topomaps signif sensors
                 f_name = path + 'sensors_late_fb_1500_1900_super_sign.txt'
+                sensors.append(j)
+        if fb_autists:
+            #1400 ms
+            if pval_in_intevals[j, 11] < 0.05:
+                f_name = path + 'sensors_early_fb_1400.txt'
                 sensors.append(j)
     print(sensors)
     if len(sensors) != 0:
