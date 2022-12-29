@@ -11,6 +11,7 @@ import matplotlib.pyplot as plt
 ###############################################################################################
 ######## Resample before doing stat #############
 def  resample_before_stat(t_min, t_max):
+    print('in resample_before_stat')
     original_time = np.arange(-1.4, 2.1+1.0/300, 1.0/300)
     correct_time = np.arange(-1.4, 2.1, 1.0/40)
     ticks_array = np.zeros((len(correct_time)))
@@ -27,6 +28,7 @@ def  resample_before_stat(t_min, t_max):
     ticks_array_extended = np.append(ticks_array, 2.1)
     idx_array_extended = np.append(idx_array, 1050.0)
     time = ticks_array_extended
+    print(idx_array_extended)
     return time, idx_array_extended
 
 ######## Функция для поиска меток фиксационного креста (по ним ищется baseline)######
@@ -174,7 +176,6 @@ def make_fix_cross_signal_baseline(subj, r, cond, data_path, L_freq, H_freq, f_s
                 events = events_pos.reshape(1,3)
             print('fb', fb)
             print('cond', cond)
-            exit()
         if fb == 'negative':
             events_neg = np.loadtxt("/net/server/data/Archive/prob_learn/asmyasnikova83/theta_4_8_FIX_CROSS/events_fix_cross/{0}_run{1}_{2}_fb_cur_negative_fix_cross.txt".format(subj, r, cond), dtype='int')
             # если только одна метка, т.е. одна эпоха, то выдается ошибка, поэтому приводим shape к виду (N,3)
@@ -182,8 +183,6 @@ def make_fix_cross_signal_baseline(subj, r, cond, data_path, L_freq, H_freq, f_s
                 events = events_neg.reshape(1,3) 
             print('fb', fb)
             print('cond', cond)
-            exit(
-            exit())
     #объединяем негативные и позитивные фидбеки для получения общего бейзлайна по ним, и сортируем массив, чтобы времена меток шли в порядке возрастания    
     #events = np.vstack([events_pos, events_neg])
     #events = np.sort(events, axis = 0)
@@ -664,27 +663,28 @@ def extract_and_av_cond_data(data_path, subjects, fr,  n): # n - количес�
     for ind, subj in enumerate(subjects):
         temp1 = mne.Evoked(op.join(data_path, '{0}_risk_evoked_beta_16_30_trf_early_log_resp_comb_planar.fif'.format(subj, fr)))
         temp2 = mne.Evoked(op.join(data_path, '{0}_norisk_evoked_beta_16_30_trf_early_log_resp_comb_planar.fif'.format(subj, fr)))
-        temp3 = mne.Evoked(op.join(data_path, '{0}_prerisk_evoked_beta_16_30_trf_early_log_resp_comb_planar.fif'.format(subj, fr)))
-        temp4 = mne.Evoked(op.join(data_path, '{0}_postrisk_evoked_beta_16_30_trf_early_log_resp_comb_planar.fif'.format(subj, fr)))
+        #temp3 = mne.Evoked(op.join(data_path, '{0}_prerisk_evoked_beta_16_30_trf_early_log_resp_comb_planar.fif'.format(subj, fr)))
+        #temp4 = mne.Evoked(op.join(data_path, '{0}_postrisk_evoked_beta_16_30_trf_early_log_resp_comb_planar.fif'.format(subj, fr)))
         contr[ind, 0, :, :] = temp1.data
         contr[ind, 1, :, :] = temp2.data
-        contr[ind, 2, :, :] = temp3.data
-        contr[ind, 3, :, :] = temp4.data
+        #contr[ind, 2, :, :] = temp3.data
+        #contr[ind, 3, :, :] = temp4.data
 		
     comp1 = contr[:, 0, :, :]
     comp2 = contr[:, 1, :, :]
-    comp3 = contr[:, 2, :, :]
-    comp4 = contr[:, 3, :, :]
+    #comp3 = contr[:, 2, :, :]
+    #comp4 = contr[:, 3, :, :]
 
     t1_stat, p1_val = stats.ttest_1samp(comp1, 0, axis=0)
     t2_stat, p2_val = stats.ttest_1samp(comp2, 0, axis=0)
-    t3_stat, p3_val = stats.ttest_1samp(comp3, 0, axis=0)
-    t4_stat, p4_val = stats.ttest_1samp(comp4, 0, axis=0)
+    #t3_stat, p3_val = stats.ttest_1samp(comp3, 0, axis=0)
+    #t4_stat, p4_val = stats.ttest_1samp(comp4, 0, axis=0)
     comp1_mean = comp1.mean(axis=0)
     comp2_mean = comp2.mean(axis=0)
-    comp3_mean = comp3.mean(axis=0)
-    comp4_mean = comp4.mean(axis=0)
-    return comp1_mean, comp2_mean, comp3_mean, comp4_mean, p1_val, p2_val, p3_val, p4_val
+    #comp3_mean = comp3.mean(axis=0)
+    #comp4_mean = comp4.mean(axis=0)
+    #return comp1_mean, comp2_mean, comp3_mean, comp4_mean, p1_val, p2_val, p3_val, p4_val
+    return comp1, comp2, comp1_mean, comp2_mean, p1_val, p2_val
 
 def ttest_pair_early_trials(data_path, response, subjects, fr, parameter1, parameter2, parameter3, parameter4, planar, n): # n - количество временных отчетов
     contr = np.zeros((len(subjects), 2, 102, n))
@@ -744,8 +744,13 @@ def ttest_pair_independent(data_path1, data_path2, response, Autists, Normals, f
     for ind, subj in enumerate(Autists):
         #TODO
         #if  parameter3 == 'negative':
+        print(parameter3)
         #temp1 = mne.Evoked(op.join(data_path1, '{0}_{1}_evoked_{2}_resp_{3}_fb_cur_{4}.fif'.format(Autists[ind], parameter1, fr1, planar, parameter3)))
         #temp2 = mne.Evoked(op.join(data_path2, '{0}_{1}_evoked_{2}_resp_{3}_fb_cur_{4}.fif'.format(Normals[ind], parameter1, fr2, planar, parameter3)))
+        #p1 = op.join(data_path1, '{0}_{1}_evoked_{2}_resp_{3}_fb_cur_{4}.fif'.format(Autists[ind], parameter1, fr1, planar, parameter3))
+        #p2 = op.join(data_path2, '{0}_{1}_evoked_{2}_resp_{3}_fb_cur_{4}.fif'.format(Normals[ind], parameter1, fr1, planar, parameter3))
+        #print(p1)
+        #print(p2)
         #if parameter3 == None:
         temp1 = mne.Evoked(op.join(data_path1, '{0}_{1}_evoked_{2}_resp_{3}.fif'.format(Autists[ind], parameter1, fr1, planar)))
         temp2 = mne.Evoked(op.join(data_path2, '{0}_{1}_evoked_{2}_resp_{3}.fif'.format(Normals[ind], parameter1, fr2, planar)))
@@ -756,7 +761,9 @@ def ttest_pair_independent(data_path1, data_path2, response, Autists, Normals, f
     t_stat, p_val = stats.ttest_ind(comp2, comp1, axis=0)
     comp1_mean = comp1.mean(axis=0)
     comp2_mean = comp2.mean(axis=0)
-    return t_stat, p_val, comp1_mean, comp2_mean
+    print(comp1_mean)
+    print(comp2_mean)
+    return t_stat, p_val, comp1_mean, comp2_mean, comp1, comp2
 ##############################################################################################
 #################################### FDR CORRECTION ########################################
 def compute_p_val(response,data_path, subjects, cond1, cond2, parameter3, parameter4, fr, time, t, idx_array):
@@ -770,12 +777,16 @@ def compute_p_val(response,data_path, subjects, cond1, cond2, parameter3, parame
     print(round(time[-1], 1))
     print(time.shape)
     print(len(subjects))
+    print('parameter3',  parameter3)
+    print('parameter4',  parameter4)
     for ind, subj in enumerate(subjects):
         if parameter3 == None:
             if response:
             #response TODO FREQ+Range
                 cond1_fname = data_path + f'{subj}_{cond1}_evoked_beta_16_30_trf_early_log_resp_comb_planar.fif'
                 cond2_fname = data_path + f'{subj}_{cond2}_evoked_beta_16_30_trf_early_log_resp_comb_planar.fif'
+                print('cond1_fname', cond1_fname)
+                print('cond2_fname', cond2_fname)
             else:
             #stimulus
                 cond1_fname = data_path + f'{subj}_{cond1}_evoked_beta_16_30_resp_comb_planar.fif'
@@ -817,45 +828,53 @@ def compute_p_val(response,data_path, subjects, cond1, cond2, parameter3, parame
     comp1_mean = comp1.mean(axis=0)
     comp2_mean = comp2.mean(axis=0)
     comp3_mean = comp3.mean(axis=0)
-    return comp1_mean, comp2_mean, comp3_mean, p_val
+    return comp1_mean, comp2_mean, comp3_mean, comp1, comp2, p_val
      
-def plot_stat_comparison(response, contrast, path, comp1, comp2, comp3, p_mul_min, p_mul_max, p_val, p_fdr, parameter3, time, title='demo_title', folder='comparison',
+def plot_stat_comparison(response, contrast, path, comp1, comp2,  comp1_stderr, comp2_stderr, comp3, p_mul_min, p_mul_max, p_val, p_fdr, parameter3,  cond1_name, time, title='demo_title', folder='comparison',
                          comp1_label='comp1', comp2_label='comp2', comp3_label='difference'):
     assert(comp1.shape[0] == comp2.shape[0] == time.shape[0])
-    os.makedirs(path+'output/'+ f'{comp1_label}_vs_{comp2_label}/', exist_ok = True)
+    if parameter3 == 'negative' or parameter3 == 'positive':
+        os.makedirs(path+ '/'+ 'output/'+ f'{cond1_name}_vs_{cond1_name}/', exist_ok = True)
+    if parameter3 == None:
+        os.makedirs(path+ '/'+ 'output/'+ f'{comp1_label}_vs_{comp2_label}/', exist_ok = True)
     print(path)
     plt.figure()
     #plt.rcParams['axes.facecolor'] = 'green'
-    plt.rcParams['figure.figsize'] = 40, 12
-    plt.rcParams['axes.linewidth'] = 1
+    #lt.rcParams['figure.figsize'] = 50, 12
+    #lt.rcParams['axes.linewidth'] = 1
     #plt.xlim(time[0], time[-1])
     plt.xlim(-0.95, 2.05)
     plt.xticks(np.arange(-1,3.0, 1))
-    plt.ylim([-5.5, 5.5])
+    #plt.ylim([-5.5, 5.5])
+    plt.ylim(p_mul_min, p_mul_max)
     #add axis for stimulus-locked data
     plt.plot([0, 0.001], [-50, 50], color='k', linewidth=3, linestyle='dotted', zorder=1)
     plt.plot([-50, 50], [0, 0.001], color='k', linewidth=3, linestyle='solid', zorder=1)
     if response:
         #add FB axis if response-locked data
         plt.plot([1, 1.001], [-50, 50], color='k', linewidth=3, linestyle='dotted', zorder=1)
-    if parameter3 == None:
-        plt.plot(time, comp1, color='r', linewidth=5, label=comp1_label)
-        plt.plot(time, comp2, color='b', linewidth=5, label=comp2_label)
-        #plot difference
-        if contrast:
-            plt.plot(time, comp3, color='k', linewidth=5, linestyle = 'dotted', label=comp3_label)
-    if parameter3 == 'negative':
-        plt.plot(time, comp1, color='r', linewidth=5, label=comp1_label)
-        plt.plot(time, comp2, color='b', linewidth=5, label=comp2_label)
-        if contrast:
-            plt.plot(time, comp3, color='k', linewidth=5, linestyle = 'dotted', label=comp3_label)
-    #plt.fill_between(time, y1 = p_mul_min, y2 = p_mul_max, where = (p_fdr < 0.05), facecolor = 'm', alpha = 0.46, step = 'pre')
-    #plt.fill_between(time, y1 = p_mul_min, y2 = p_mul_max, where = ((p_val < 0.05) * (p_fdr > 0.05)), facecolor = 'g', alpha = 0.46, step = 'pre')
-    # plt.fill_between(time, y1 = p_mul_max, y2 = p_mul_min, where = ((time>-0.350)*(time<-0.050)), facecolor = 'm', alpha = 0.46, step = 'pre')
-    plt.tick_params(labelsize = 20)
+    #if parameter3 == None:
+    #    plt.plot(time, comp1, color='r', linewidth=5, label=comp1_label)
+    #    plt.plot(time, comp2, color='b', linewidth=5, label=comp2_label)
+    #    #plot difference
+    #    if contrast:
+    #        plt.plot(time, comp3, color='k', linewidth=5, linestyle = 'dotted', label=comp3_label)
+    print('comp1', comp1.shape)
+    print('comp1_stderr', comp1_stderr.shape)
+    plt.plot(time, comp1, color='r', linewidth=5, label=comp1_label)
+    plt.fill_between(time, comp1-comp1_stderr, comp1+comp1_stderr, facecolor = 'r', alpha=.2)
+    plt.plot(time, comp2, color='b', linewidth=5, label=comp2_label)
+    plt.fill_between(time, comp2-comp2_stderr, comp2+comp2_stderr, facecolor = 'b', alpha=.2)
+    if contrast:
+        plt.plot(time, comp3, color='k', linewidth=5, linestyle = 'dotted', label=comp3_label)
+    plt.fill_between(time, y1 = p_mul_min, y2 = p_mul_max, where = (p_fdr < 0.05), facecolor = 'm', alpha = 0.46, step = 'pre')
+    plt.fill_between(time, y1 = p_mul_min, y2 = p_mul_max, where = ((p_val < 0.05) * (p_fdr > 0.05)), facecolor = 'g', alpha = 0.46, step = 'pre')
+    #plt.fill_between(time, y1 = p_mul_max, y2 = p_mul_min, where = ((time>-0.350)*(time<-0.050)), facecolor = 'm', alpha = 0.46, step = 'pre')
+    plt.tick_params(labelsize = 40)
     #plt.legend(loc='upper left', fontsize = 15)
-    plt.title(title, fontsize = 20)
-    plt.savefig(path+'output/'+ f'{comp1_label}_vs_{comp2_label}/'+title + '.png', transparent=True)
+    plt.title(title, fontsize = 40)
+    plt.savefig(path+ '/' + 'output/'+ f'{comp1_label}_vs_{comp2_label}/'+title + '.png', transparent=True)
+    print('Saved')
     plt.close()
 #############################################################################
 ##################### непарный ttest #######################################
@@ -877,6 +896,9 @@ def ttest_vs_zero_test(data_path, subjects, parameter1, parameter3, freq_range, 
     contr = np.zeros((len(subjects), 1, 102, n))
 
     for ind, subj in enumerate(subjects):
+        print(subj)
+        print(parameter1)
+        print(data_path)
         temp1 = mne.Evoked(op.join(data_path, '{0}_{1}_evoked_{2}_resp_{3}.fif'.format(subj, parameter1, freq_range, planar)))
                                 
         contr[ind, 0, :, :] = temp1.data
@@ -888,6 +910,28 @@ def ttest_vs_zero_test(data_path, subjects, parameter1, parameter3, freq_range, 
                                                                             
     return t_stat, p_val, comp1_mean, contr
 
+def ttest_vs_zero_feedback_test(data_path, subjects, parameter1, parameter3, freq_range, planar, n): # n - количество временных отчетов
+    contr = np.zeros((len(subjects), 1, 102, n))
+
+    for ind, subj in enumerate(subjects):
+        print(subj)
+        print(parameter1)
+        d = op.join(data_path, '{0}_{1}_evoked_{2}_resp_{3}_fb_cur_{4}.fif'.format(subj, parameter1, freq_range, planar, parameter3))
+        print(d)
+        temp1 = mne.Evoked(op.join(data_path, '{0}_{1}_evoked_{2}_resp_{3}_fb_cur_{4}.fif'.format(subj, parameter1, freq_range, planar, parameter3)))
+                                
+        contr[ind, 0, :, :] = temp1.data
+
+    #certain channels against zero
+    #cluster = [5, 9 , 11]
+    #stat_sensors = np.array(cluster)
+    #comp1 = contr[:, 0, 5, 6]                                                   
+    comp1 = contr[:, 0, :, :]
+    t_stat, p_val = stats.ttest_1samp(comp1, 0, axis=0)
+    print(p_val)
+    comp1_mean = comp1.mean(axis=0)
+                                                                            
+    return t_stat, p_val, comp1_mean, contr
 def to_str_ar(ch_l):
     temp = []
     for i in ch_l:
@@ -953,9 +997,10 @@ def plot_deff_topo(p_val, Normals_Autists, temp, mean1, mean2, time_to_plot, vmi
 
 	#temp_shift = temp.shift_time(-0.600, relative=False)
 	
-    fig1 = temp.plot_topomap(times = time_to_plot, ch_type='planar1', scalings = 1, average=0.2, units = 'dB', show = False, time_unit='s', title = title);
+    fig1 = temp.plot_topomap(times = time_to_plot, ch_type='planar1', scalings = 1, average=0.4, units = 'dB', show = False, vmin = vmin_contrast, vmax = vmax_contrast, time_unit='s', title = title);
+    #fig2 = temp.plot_topomap(times = time_to_plot, ch_type='planar1', scalings = 1, average=0.4, units = 'dB', show = False, time_unit='s', title = title);
 
-    fig2 = temp.plot_topomap(times = time_to_plot, ch_type='planar1', scalings = 1, average=0.2, units = 'dB', show = False, vmin = vmin_contrast, vmax = vmax_contrast, time_unit='s', title = title, colorbar = True, extrapolate = "local", mask = np.bool_(binary), mask_params = dict(marker='o',			markerfacecolor='white', markeredgecolor='k', linewidth=2, markersize=7, markeredgewidth=4))
+    fig2 = temp.plot_topomap(times = time_to_plot, ch_type='planar1', scalings = 1, average=0.4, units = 'dB', show = False, vmin = vmin_contrast, vmax = vmax_contrast, time_unit='s', title = title, colorbar = True, extrapolate = "local", mask = np.bool_(binary), mask_params = dict(marker='o',			markerfacecolor='white', markeredgecolor='yellow', linewidth=2, markersize=7, markeredgewidth=4))
 
     return fig1, fig2, temp # temp - "Evoked" for difference mean1 and mean2, which can be save if it is needed   
 
@@ -975,19 +1020,18 @@ def plot_topo_vs_zero(p_val, temp, mean1, time_to_plot, vmin, vmax, title):
 
 
 # загружаем донора (любой Evoked с комбинированными планарами или одним планаром - чтобы было 102 сеносора). 
-n = 17 # количество говов в ряду
+#n = 17 # количество говов в ряду
 
 # задаем временные точнки, в которых будем строить головы, затем мы присвоим их для донора (template)
-times_array = np.array([-0.8, -0.6, -0.4, -0.2, 0, 0.2, 0.4, 0.6, 0.8, 1.0, 1.2, 1.4, 1.6, 1.8, 2.0, 2.2, 2.4])
+#times_array = np.array([-0.8, -0.6, -0.4, -0.2, 0, 0.2, 0.4, 0.6, 0.8, 1.0, 1.2, 1.4, 1.6, 1.8, 2.0, 2.2, 2.4])
 
 def nocolor_topomaps_line (n, temp, times_array, template ):
-  
     if template:
         df = np.zeros((102, n))
     else:
         df = np.zeros((102, 17))
     temp.data = df
-
+    
     # задаем временные точки в которые мы будем строить головы
     temp.times = times_array
 

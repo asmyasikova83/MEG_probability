@@ -1,11 +1,11 @@
 import mne
 import os.path as op
 import os
-import scipy
 from scipy import io
 from matplotlib import pyplot as plt
 import numpy as np
 import pandas as pd
+import scipy
 from scipy import stats
 import copy
 import statsmodels.stats.multitest as mul
@@ -21,17 +21,16 @@ options = {
 }
 prefix = '/net/server/data/Archive/prob_learn/asmyasnikova83/'
 freq_range = 'beta_16_30_trf_early_log'
-#parameter3 = 'negative'
-#parameter4 = 'positive'
+parameter3 = 'negative'
+parameter4 = 'positive'
 
-parameter3 = None
-parameter4 = None
+#parameter3 = None
+#parameter4 = None
 
 # загружаем комбайн планары, усредненные внутри каждого испытуемого
 if parameter3  == None:
     if response:
-        #data_path = '{0}/Autists_extended/{1}_trained_classical_bline/{1}_ave_into_subjects_comb_planar/'.format(prefix, freq_range)
-        data_path = '{0}/Normals_extended/{1}_trained_classical_bline/{1}_ave_into_subjects_comb_planar/'.format(prefix, freq_range)
+        data_path = '{0}/Autists_extended/{1}_trained_classical_bline/{1}_ave_into_subjects_comb_planar/'.format(prefix, freq_range)
         #data_path = '/net/server/data/Archive/prob_learn/vtretyakova/Nikita_mio_cleaned/beta_16_30_trf_no_log_division/beta_16_30_trf_no_log_division_second_bl_comb_planar/'
         # if pretrial
         #data_path = '/net/server/data/Archive/prob_learn/asmyasnikova83/probability/beta_16_30_trf_early_log/beta_16_30_trf_early_log_ave_comb_planar/'
@@ -39,7 +38,6 @@ if parameter3  == None:
         data_path = '/net/server/data/Archive/prob_learn/asmyasnikova83/stim_check/beta_16_30_trf_no_log_division_stim/beta_16_30_trf_no_log_division_stim_ave_comb_planar/'
 if parameter3  == 'negative' or parameter3  == 'positive':
     if response:
-        #data_path = '{0}/Autists_extended/{1}_trained_classical_bline/{1}_ave_into_subjects_comb_planar/'.format(prefix, freq_range)
         data_path = '{0}/Normals_extended/{1}_trained_classical_bline/{1}_ave_into_subjects_comb_planar/'.format(prefix, freq_range)
         #data_path = '/net/server/data/Archive/prob_learn/asmyasnikova83/beta/beta_16_30_fb_ave_comb_planar/'
     else:
@@ -50,8 +48,8 @@ if parameter3  == 'negative' or parameter3  == 'positive':
 ### extract subjects with all conditions:fb+trial_type ####
 #out_path = f'/net/server/data/Archive/prob_learn/vtretyakova/Nikita_mio_cleaned/beta_16_30_trf_no_log_division/beta_16_30_trf_no_log_division_second_bl_epo/'#TODO
 #out_path = '/net/server/data/Archive/prob_learn/asmyasnikova83/stim_check/beta_16_30_trf_no_log_division_stim/beta_16_30_trf_no_log_division_stim_second_bl_epo/'.format(freq_range)
-out_path = '/net/server/data/Archive/prob_learn/asmyasnikova83/Autists_extended/{0}_trained_classical_bline/beta_16_30_trf_early_log_epo/'.format(freq_range)
-f = os.listdir(out_path) # Делает список всех файлов, которые храняться в папке
+#out_path = '/net/server/data/Archive/prob_learn/asmyasnikova83/Normals_extended/{0}_trained_classical_bline/beta_16_30_trf_early_log_epo/'.format(freq_range)
+#f = os.listdir(out_path) # Делает список всех файлов, которые храняться в папке
 
 
 # задаем время и донора
@@ -79,20 +77,22 @@ os.makedirs(path + 'output/', exist_ok=True)
 
 
 cond1 = 'risk'
-cond2= 'norisk'
+cond2= 'risk'
 
 cond1_name = cond1
 cond2_name = cond2
-
-#remove P061 for risk
-subjects = ['P001', 'P004', 'P019', 'P021', 'P022', 'P032',
+if cond1 == 'norisk':
+    #subjects = Autists
+    subjects = Normals
+if cond1 == 'risk':
+    subjects = ['P001', 'P004', 'P019', 'P021', 'P022', 'P032',
                'P034', 'P035', 'P039', 'P040', 'P044', 'P047',
-               'P048', 'P053', 'P055', 'P058', 'P059', 'P060',
+               'P048', 'P053', 'P055',         'P059', 'P060',
                'P063', 'P064', 'P065', 'P067']
-Autists = ['P301', 'P304', 'P307', 'P312', 'P313', 'P314',
-               'P316',  'P320', 'P321', 'P322', 'P323', 'P324',
-               'P325',  'P326', 'P327', 'P328', 'P329', 'P333',
-               'P335', 'P338', 'P341', 'P342']
+    #subjects = ['P301', 'P304', 'P307', 'P312', 'P313', 'P314',
+    #           'P316',  'P320', 'P321',         'P323', 'P324',
+    #           'P325',          'P327', 'P328', 'P329', 'P333',
+    #                    'P335', 'P338', 'P341', 'P342']
 #if cond1 == 'prerisk':
 #    Autists = Autists_norisk
 #    Normals = Normals_norisk
@@ -126,16 +126,15 @@ for p in planars:
     print('comp2_label', comp2_label)
     print('cond1_name', cond1_name)
     print('cond2_name', cond2_name)
-    
     aver = False
-    
+    print('comp1.shape', comp1.shape)
+    print('comp1.shape', comp1.shape)
     comp1_stderr = np.zeros((comp1.shape[1], comp1.shape[2]))
     comp2_stderr = np.zeros((comp1.shape[1], comp2.shape[2]))
-
+    print('comp1_stderr.shape', comp1_stderr.shape)
     for idx in range(102):
         comp1_stderr[idx,:] = scipy.stats.sem(comp1[:, idx, :], axis=0)
         comp2_stderr[idx,:] = scipy.stats.sem(comp2[:, idx, :], axis=0)
-
         rej,p_fdr = mne.stats.fdr_correction(p_val[idx,:], alpha=0.05, method='indep')
 
         plot_stat_comparison(response, aver, path, comp1_mean[idx], comp2_mean[idx],comp1_stderr[idx], comp2_stderr[idx], comp3_mean[idx], p_mul_min, p_mul_max, p_val[idx], p_fdr, parameter3, cond1_name, time, title = chan_labels[idx+204],
@@ -149,7 +148,7 @@ for p in planars:
         add_str_html(html_name, '<html>')
         add_str_html(html_name, '<body>')
         if response:
-            add_str_html(html_name, '<p style="font-size:32px;"><b>NORMALS AVERAGED AT RESPONSE %s, averaged %s, %d subjects, <span style="color:green;"> p_val < 0.05 </span> <span style="color:Magenta;">p_fdr < 0.05 </span> </b></p>' % (planar, fr, len(subjects)))
+            add_str_html(html_name, '<p style="font-size:32px;"><b>NORMALS  %s AVERAGED AT RESPONSE %s, averaged %s, %d subjects, <span style="color:green;"> p_val < 0.05 </span> <span style="color:Magenta;">p_fdr < 0.05 </span> </b></p>' % (cond1, planar, fr, len(subjects)))
         else:
             add_str_html(html_name, '<p style="font-size:32px;"><b>AVERAGED AT STIMULUS %s, averaged %s, %d subjects <span style="color:green;"> p_val < 0.05 </span> <span style="color:Magenta;">p_fdr < 0.05 </span> </b></p>' % (planar, fr, len(subjects)))
 
