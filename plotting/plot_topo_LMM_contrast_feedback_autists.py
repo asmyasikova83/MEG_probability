@@ -103,9 +103,6 @@ for cond in conds:
 
     temp = mne.Evoked("/net/server/data/Archive/prob_learn/vtretyakova/Nikita_mio_cleaned/beta_16_30_ave_into_subjects_comb_planar/P001_norisk_evoked_beta_16_30_resp_comb_planar.fif")
     n = temp.data.shape[1] # количество временных отчетов для combined planars - temp.data.shape = (102 x n), где 102 - количество планаров, а n - число временных отчето
-    
-    #_, p_val, risk_mean_Autists, _ = ttest_vs_zero_test(data_path_Autists, Autists, parameter1 = cond, parameter3 =  parameter3, freq_range = fr, planar = planars, n = n)
-    #_, p_val, risk_mean_Normals, _ = ttest_vs_zero_test(data_path_Normals, Normals, parameter1 = cond, parameter3 =  parameter3, freq_range = fr, planar = planars, n = n)
     if parameter3 == None:
         _, p_val, risk_mean_Autists, _ = ttest_vs_zero_test(data_path_Autists, Autists_list, parameter1 = cond, parameter3 =  None, freq_range = fr, planar = planars, n = n)
         _, p_val, risk_mean_Normals, _ = ttest_vs_zero_test(data_path_Normals, Normals_list, parameter1 = cond, parameter3 =  None, freq_range = fr, planar = planars, n = n)
@@ -129,17 +126,11 @@ for cond in conds:
     plotting_LMEM.times = times
 
     data_for_plotting = np.empty((102, 0))
-    print('temp.data shape', plotting_LMEM.data.shape)
     print('Drawing')
     if parameter3 == None:
-        #title1 = f'{cond} Autists minus {cond} Normals noFDR'
-        #title1 = f'{cond} Autists, noFDR'
-        #title1 = f'{cond} Normals, noFDR'
         _, fig1, temp = plot_deff_topo(pval_in_intevals, Normals_Autists, plotting_LMEM, risk_mean_Autists, risk_mean_Normals, time_to_plot, -1.2, 1.2, title = f'{cond} Autists minus {cond} Normals noFDR')
         _, fig2, temp = plot_deff_topo(pval_space_fdr, Normals_Autists, plotting_LMEM, risk_mean_Autists, risk_mean_Normals, time_to_plot, -1.2, 1.2, title = f'{cond} Autists minus {cond} Normals spaceFDR')
         _, fig3, temp = plot_deff_topo(pval_full_fdr, Normals_Autists, plotting_LMEM, risk_mean_Autists, risk_mean_Normals, time_to_plot, -1.2, 1.2, title = f'{cond} Autists minus {cond} Normals fullFDR')
-        #fig2, _, temp = plot_deff_topo(pval_space_fdr, Normals_Autists, plotting_LMEM, risk_mean_Autists, risk_mean_Normals, time_to_plot, -2.4, 2.4, title = f'{cond} Autists minus {cond} Normals spaceFDR')
-        #fig3, _, temp = plot_deff_topo(pval_full_fdr, Normals_Autists, plotting_LMEM, risk_mean_Autists, risk_mean_Normals, time_to_plot, -2.4, 2.4, title = f'{cond} Autists minus {cond} Normals fullFDR')
         fig1.savefig(path_pic + f'/{cond}_AT_minus_{cond}_NT_nofdr.jpeg', dpi = 500)
         fig2.savefig(path_pic + f'/{cond}_AT_minus_{cond}_NT_space_fdr.jpeg', dpi = 500)
         fig3.savefig(path_pic + f'/{cond}_AT_minus_{cond}_NT_full_fdr.jpeg', dpi = 500)
