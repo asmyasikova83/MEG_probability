@@ -14,7 +14,7 @@ from config import *
 prefix_data = '/net/server/data/Archive/prob_learn/asmyasnikova83/'
 prefix = '_trained'
 fr = 'beta_16_30_trf_early_log'
-path_pic = '/net/server/data/Archive/prob_learn/asmyasnikova83/topomaps_LMEM/{0}'.format(fr)
+path_pic = '/net/server/data/Archive/prob_learn/asmyasnikova83/topomaps_LMEM_test/{0}'.format(fr)
 data_path_Autists = '{0}/Autists_extended/{1}{2}_classical_bline/{1}_ave_into_subjects_comb_planar/'.format(prefix_data, fr, prefix)
 data_path_Normals = '{0}/Normals_extended/{1}{2}_classical_bline/{1}_ave_into_subjects_comb_planar/'.format(prefix_data, fr, prefix)
 
@@ -32,14 +32,17 @@ vmax = 4.5
 conds = ['norisk', 'risk']
 #conds = ['norisk']
 
-parameter3  = None
+parameter3  = 'positive'
 fb = parameter3
 #fb = 'positive'
 
+
+print(prefix_data)
 if parameter3 == None:
     df = pd.read_csv(f'/{prefix_data}/beta/p_vals_by_trial_type_MEG_group_400ms_fin.csv')
 if parameter3 != None:
-    df = pd.read_csv(f'/{prefix_data}/beta/p_vals_Tukey_by_feedback_group_400ms_fin.csv')
+    df = pd.read_csv(f'/{prefix_data}/beta/p_vals_Tukey_by_feedback_MEG_group_400ms_fin_ed.csv')
+print(df)
 # интервалы усредения
 #tmin = [-0.9, -0.7, -0.5, -0.3, -0.1, 0.1, 0.3, 0.5, 0.7, 0.9, 1.1, 1.3, 1.5, 1.7, 1.9, 2.1, 2.3]
 #tmax = [-0.7, -0.5, -0.3, -0.1, 0.1, 0.3, 0.5, 0.7, 0.9, 1.1, 1.3, 1.5, 1.7, 1.9, 2.1, 2.3, 2.5]
@@ -58,8 +61,14 @@ t_end =  2.3
 for cond in conds:
     print(cond)
     if cond == 'norisk':
-        Autists_list = Autists
-        Normals_list = Normals
+        Normals_list = ['P001', 'P004', 'P019', 'P021', 'P022', 'P032',
+               'P034', 'P035', 'P039', 'P040', 'P044', 'P047',
+               'P048', 'P053', 'P055', 'P058', 'P059', 'P060',
+               'P061', 'P063', 'P064', 'P065', 'P067']
+        Autists_list = ['P301', 'P304', 'P307', 'P312', 'P313', 'P314',
+               'P316',  'P320', 'P321', 'P322', 'P323', 'P324',
+               'P325',  'P326', 'P327', 'P328', 'P329', 'P333',
+               'P334', 'P335', 'P338', 'P341', 'P342']
     if cond == 'risk':
         if parameter3 == None:
             Normals_list = ['P001', 'P004', 'P019', 'P021', 'P022', 'P032',
@@ -93,7 +102,7 @@ for cond in conds:
     for i in range(102):
         pval_s = df[df['sensor'] == i]
         if parameter3 != None:
-            pval_norisk_risk = pval_s[f'{cond}_{fb}_normals - autists'].tolist()
+            pval_norisk_risk = pval_s[f'{cond}-{fb}-normals_autists'].tolist()
         if parameter3 == None:
             pval_norisk_risk = pval_s[f'{cond}-normals_autists'].tolist()
         pval_in_intevals.append(pval_norisk_risk)
@@ -107,8 +116,8 @@ for cond in conds:
         _, p_val, risk_mean_Autists, _ = ttest_vs_zero_test(data_path_Autists, Autists_list, parameter1 = cond, parameter3 =  None, freq_range = fr, planar = planars, n = n)
         _, p_val, risk_mean_Normals, _ = ttest_vs_zero_test(data_path_Normals, Normals_list, parameter1 = cond, parameter3 =  None, freq_range = fr, planar = planars, n = n)
     if parameter3 != None:
-        _, p_val, risk_mean_Autists, _ = ttest_vs_zero_feedback_test(data_path_Autists, Autists_list, parameter1 = cond, parameter3 =  'negative', freq_range = fr, planar = planars, n = n)
-        _, p_val, risk_mean_Normals, _ = ttest_vs_zero_feedback_test(data_path_Normals, Normals_list, parameter1 = cond, parameter3 =  'negative', freq_range = fr, planar = planars, n = n)
+        _, p_val, risk_mean_Autists, _ = ttest_vs_zero_feedback_test(data_path_Autists, Autists_list, parameter1 = cond, parameter3 =  f'{fb}', freq_range = fr, planar = planars, n = n)
+        _, p_val, risk_mean_Normals, _ = ttest_vs_zero_feedback_test(data_path_Normals, Normals_list, parameter1 = cond, parameter3 =  f'{fb}', freq_range = fr, planar = planars, n = n)
     # считаем разницу бета и добавляем к шаблону (донору)
     data_for_plotting = np.empty((102, 0))
     #усредняем сигнал в каждом из интервалов усреднения и собираем в единый np.array (102 x n) где 102 - количество комбайнд планаров, а n - количество интервалов усредения
