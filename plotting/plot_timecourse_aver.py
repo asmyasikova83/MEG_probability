@@ -24,16 +24,16 @@ options = {
 prefix_data = '/net/server/data/Archive/prob_learn/asmyasnikova83/'
 prefix = '_trained'
 fr = 'beta_16_30_trf_early_log'
-path_pic = '/net/server/data/Archive/prob_learn/asmyasnikova83/timecourses_LMEM_test/{0}'.format(fr)
+path_pic = '/net/server/data/Archive/prob_learn/asmyasnikova83/timecourses_LMEM_decision/{0}'.format(fr)
 
 
 cond1 = 'norisk'
 cond2 = 'norisk'
-#parameter3 = 'negative'
-#parameter4 = 'negative'
+parameter3 = 'positive'
+parameter4 = 'positive'
 
-parameter3 = None
-parameter4 = None
+#parameter3 = None
+#parameter4 = None
 
 if Autists:
     data_path = '{0}/Autists_extended/{1}{2}_classical_bline/{1}_ave_into_subjects_comb_planar/'.format(prefix_data, fr, prefix)
@@ -71,7 +71,7 @@ if Normals_Autists:
                 'P034', 'P035', 'P039', 'P040', 'P044', 'P047',
                 'P048', 'P053', 'P055', 'P058', 'P059', 'P060',
                         'P063', 'P064', 'P065', 'P067']
-    if parameter3 == 'negative' or parameter3 == 'positive':
+    if parameter3 == 'negative':
         Autists = ['P301', 'P304', 'P307', 'P312', 'P313', 'P314',
                        'P316',  'P320', 'P321', 'P322', 'P323', 'P324',
                        'P325',  'P326', 'P327', 'P328', 'P329', 'P333',
@@ -79,6 +79,15 @@ if Normals_Autists:
         Normals = ['P001', 'P004', 'P019', 'P021', 'P022', 'P032',
                 'P034', 'P035', 'P039', 'P040', 'P044', 'P047',
                 'P048', 'P053', 'P055', 'P058', 'P059', 'P060',
+                        'P063', 'P064', 'P065', 'P067']
+    if cond1 == 'risk' and parameter3 == 'positive':
+        Autists = ['P301', 'P304', 'P307', 'P312', 'P313', 'P314',
+                       'P316',  'P320', 'P321',     'P323', 'P324',
+                       'P325',          'P327',     'P329', 'P333',
+                       'P335', 'P338', 'P341', 'P342']
+        Normals = ['P001', 'P004', 'P019', 'P021', 'P022', 'P032',
+                'P034', 'P035', 'P039',      'P044', 'P047',
+                'P048',         'P055',      'P059', 'P060',
                         'P063', 'P064', 'P065', 'P067']
 
 temp = mne.Evoked("/net/server/data/Archive/prob_learn/vtretyakova/Nikita_mio_cleaned/beta_16_30_ave_into_subjects_comb_planar/P001_norisk_evoked_beta_16_30_resp_comb_planar.fif")
@@ -159,9 +168,9 @@ for p in planars:
     #feedback 26 60 69
     #set your channels
     #decision
-    chs = [76, 77, 88, 78, 71]
+    #chs = [76, 77, 88, 78, 71]
     #late fb Anterior
-    #chs = [5, 9, 10, 19, 20]
+    chs = [5, 9, 10, 19, 20]
     print('p val shape', p_val.shape)
     p_val_aver = np.mean(p_val[chs, :], axis = 0)
     comp1_mean_aver = np.mean(comp1_mean[chs, :], axis = 0)
@@ -176,7 +185,7 @@ for p in planars:
     if response:
         if group:
             if Normals_Autists:
-                title = f'Betw-group{cond1_name}ATvs{cond2_name}NT'
+                title = f'Betw-group{cond1_name}ATvs{cond1_name}NT'
         if group == False:
             if Normals:
                 title = f'{cond1_name}vs{cond2_name}NT'
